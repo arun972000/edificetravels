@@ -1,0 +1,48 @@
+---
+/**
+ * A buta (paisley), the mango-seed motif of Indian block prints and shawls,
+ * as a small mirrored divider between sections. Draws itself in once.
+ * Decorative only.
+ */
+import { site } from '../../data/site';
+interface Props { class?: string }
+const { class: className = '' } = Astro.props;
+const buta = 'M20 36 C 9 36, 4 27, 7 19 C 10 11, 19 6, 27 4 C 24 9, 25 13, 28 17 C 32 23, 30 31, 24 34 C 22.5 35.3, 21.3 36, 20 36 Z';
+const curl = 'M19.5 31 C 13.5 30.5, 11 24, 14 18.5 C 16 15, 19.5 13, 22 12.5';
+---
+
+{site.decor && (
+  <div class:list={['buta-divider flex items-center justify-center gap-3 text-brand-deep', className]} aria-hidden="true" data-buta>
+    <span class="buta-line h-px w-16 bg-current opacity-40 sm:w-24"></span>
+    <span class="h-1.5 w-1.5 rotate-45 bg-brand opacity-80"></span>
+    <svg width="104" height="50" viewBox="0 0 84 40" fill="none" stroke="currentColor" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round">
+      <g transform="translate(42 0) scale(-1 1)"><path pathLength="1" d={buta} class="buta-fill" /><path pathLength="1" d={curl} /><circle cx="18" cy="24" r="1.6" fill="currentColor" stroke="none" /></g>
+      <g transform="translate(42 0)"><path pathLength="1" d={buta} class="buta-fill" /><path pathLength="1" d={curl} /><circle cx="18" cy="24" r="1.6" fill="currentColor" stroke="none" /></g>
+      <circle cx="42" cy="37" r="1.8" fill="#ed7717" stroke="none" />
+    </svg>
+    <span class="h-1.5 w-1.5 rotate-45 bg-brand opacity-80"></span>
+    <span class="buta-line h-px w-16 bg-current opacity-40 sm:w-24"></span>
+  </div>
+)}
+
+<style>
+  :global(html.js) .buta-divider path { stroke-dasharray: 1; stroke-dashoffset: 1; transition: stroke-dashoffset 1.8s cubic-bezier(0.16, 1, 0.3, 1) 0.2s; }
+  :global(html.js) .buta-divider .buta-line { transform: scaleX(0); transition: transform 1.2s cubic-bezier(0.16, 1, 0.3, 1); }
+  :global(html.js) .buta-divider .buta-line:first-child { transform-origin: right; }
+  :global(html.js) .buta-divider .buta-line:last-child { transform-origin: left; }
+  :global(html.js) .buta-divider.is-drawn path { stroke-dashoffset: 0; }
+  :global(html.js) .buta-divider.is-drawn .buta-line { transform: none; }
+  .buta-fill { fill: var(--c-brand-soft); }
+  @media (prefers-reduced-motion: reduce) {
+    :global(html.js) .buta-divider path { stroke-dashoffset: 0; transition: none; }
+    :global(html.js) .buta-divider .buta-line { transform: none; transition: none; }
+  }
+</style>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-buta]').forEach(el => {
+    if (!('IntersectionObserver' in window)) { el.classList.add('is-drawn'); return; }
+    const io = new IntersectionObserver(es => { if (es.some(e => e.isIntersecting)) { el.classList.add('is-drawn'); io.disconnect(); } }, { threshold: 0.6 });
+    io.observe(el);
+  });
+</script>

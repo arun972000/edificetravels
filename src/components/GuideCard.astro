@@ -1,0 +1,34 @@
+---
+import { Image } from 'astro:assets';
+import type { CollectionEntry } from 'astro:content';
+import { photo } from '../lib/photos';
+import { getDict, fmt } from '../i18n';
+import type { Locale } from '../i18n/config';
+
+interface Props { guide: CollectionEntry<'guides'>; class?: string; locale?: Locale; }
+const { guide, class: className = '', locale = 'en' } = Astro.props;
+const t = getDict(locale);
+const g = guide.data;
+const CATEGORY: Record<string, string> = {
+  planning: 'Planning', visa: 'Visas', money: 'Money', safety: 'Safety', culture: 'Culture',
+  food: 'Food', transport: 'Getting around', packing: 'Packing', wellness: 'Wellness',
+};
+---
+
+<a href={`/guide/${guide.id}`} class:list={['group press flex flex-col', className]}>
+  <div class="frame aspect-[4/3]">
+    <Image
+      src={photo(g.heroImage)}
+      alt=""
+      widths={[480, 720, 960]}
+      sizes="(min-width: 1024px) 23rem, (min-width: 640px) 46vw, 80vw"
+      class="h-full w-full object-cover"
+      loading="lazy"
+      decoding="async"
+    />
+    <span class="absolute left-3 top-3 rounded-pill bg-white/90 px-3 py-1 text-[0.78rem] font-bold text-[#1b1d21] backdrop-blur-md">{locale === 'en' ? (CATEGORY[g.category] ?? g.category) : t.common.inEnglish}</span>
+  </div>
+  <h3 class="mt-3 px-1 text-[1.125rem] leading-snug text-ink group-hover:underline group-hover:decoration-brand group-hover:decoration-2 group-hover:underline-offset-4">{g.title}</h3>
+  <p class="mt-1.5 line-clamp-2 px-1 text-[0.92rem] leading-snug text-ink-soft">{g.description}</p>
+  <p class="mt-2 px-1 text-[0.82rem] font-semibold text-ink-muted">{fmt(t.common.minRead, { n: g.readingMinutes })}</p>
+</a>

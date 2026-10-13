@@ -1,0 +1,91 @@
+---
+/**
+ * The three ways to stay on a journey, as a segmented switch. Hotels and the
+ * way you travel only: prices are quoted personally after an enquiry.
+ * Without script all three panels show, one after another.
+ */
+import Button from './Button.astro';
+
+interface Tier { hotels: string[]; vehicle: string; note?: string }
+interface Props { tiers: { comfort: Tier; premium: Tier; luxury: Tier }; planHref: string; }
+const { tiers, planHref } = Astro.props;
+const list = [
+  { id: 'comfort', name: 'Comfort', blurb: 'Well-run hotels with some character, and the same private car and driver throughout. This is the journey as written.', tier: tiers.comfort },
+  { id: 'premium', name: 'Premium', blurb: 'Heritage havelis and boutique hotels, with a local guide in every city and more of the days arranged privately.', tier: tiers.premium },
+  { id: 'luxury', name: 'Luxury', blurb: 'The palace and lake hotels, a suite where the view earns it, and evenings arranged for you alone.', tier: tiers.luxury },
+];
+---
+
+<div class="stays" data-stays>
+  <div class="relative inline-grid w-full max-w-md grid-cols-3 rounded-pill bg-bg-muted p-1.5 sm:w-auto" role="tablist" aria-label="Stay style">
+    <span class="stays-thumb absolute inset-y-1.5 left-1.5 w-[calc((100%-0.75rem)/3)] rounded-pill bg-bg-elevated shadow-2" aria-hidden="true"></span>
+    {list.map((t, i) => (
+      <button type="button" role="tab" id={`stay-tab-${t.id}`} aria-controls={`stay-panel-${t.id}`} aria-selected={i === 0 ? 'true' : 'false'} tabindex={i === 0 ? 0 : -1} class="relative z-10 h-11 rounded-pill px-5 text-[0.95rem] font-bold text-ink-soft transition-colors aria-selected:text-ink" data-stay-tab={i}>{t.name}</button>
+    ))}
+  </div>
+
+  <div class="mt-5 grid">
+    {list.map((t, i) => (
+      <section id={`stay-panel-${t.id}`} role="tabpanel" aria-labelledby={`stay-tab-${t.id}`} class="stay-panel col-start-1 row-start-1 rounded-[26px] border border-line bg-bg-elevated p-5 sm:p-8" data-stay-panel={i} data-active={i === 0 ? 'true' : 'false'}>
+        <div class="grid gap-6 lg:grid-cols-[1fr_1.4fr] lg:gap-12">
+          <div>
+            <h3 class="font-display text-[2rem] font-normal leading-none tracking-[-0.02em] text-ink">{t.name}</h3>
+            <p class="mt-3 text-[1rem] leading-relaxed text-ink-soft">{t.blurb}</p>
+            <div class="mt-5 rounded-[18px] bg-bg-muted p-4">
+              <p class="text-[0.82rem] font-semibold text-ink-muted">How you travel</p>
+              <p class="mt-1 text-[0.98rem] font-semibold text-ink">{t.tier.vehicle}</p>
+              {t.tier.note && <p class="mt-2 text-[0.88rem] text-ink-muted">{t.tier.note}</p>}
+            </div>
+          </div>
+          <div>
+            <p class="text-[0.82rem] font-semibold text-ink-muted">Where you stay</p>
+            <ul class="mt-2 divide-y divide-line">
+              {t.tier.hotels.map(h => (
+                <li class="flex items-start gap-3 py-3 text-[0.98rem] text-ink">
+                  <span class="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-brand" aria-hidden="true"></span>
+                  <span>{h}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      </section>
+    ))}
+  </div>
+
+  <div class="reveal mt-5 flex flex-col gap-4 rounded-[26px] bg-night p-5 text-white sm:flex-row sm:items-center sm:justify-between sm:p-7">
+    <p class="max-w-2xl text-[1rem] leading-relaxed text-white/85">
+      Every journey is quoted personally. Tell us your dates and the style you like, and your itemised written quote, with every hotel named, arrives within 48 hours.
+    </p>
+    <Button href={planHref} size="lg" track="plan_click" class="shrink-0">Ask for a quote</Button>
+  </div>
+</div>
+
+<style>
+  .stays-thumb { transition: transform 0.55s var(--ease-out); transform: translateX(calc(var(--idx, 0) * 100%)); }
+  html.js .stay-panel { opacity: 0; visibility: hidden; transform: translateY(10px); transition: opacity 0.45s var(--ease-out), transform 0.55s var(--ease-out), visibility 0s 0.45s; }
+  html.js .stay-panel[data-active="true"] { opacity: 1; visibility: visible; transform: none; transition: opacity 0.5s var(--ease-out), transform 0.6s var(--ease-out), visibility 0s; }
+  html:not(.js) .stay-panel { grid-row: auto; margin-bottom: 1rem; }
+  html:not(.js) [role="tablist"] { display: none; }
+</style>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-stays]').forEach(root => {
+    const tabs = Array.from(root.querySelectorAll<HTMLButtonElement>('[data-stay-tab]'));
+    const panels = Array.from(root.querySelectorAll<HTMLElement>('[data-stay-panel]'));
+    const list = root.querySelector<HTMLElement>('[role="tablist"]')!;
+    const select = (i: number, focus = false) => {
+      tabs.forEach((t, k) => { t.setAttribute('aria-selected', String(k === i)); t.tabIndex = k === i ? 0 : -1; });
+      panels.forEach((p, k) => { p.dataset.active = String(k === i); });
+      list.style.setProperty('--idx', String(i));
+      if (focus) tabs[i].focus();
+    };
+    tabs.forEach((t, i) => {
+      t.addEventListener('click', () => select(i));
+      t.addEventListener('keydown', e => {
+        if (e.key === 'ArrowRight') select((i + 1) % tabs.length, true);
+        if (e.key === 'ArrowLeft') select((i + tabs.length - 1) % tabs.length, true);
+      });
+    });
+  });
+</script>

@@ -1,0 +1,32 @@
+---
+import ProseLayout from '../layouts/ProseLayout.astro';
+import { site } from '../data/site';
+---
+
+<ProseLayout title="Terms and conditions" description="Terms of use for the Edifice Travels website, and the general terms that apply when you send an enquiry or receive a written proposal from us." eyebrow="Legal" updated="10 October 2026">
+  <p>These terms cover your use of this website and our enquiry and proposal process. The terms that apply once you book a journey are on the <a href="/booking-terms">booking and cancellation</a> page, which forms part of your contract with {site.legalName}.</p>
+
+  <h2>Who you are dealing with</h2>
+  <p>{site.legalName}, a limited liability partnership registered in India with its office in {site.address.locality}, India. Registration identifiers are shown in the footer of every page.</p>
+
+  <h2>Information on this site</h2>
+  <p>Itineraries, hotels, prices and travel advice are given in good faith and kept current, with "updated" dates on guide pages. Prices are indicative until confirmed in a written proposal; the rupee price in your proposal is the price that applies. Approximate conversions to other currencies are for guidance only. Visa, health and entry rules change; the official source always prevails and you are responsible for checking it before you travel.</p>
+
+  <h2>Enquiries and proposals</h2>
+  <p>Sending an enquiry does not create a booking or any obligation on either side. A proposal is an invitation to book and remains valid for the period stated on it, after which prices and availability may change.</p>
+
+  <h2>Intellectual property</h2>
+  <p>Text, itineraries and design on this site belong to {site.legalName}. Photographs are either ours or used under the licences listed on the <a href="/credits">photo credits</a> page. You may share links freely; please do not copy itineraries for commercial use.</p>
+
+  <h2>Links and third parties</h2>
+  <p>Links to government visa sites, WhatsApp and other services are provided for convenience; we are not responsible for their content or policies.</p>
+
+  <h2>Liability for website use</h2>
+  <p>We take care to keep this site accurate and available but do not guarantee either. To the extent the law allows, we are not liable for loss arising from reliance on the site's content before a booking contract exists. Nothing limits liability that cannot be limited by law.</p>
+
+  <h2>Governing law</h2>
+  <p>These website terms are governed by the laws of India, with courts in New Delhi having jurisdiction, without affecting consumer protections you have where you live.</p>
+
+  <h2>Contact</h2>
+  <p><a href={`mailto:${site.email}`}>{site.email}</a>, {site.phoneDisplay}</p>
+</ProseLayout>

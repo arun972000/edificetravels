@@ -1,0 +1,9 @@
+# Keep line endings as LF everywhere, including Windows checkouts and the Linux build.
+* text=auto eol=lf
+*.jpg binary
+*.jpeg binary
+*.png binary
+*.avif binary
+*.webp binary
+*.woff2 binary
+*.ico binary

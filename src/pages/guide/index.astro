@@ -1,0 +1,42 @@
+---
+import { getImage } from 'astro:assets';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Hero from '../../components/Hero.astro';
+import SectionHeading from '../../components/SectionHeading.astro';
+import GuideCard from '../../components/GuideCard.astro';
+import { photo } from '../../lib/photos';
+import { photoAlt } from '../../data/photo-alt';
+import { allGuides } from '../../lib/content';
+import { breadcrumbLd } from '../../lib/seo';
+import { waMessages } from '../../lib/whatsapp';
+
+const guides = await allGuides();
+const crumbs = [{ name: 'Home', href: '/' }, { name: 'Travel guide', href: '/guide' }];
+const CATEGORY: Record<string, string> = { planning: 'Planning', visa: 'Visas', money: 'Money', safety: 'Safety', culture: 'Culture', food: 'Food', transport: 'Getting around', packing: 'Packing', wellness: 'Wellness' };
+const groups = [...new Set(guides.map(g => g.data.category))].map(c => ({ c, items: guides.filter(g => g.data.category === c) }));
+---
+
+<BaseLayout
+  title="India travel guide: visas, costs, safety and timing"
+  description="Straight answers for planning a private India trip: the e-Visa step by step, trip costs, the best time to visit, solo women travel, food, money and transport."
+  transparentHeader
+  jsonLd={[breadcrumbLd(crumbs)]}
+  image={(await getImage({ src: photo('indian-market'), width: 1200, format: 'jpeg' })).src}
+>
+  <Hero image={photo('indian-market')} alt={photoAlt('indian-market')} title="What to know before you go to India" lead="Written by the specialists who plan the journeys, with the date each guide was last checked. If your question is not here, send it to us on WhatsApp." height="medium" breadcrumbs={crumbs} whatsapp={waMessages.general()} />
+
+  <div class="sticky top-[calc(var(--header-h)+var(--notice-h,0px))] z-30 mt-4 border-b border-line bg-bg/90 backdrop-blur-xl">
+    <nav class="no-scrollbar container-x flex gap-1.5 overflow-x-auto py-2.5" aria-label="Topics">
+      {groups.map(g => <a href={`#topic-${g.c}`} class="chip shrink-0 !h-10">{CATEGORY[g.c] ?? g.c}</a>)}
+    </nav>
+  </div>
+
+  {groups.map(g => (
+    <section id={`topic-${g.c}`} class="scroll-mt-[calc(var(--header-h)+4.5rem)] py-10 md:py-14">
+      <div class="container-x"><SectionHeading title={CATEGORY[g.c] ?? g.c} /></div>
+      <ul class="swipe mt-7 lg:!grid-flow-row lg:!grid-cols-3 lg:!overflow-visible" role="list">
+        {g.items.map(x => <li class="reveal"><GuideCard guide={x} /></li>)}
+      </ul>
+    </section>
+  ))}
+</BaseLayout>

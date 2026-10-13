@@ -1,0 +1,18 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import SectionHeading from '../components/SectionHeading.astro';
+import Button from '../components/Button.astro';
+import WhatsAppButton from '../components/WhatsAppButton.astro';
+import { waMessages } from '../lib/whatsapp';
+import { site } from '../data/site';
+---
+
+<BaseLayout title="Thank you" description="Your enquiry has reached a specialist." noindex>
+  <div class="container-x py-20 md:py-32">
+    <SectionHeading as="h1" size="h1" title="Your plan is with a specialist" lead={`We reply within ${site.replyHours} hours, usually sooner. If you would rather talk now, WhatsApp is open.`} align="center" />
+    <div class="mt-10 flex flex-wrap justify-center gap-3">
+      <WhatsAppButton href={waMessages.general()} size="lg" trackLabel="thank-you" />
+      <Button href="/journeys" variant="secondary" size="lg">Browse journeys meanwhile</Button>
+    </div>
+  </div>
+</BaseLayout>

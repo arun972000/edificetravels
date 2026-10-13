@@ -1,0 +1,117 @@
+---
+import { Image, getImage } from 'astro:assets';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Hero from '../components/Hero.astro';
+import SectionHeading from '../components/SectionHeading.astro';
+import SpecialistCard from '../components/SpecialistCard.astro';
+import Button from '../components/Button.astro';
+import { photo } from '../lib/photos';
+import { photoAlt } from '../data/photo-alt';
+import { waMessages } from '../lib/whatsapp';
+import { allSpecialists } from '../lib/content';
+import { breadcrumbLd } from '../lib/seo';
+import { getDict, fmt } from '../i18n';
+import { site } from '../data/site';
+import { localizedPath, type Locale } from '../i18n/config';
+
+interface Props { locale: Locale }
+const { locale } = Astro.props;
+const t = getDict(locale);
+const alt = (slug: string) => (locale === 'en' ? photoAlt(slug) : '');
+const a = t.about;
+const specialists = await allSpecialists();
+const crumbs = [{ name: t.nav.home, href: localizedPath('/', locale) }, { name: t.nav.about, href: localizedPath('/about', locale) }];
+const og = await getImage({ src: photo('rural-village'), width: 1200, format: 'jpeg' });
+---
+
+<BaseLayout title={t.meta.aboutTitle} description={t.meta.aboutDescription} transparentHeader jsonLd={[breadcrumbLd(crumbs)]} image={og.src} locale={locale}>
+  <Hero image={photo('jodhpur-blue-city')} alt={alt('jodhpur-blue-city')} eyebrow={a.eyebrow} title={a.title} emphasis={a.emphasis} lead={a.lead} height="medium" breadcrumbs={crumbs} />
+
+  <section class="container-x grid grid-cols-1 gap-10 py-14 lg:grid-cols-[1.1fr_1fr] lg:gap-16 md:py-24">
+    <div class="space-y-6">
+      {a.story.map((para, i) => (
+        <p class:list={['reveal', i === 0 ? 'font-display text-[clamp(1.6rem,1.25rem+1.3vw,2.4rem)] leading-[1.25] tracking-[-0.015em] text-ink' : 'text-lead text-ink-soft']}>{para}</p>
+      ))}
+      <h2 class="reveal pt-6 font-sans text-[1.25rem] font-extrabold tracking-normal text-ink">{a.whereTitle}</h2>
+      <p class="reveal text-body text-ink-soft">{a.where}</p>
+    </div>
+    <div class="grid grid-cols-2 gap-2.5 lg:grid-cols-1 lg:gap-3">
+      <div class="reveal-img relative overflow-hidden rounded-[24px]"><Image src={photo('indian-festival')} alt={alt('indian-festival')} widths={[480, 800]} sizes="(min-width: 1024px) 40vw, 100vw" class="aspect-[4/3] w-full object-cover" loading="lazy" /></div>
+      <div class="reveal-img relative overflow-hidden rounded-[24px]"><Image src={photo('rural-village')} alt={alt('rural-village')} widths={[480, 800]} sizes="(min-width: 1024px) 40vw, 100vw" class="aspect-[4/3] w-full object-cover" loading="lazy" /></div>
+    </div>
+  </section>
+
+  <section class="container-x py-6 md:py-10">
+    <div class="rounded-[32px] bg-night px-5 py-10 text-white sm:px-8 md:px-12 md:py-16">
+      <SectionHeading title={a.beliefsTitle} dark />
+      <ul class="mt-8 grid gap-2.5 md:mt-12 md:grid-cols-2 lg:grid-cols-3">
+        {a.beliefs.map(b => (
+          <li class="reveal rounded-[22px] bg-white/[0.07] p-5 sm:p-6">
+            <h3 class="text-[1.1rem] font-extrabold text-white">{b.t}</h3>
+            <p class="mt-2 text-[0.95rem] leading-relaxed text-white/75">{b.d}</p>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <section class="container-x py-14 md:py-24" id="specialists">
+    <SectionHeading title={a.teamTitle} lead={a.teamLead} />
+    <div class="mt-8 grid grid-cols-1 gap-3 md:mt-12 md:grid-cols-2">
+      {specialists.map(s => <div class="reveal"><SpecialistCard specialist={s} whatsapp={waMessages.general()} locale={locale} class="h-full" /></div>)}
+      <div class="reveal flex flex-col rounded-[24px] bg-bg-muted p-5 sm:p-6">
+        <p class="text-[0.82rem] font-semibold text-ink-muted">{t.contact.office}</p>
+        <p class="text-[1.2rem] font-extrabold leading-tight text-ink">{site.name}</p>
+        <p class="text-[0.88rem] text-ink-soft">{fmt(a.unitOf, { legal: site.legalName })}</p>
+        <address class="mt-4 text-[0.95rem] not-italic leading-relaxed text-ink-soft">
+          {site.address.street}<br />{site.address.locality} {site.address.postalCode}, India
+        </address>
+        <dl class="mt-4 grid grid-cols-[auto_1fr] gap-x-4 gap-y-1.5 text-[0.95rem]">
+          <dt class="text-ink-muted">{t.contact.phoneTitle}</dt>
+          <dd><a href={`tel:${site.phoneTel}`} class="font-semibold text-ink underline-offset-2 hover:underline">{site.phoneDisplay}</a></dd>
+          <dt class="text-ink-muted">{t.contact.emailTitle}</dt>
+          <dd class="min-w-0 break-words"><a href={`mailto:${site.email}`} class="font-semibold text-ink underline-offset-2 hover:underline">{site.email}</a></dd>
+        </dl>
+        <div class="mt-auto pt-6">
+          <Button href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${site.address.street}, ${site.address.locality} ${site.address.postalCode}`)}`} variant="secondary" external>{a.mapLink}</Button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="container-x py-8 md:py-12">
+    <SectionHeading title={a.compareTitle} />
+    <ul class="mt-8 grid gap-2.5 md:hidden" role="list">
+      {a.compare.map(([k, us, them]) => (
+        <li class="reveal rounded-[22px] bg-bg-muted p-5">
+          <p class="text-[1rem] font-extrabold text-ink">{k}</p>
+          <p class="mt-3 flex gap-2.5 text-[0.95rem] text-ink"><span class="mt-0.5 grid h-5 w-5 shrink-0 place-items-center rounded-full bg-brand text-[#1b1d21]" aria-hidden="true"><svg width="10" height="10" viewBox="0 0 12 12"><path d="M2.5 6.5l2.2 2.2L9.5 3.8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span><span class="font-bold">{a.compareUs}: </span>{us}</span></p>
+          <p class="mt-2 pl-7 text-[0.9rem] text-ink-muted"><span class="font-semibold">{a.compareThem}: </span>{them}</p>
+        </li>
+      ))}
+    </ul>
+    <div class="reveal mt-10 hidden overflow-hidden rounded-[24px] border border-line md:block">
+      <table class="w-full text-small">
+        <thead class="bg-bg-muted text-left text-ink">
+          <tr><th class="p-4 font-semibold"><span class="sr-only">Topic</span></th><th class="p-4 font-semibold">{a.compareUs}</th><th class="p-4 font-semibold">{a.compareThem}</th></tr>
+        </thead>
+        <tbody class="divide-y divide-line">
+          {a.compare.map(([k, us, them]) => (
+            <tr class="align-top"><th scope="row" class="p-4 font-medium text-ink">{k}</th><td class="p-4 text-ink">{us}</td><td class="p-4 text-ink-muted">{them}</td></tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="container-x py-16 md:py-20">
+    <div class="reveal relative overflow-hidden rounded-[30px] bg-brand-soft p-6 sm:p-10 md:p-14">
+      <h2 class="text-h2 text-ink">{a.ctaTitle}</h2>
+      <p class="mt-3 max-w-2xl text-lead text-ink-soft">{a.ctaLead}</p>
+      <div class="mt-7 flex flex-wrap gap-3">
+        <Button href={localizedPath('/plan', locale)} size="lg" track="plan_click">{t.common.planTrip}</Button>
+        <Button href="/how-booking-works" variant="secondary" size="lg">{a.howBooking}</Button>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

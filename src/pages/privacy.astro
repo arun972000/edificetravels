@@ -1,0 +1,48 @@
+---
+import ProseLayout from '../layouts/ProseLayout.astro';
+import { site } from '../data/site';
+---
+
+<ProseLayout title="Privacy policy" description="How Edifice Travels collects, uses and protects personal data under India's Digital Personal Data Protection Act and the EU and UK GDPR." eyebrow="Legal" updated="10 October 2026">
+  <p>This policy explains what personal data {site.legalName} ("we") collects when you use this website or travel with us, why, and the rights you have. It is written to meet India's Digital Personal Data Protection Act 2023 and its 2025 Rules, and the EU and UK General Data Protection Regulation for visitors in those places.</p>
+
+  <h2>Who we are</h2>
+  <p>{site.legalName}, {site.address.locality} {site.address.postalCode}, India. Data questions: <a href={`mailto:${site.email}`}>{site.email}</a>. Our data contact and grievance officer can be reached at the same address; we acknowledge requests within 48 hours and resolve them within 30 days.</p>
+
+  <h2>What we collect and why</h2>
+  <table>
+    <thead><tr><th>Data</th><th>When</th><th>Why</th><th>Basis</th></tr></thead>
+    <tbody>
+      <tr><td>Name, email, country, WhatsApp number, travel preferences, message</td><td>When you use the planner, email or WhatsApp us</td><td>To reply to your enquiry and design a proposal</td><td>Your consent, and the steps needed before a contract</td></tr>
+      <tr><td>Passport details, dates of birth, dietary and medical notes, emergency contacts</td><td>When you book</td><td>Hotel, train, flight and permit bookings; your safety</td><td>Performance of the contract; your explicit consent for health data</td></tr>
+      <tr><td>Payment confirmation (not card numbers, which our payment provider handles)</td><td>When you pay</td><td>Accounting and tax law</td><td>Legal obligation</td></tr>
+      <tr><td>One analytics cookie and anonymised usage data</td><td>Only if you accept cookies</td><td>To see which pages help people plan</td><td>Your consent</td></tr>
+      <tr><td>WhatsApp conversations</td><td>When you message us</td><td>To plan and support your journey</td><td>Consent and contract. WhatsApp's own policy also applies</td></tr>
+    </tbody>
+  </table>
+
+  <h2>Who we share it with</h2>
+  <p>Only the suppliers who need it to deliver your journey: hotels, drivers, guides, airlines, train operators and permit offices in India, and our email and form service providers. We never sell personal data and never share it for advertising. Suppliers receive the minimum they need; a hotel gets your name and dates, not your passport scan, unless the law requires it (Indian hotels must record passport and visa details for foreign guests at check-in).</p>
+
+  <h2>Where it is stored</h2>
+  <p>In India, and with service providers who may process it in the EU or the USA under standard contractual safeguards. Enquiry data is kept for 24 months after the last contact; booking records for 8 years as Indian tax law requires; then deleted.</p>
+
+  <h2>Your rights</h2>
+  <ul>
+    <li>To see the data we hold about you and receive a copy.</li>
+    <li>To correct it, or have it deleted when we no longer need it for a legal reason.</li>
+    <li>To withdraw consent at any time, which stops future processing based on consent.</li>
+    <li>To nominate someone to exercise these rights for you (a right under Indian law).</li>
+    <li>To complain: to us first, then to India's Data Protection Board, or to your local authority in the EU or UK.</li>
+  </ul>
+  <p>Write to <a href={`mailto:${site.email}`}>{site.email}</a>. We do not charge for requests.</p>
+
+  <h2>Security and breaches</h2>
+  <p>Data is held on access-controlled systems with encryption in transit. If a breach affects your data we will tell you and the relevant authority without undue delay, as the law requires.</p>
+
+  <h2>Children</h2>
+  <p>We collect children's details only from a parent or guardian, for the purpose of their travel.</p>
+
+  <h2>Changes</h2>
+  <p>We update this page when the law or our practices change, and show the date at the top.</p>
+</ProseLayout>

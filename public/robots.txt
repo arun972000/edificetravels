@@ -1,0 +1,15 @@
+User-agent: *
+Allow: /
+Disallow: /thank-you
+
+# Answer engines are welcome to read and cite the travel guides.
+User-agent: GPTBot
+Allow: /
+User-agent: PerplexityBot
+Allow: /
+User-agent: ClaudeBot
+Allow: /
+User-agent: Google-Extended
+Allow: /
+
+Sitemap: https://edificetravels.com/sitemap-index.xml

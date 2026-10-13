@@ -1,0 +1,195 @@
+---
+/**
+ * Site header: a light white bar that stays reachable. The locale chip
+ * shows the visitor's flag flying on a small pole and opens the country and
+ * language popover; on phones the menu is a light dropdown card with links,
+ * region chips and the two ways to reach us.
+ */
+import Logo from './Logo.astro';
+import FlagWave from './FlagWave.astro';
+import Button from './Button.astro';
+import WhatsAppButton from './WhatsAppButton.astro';
+import { waMessages } from '../lib/whatsapp';
+import { getDict, regionCopy } from '../i18n';
+import { localizedPath, basePath, type Locale } from '../i18n/config';
+import { allRegions } from '../lib/content';
+
+interface Props {
+  /** Kept for old call sites. The header is always solid now. */
+  transparent?: boolean;
+  locale?: Locale;
+}
+const { locale = 'en' } = Astro.props;
+const t = getDict(locale);
+const current = basePath(Astro.url.pathname);
+const nav = [
+  { label: t.nav.journeys, href: '/journeys', base: '/journeys' },
+  { label: t.nav.destinations, href: '/destinations', base: '/destinations' },
+  { label: t.nav.guide, href: '/guide', base: '/guide' },
+  { label: t.nav.about, href: localizedPath('/about', locale), base: '/about' },
+  { label: t.nav.contact, href: localizedPath('/contact', locale), base: '/contact' },
+];
+const isActive = (b: string) => current === b || current.startsWith(b + '/');
+const regions = (await allRegions()).map(r => ({ id: r.id, title: regionCopy(r.id, locale, { title: r.data.title, tagline: r.data.tagline }).title }));
+---
+
+<header id="site-header" class="site-header fixed inset-x-0 top-0 z-50">
+  <div id="locale-notice" class="bg-ink text-bg" hidden>
+    <div class="container-x flex flex-wrap items-center justify-between gap-x-4 gap-y-1 py-2 text-[0.85rem]">
+      <span data-notice-text></span>
+      <a data-notice-link href="/" class="font-bold text-[#ffb36b] underline underline-offset-2"></a>
+    </div>
+  </div>
+  <div class="container-x flex h-[var(--header-h)] items-center justify-between gap-3">
+    <a href={localizedPath('/', locale)} class="press flex items-center rounded-md" aria-label={`Edifice Travels, ${t.nav.home}`}>
+      <Logo />
+    </a>
+
+    <nav aria-label={t.nav.primary} class="hidden lg:block">
+      <ul class="flex items-center gap-1 rounded-pill bg-bg-muted p-1">
+        {nav.map(item => (
+          <li>
+            <a
+              href={item.href}
+              aria-current={isActive(item.base) ? 'page' : undefined}
+              class="nav-link block rounded-pill px-4 py-2 text-[0.95rem] font-semibold text-ink-soft transition-colors duration-300 hover:text-ink aria-[current=page]:bg-bg-elevated aria-[current=page]:text-ink aria-[current=page]:shadow-1"
+            >{item.label}</a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+
+    <div class="flex items-center gap-2">
+      <button
+        type="button"
+        data-locale-open
+        class="locale-chip press inline-flex h-11 items-center gap-1.5 rounded-pill border border-line bg-bg-elevated pl-2.5 pr-3.5 text-[0.9rem] font-bold text-ink transition-colors hover:border-ink/40"
+        aria-haspopup="dialog"
+        aria-label={t.locale.button}
+        title={t.locale.button}
+      >
+        <span class="flagpole" data-locale-pole hidden aria-hidden="true">
+          <span class="pole"></span>
+          <span class="hoist" data-flag-hoist><FlagWave size="md" fly data-locale-flag /></span>
+        </span>
+        <span data-locale-globe class="grid h-[30px] w-[30px] place-items-center rounded-full bg-bg-muted" aria-hidden="true">
+          <svg width="18" height="18" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.6" d="M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18Zm-8.5-6h17M3.5 9h17M12 3c2.5 2.6 3.8 5.6 3.8 9s-1.3 6.4-3.8 9c-2.5-2.6-3.8-5.6-3.8-9S9.5 5.6 12 3Z"/></svg>
+        </span>
+        <span data-locale-code class="uppercase tabular-nums">{locale}</span>
+      </button>
+      <span class="hidden sm:inline-flex">
+        <WhatsAppButton href={waMessages.general()} variant="icon" trackLabel="header" locale={locale} />
+      </span>
+      <span class="hidden md:inline-flex">
+        <Button href={localizedPath('/plan', locale)} size="sm" track="plan_click" class="!h-11 !px-5">{t.nav.plan}</Button>
+      </span>
+      <button
+        type="button"
+        id="menu-toggle"
+        class="menu-toggle press inline-flex h-11 w-11 items-center justify-center rounded-full bg-ink text-bg lg:hidden"
+        aria-controls="mobile-menu"
+        aria-expanded="false"
+        aria-label={t.nav.menuOpen}
+        data-label-open={t.nav.menuOpen}
+        data-label-close={t.nav.menuClose}
+      >
+        <span class="burger" aria-hidden="true"><span></span><span></span></span>
+      </button>
+    </div>
+  </div>
+
+  <div id="mobile-menu" class="mobile-menu lg:hidden" hidden>
+    <div class="mm-scrim" data-menu-scrim aria-hidden="true"></div>
+    <div class="mm-card">
+      <ul class="p-1.5">
+        {nav.map(item => (
+          <li>
+            <a href={item.href} class="flex items-center justify-between rounded-[14px] px-3.5 py-3 text-[1.05rem] font-bold text-ink transition-colors hover:bg-bg-muted aria-[current=page]:bg-brand-soft" aria-current={isActive(item.base) ? 'page' : undefined}>
+              <span>{item.label}</span>
+              <svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true" class="text-ink-muted"><path d="M6 3.5 10.5 8 6 12.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" /></svg>
+            </a>
+          </li>
+        ))}
+      </ul>
+      <div class="border-t border-line px-3.5 pb-3 pt-3">
+        <p class="text-[0.8rem] font-bold text-ink-muted">{t.home.regionsLabel}</p>
+        <div class="no-scrollbar -mx-3.5 mt-2 flex gap-1.5 overflow-x-auto px-3.5">
+          {regions.map(r => <a href={`/regions/${r.id}`} class="chip !h-9 shrink-0 !px-3.5 !text-[0.85rem]">{r.title}</a>)}
+        </div>
+      </div>
+      <div class="grid grid-cols-2 gap-2 border-t border-line p-3">
+        <Button href={localizedPath('/plan', locale)} size="sm" track="plan_click" class="!h-11 w-full">{t.nav.plan}</Button>
+        <WhatsAppButton href={waMessages.general()} size="sm" label="WhatsApp" trackLabel="mobile-menu" locale={locale} class="[&>a]:!h-11 [&>a]:w-full" />
+      </div>
+    </div>
+  </div>
+</header>
+
+<style>
+  .site-header {
+    background: color-mix(in oklab, var(--c-bg) 86%, transparent);
+    backdrop-filter: saturate(1.4) blur(14px);
+    -webkit-backdrop-filter: saturate(1.4) blur(14px);
+    color: var(--c-ink);
+    border-bottom: 1px solid transparent;
+    transition: border-color 0.4s var(--ease-out), transform 0.5s var(--ease-out), background-color 0.4s var(--ease-out);
+  }
+  .site-header.is-scrolled { border-bottom-color: var(--c-line); }
+  .site-header.is-hidden:not(.is-open) { transform: translateY(-100%); }
+  .site-header.is-open { background: var(--c-bg); }
+
+  .burger { position: relative; display: block; width: 18px; height: 12px; }
+  .burger span { position: absolute; left: 0; right: 0; height: 2px; border-radius: 2px; background: currentColor; transition: transform 0.45s var(--ease-out), top 0.45s var(--ease-out); }
+  .burger span:first-child { top: 2px; }
+  .burger span:last-child { top: 8px; }
+  .site-header.is-open .burger span:first-child { top: 5px; transform: rotate(45deg); }
+  .site-header.is-open .burger span:last-child { top: 5px; transform: rotate(-45deg); }
+
+  .mobile-menu { position: fixed; inset: calc(var(--header-h) + var(--notice-h, 0px)) 0 0 0; }
+  .mm-scrim { position: absolute; inset: 0; background: rgb(12 13 15 / 0.28); opacity: 0; transition: opacity 0.3s ease; }
+  .mm-card {
+    position: absolute; top: 6px; left: 12px; right: 12px;
+    max-height: calc(100% - 18px); overflow-y: auto;
+    border: 1px solid var(--c-line); border-radius: 20px;
+    background: var(--c-bg-elevated);
+    box-shadow: 0 18px 50px -18px rgb(20 22 26 / 0.35), 0 2px 8px rgb(20 22 26 / 0.06);
+    transform-origin: calc(100% - 22px) 0;
+    opacity: 0; transform: translateY(-6px) scale(0.97);
+    transition: opacity 0.22s ease, transform 0.3s var(--ease-out);
+  }
+  .site-header.is-open .mm-scrim { opacity: 1; }
+  .site-header.is-open .mm-card { opacity: 1; transform: none; }
+  @media (prefers-reduced-motion: reduce) { .mm-card, .mm-scrim { transition: none; } }
+</style>
+
+<script>
+  const header = document.getElementById('site-header')!;
+  const toggle = document.getElementById('menu-toggle') as HTMLButtonElement | null;
+  const menu = document.getElementById('mobile-menu') as HTMLElement | null;
+
+  // A hairline after a little scroll; slides away on the way down, back on the way up.
+  let lastY = window.scrollY;
+  const onScroll = () => {
+    const y = window.scrollY;
+    header.classList.toggle('is-scrolled', y > 8);
+    if (y > 520 && y > lastY + 6) header.classList.add('is-hidden');
+    else if (y < lastY - 6 || y < 520) header.classList.remove('is-hidden');
+    lastY = y;
+  };
+  onScroll();
+  window.addEventListener('scroll', onScroll, { passive: true });
+
+  const setOpen = (open: boolean) => {
+    if (!toggle || !menu) return;
+    if (open) menu.hidden = false;
+    requestAnimationFrame(() => header.classList.toggle('is-open', open));
+    toggle.setAttribute('aria-expanded', String(open));
+    toggle.setAttribute('aria-label', (open ? toggle.dataset.labelClose : toggle.dataset.labelOpen) ?? '');
+    document.documentElement.style.overflow = open ? 'hidden' : '';
+    if (!open) setTimeout(() => { if (!header.classList.contains('is-open')) menu.hidden = true; }, 320);
+  };
+  toggle?.addEventListener('click', () => setOpen(toggle.getAttribute('aria-expanded') !== 'true'));
+  menu?.querySelector('[data-menu-scrim]')?.addEventListener('click', () => setOpen(false));
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') setOpen(false); });
+  window.matchMedia('(min-width: 64rem)').addEventListener('change', e => { if (e.matches) setOpen(false); });
+</script>

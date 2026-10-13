@@ -1,0 +1,189 @@
+---
+/**
+ * Home hero: a rounded postcard of four photographs that cross-fade with a
+ * slow drift. As the visitor starts to scroll, the postcard opens out to the
+ * full screen, which is the page's one big movement. A live India clock sits
+ * on the card; a pause control satisfies WCAG 2.2.2. On wide screens a glass
+ * panel offers the first choices.
+ */
+import { Image } from 'astro:assets';
+import type { CollectionEntry } from 'astro:content';
+import Button from '../Button.astro';
+import WhatsAppButton from '../WhatsAppButton.astro';
+import { photo } from '../../lib/photos';
+import { photoAlt } from '../../data/photo-alt';
+import { waMessages } from '../../lib/whatsapp';
+import { safeJson } from '../../lib/json';
+import { getDict, regionCopy } from '../../i18n';
+import { localizedPath, type Locale } from '../../i18n/config';
+
+interface Props { locale: Locale; regions: CollectionEntry<'regions'>[] }
+const { locale, regions } = Astro.props;
+const t = getDict(locale);
+const slugs = ['hero-taj-dawn', 'hero-kerala-backwaters', 'hero-rajasthan-desert', 'hero-ladakh'];
+const slides = t.home.slides.map((s, i) => ({ ...s, slug: slugs[i] ?? slugs[0] }));
+const words = t.home.heroTitle.split(/\s+/);
+---
+
+<section class="pc relative h-[calc(100svh-var(--header-h)+28svh)]" data-pc aria-roledescription="carousel" aria-label={t.home.heroEyebrow}>
+  <div class="pc-stage sticky top-[var(--header-h)] h-[calc(100svh-var(--header-h))]" data-pc-stage>
+    <div class="pc-card relative isolate flex h-full flex-col justify-end overflow-hidden bg-[#16181b] text-white" data-pc-card>
+      <div class="absolute inset-0 -z-10">
+        {slides.map((s, i) => (
+          <div class:list={['pc-slide absolute inset-0', i === 0 && 'is-active']} data-slide={i} aria-hidden={i === 0 ? 'false' : 'true'}>
+            <Image
+              src={photo(s.slug)}
+              alt={i === 0 ? photoAlt(s.slug) : ''}
+              widths={[640, 960, 1280, 1920, 2400]}
+              sizes="100vw"
+              loading={i === 0 ? 'eager' : 'lazy'}
+              fetchpriority={i === 0 ? 'high' : 'low'}
+              decoding="async"
+              class="h-full w-full object-cover"
+            />
+          </div>
+        ))}
+        <div class="absolute inset-0 bg-[linear-gradient(to_top,rgba(10,11,13,0.85)_0%,rgba(10,11,13,0.35)_42%,rgba(10,11,13,0.05)_70%)]" aria-hidden="true"></div>
+        <div class="absolute inset-x-0 top-0 h-36 bg-gradient-to-b from-black/40 to-transparent" aria-hidden="true"></div>
+      </div>
+
+      <!-- Top of the card: slide place, progress and pause. -->
+      <div class="absolute inset-x-0 top-0 flex items-center justify-between gap-3 p-4 sm:p-6 md:p-8">
+        <span class="pc-in inline-flex items-center gap-2 rounded-pill border border-white/25 bg-black/25 px-3 py-1.5 text-[0.82rem] font-bold backdrop-blur-md" style="--d:.2s">
+          <span class="live-dot"></span>
+          <span data-local="india-time" data-template={t.local.nowInIndia}>{t.local.nowInIndia.replace('{time}', '').trim()}</span>
+        </span>
+        <div class="pc-in flex items-center gap-2" style="--d:.3s">
+          <div class="hidden gap-1.5 sm:flex" aria-hidden="true">
+            {slides.map((_, i) => (
+              <span class="pc-seg relative h-[3px] w-8 overflow-hidden rounded-full bg-white/30" data-seg={i}><span class="absolute inset-0 origin-left bg-white"></span></span>
+            ))}
+          </div>
+          <button type="button" data-pc-toggle class="press grid h-9 w-9 place-items-center rounded-full border border-white/30 bg-black/25 backdrop-blur-md" aria-label={t.home.pause} data-label-pause={t.home.pause} data-label-play={t.home.play}>
+            <svg class="icon-pause" width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><path d="M3.5 2v8M8.5 2v8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+            <svg class="icon-play hidden" width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><path d="M3 1.5l7 4.5-7 4.5z" fill="currentColor"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <div class="pc-copy relative grid gap-8 p-5 pb-7 sm:p-8 md:p-10 lg:grid-cols-[1.35fr_0.85fr] lg:items-end lg:p-14" data-pc-copy>
+        <div>
+          <p class="pc-in mb-3 text-[0.95rem] font-semibold text-white/85" style="--d:.15s" aria-live="polite">
+            <span data-pc-place class="font-bold text-[#ffb36b]">{slides[0].place}</span>
+            <span class="ml-1.5" data-pc-caption>{slides[0].caption}</span>
+          </p>
+          <h1 class="max-w-[13ch] text-[clamp(2.9rem,2rem+5.2vw,7rem)] leading-[0.93] tracking-[-0.03em] text-white">
+            {words.map((w, i) => (
+              <><span class="w"><span class="pc-word" style={`--i:${i}`}>{w}</span></span>{i < words.length - 1 ? ' ' : ''}</>
+            ))}
+          </h1>
+          <p class="pc-in mt-4 max-w-lg text-[1.05rem] leading-relaxed text-white/88 md:text-lead" style="--d:.75s">{t.home.heroLead}</p>
+          <div class="pc-in mt-6 flex flex-wrap gap-2.5" style="--d:.9s">
+            <Button href={localizedPath('/plan', locale)} size="lg" track="plan_click">{t.common.planTrip}</Button>
+            <WhatsAppButton href={waMessages.general()} size="lg" variant="inverse" label={t.common.whatsappSpecialist} trackLabel="hero" locale={locale} />
+          </div>
+        </div>
+
+        <!-- Wide screens: first choices on a glass panel. -->
+        <div class="pc-in hidden rounded-[26px] border border-white/20 bg-white/10 p-5 backdrop-blur-xl lg:block" style="--d:1.05s">
+          <p class="text-[1rem] font-bold text-white">{t.home.startTitle}</p>
+          <div class="mt-3 flex flex-wrap gap-2">
+            {regions.map(r => (
+              <a href={`/regions/${r.id}`} class="press inline-flex h-10 items-center rounded-pill bg-white/90 px-4 text-[0.9rem] font-bold text-[#1b1d21] transition-colors hover:bg-white">{regionCopy(r.id, locale, { title: r.data.title, tagline: r.data.tagline }).title}</a>
+            ))}
+            <a href={localizedPath('/plan', locale)} class="press inline-flex h-10 items-center rounded-pill border border-white/40 px-4 text-[0.9rem] font-bold text-white hover:bg-white/15">{t.home.designOwn}</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script type="application/json" data-pc-data set:html={safeJson(slides.map(s => ({ place: s.place, caption: s.caption })))} />
+</section>
+
+<style>
+  /* The postcard: inset with rounded corners at rest, full screen once opened. */
+  .pc-stage { padding: calc(0.75rem * (1 - var(--p, 0))); }
+  .pc-card { border-radius: calc(28px * (1 - var(--p, 0))); height: 100%; }
+  @media (min-width: 48rem) {
+    .pc-stage { padding: calc(1rem * (1 - var(--p, 0))); }
+    .pc-card { border-radius: calc(36px * (1 - var(--p, 0))); }
+  }
+  .pc-copy { transform: translate3d(0, calc(var(--p, 0) * -24px), 0); }
+
+  .pc-slide { opacity: 0; transition: opacity 1.8s var(--ease-in-out); }
+  .pc-slide.is-active { opacity: 1; }
+  .pc-slide.is-active :global(img) { animation: kenburns 9s var(--ease-out) both; }
+  .pc-seg > span { transform: scaleX(0); }
+  .pc-seg.is-active > span { animation: progress 7s linear both; }
+  .pc-seg.is-done > span { transform: scaleX(1); }
+  .pc.is-paused .pc-seg.is-active > span { animation-play-state: paused; }
+  .pc.is-paused .icon-pause { display: none; }
+  .pc.is-paused .icon-play { display: block; }
+
+  .pc-word { transform: translateY(105%); animation: pc-up 1.2s var(--ease-out) forwards; animation-delay: calc(0.25s + var(--i) * 0.08s); }
+  .pc-in { opacity: 0; transform: translateY(16px); animation: pc-fade 1.1s var(--ease-out) forwards; animation-delay: var(--d); }
+  @keyframes pc-up { to { transform: none; } }
+  @keyframes pc-fade { to { opacity: 1; transform: none; } }
+  @media (prefers-reduced-motion: reduce) {
+    .pc-word, .pc-in { animation: none; opacity: 1; transform: none; }
+    .pc-slide.is-active :global(img) { animation: none; }
+  }
+</style>
+
+<script>
+  const hero = document.querySelector<HTMLElement>('[data-pc]');
+  if (hero) {
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const stage = hero.querySelector<HTMLElement>('[data-pc-stage]')!;
+
+    // Open the postcard as the first part of the page scrolls past.
+    if (!reduce) {
+      let raf = 0;
+      const tick = () => {
+        raf = 0;
+        const range = hero.offsetHeight - stage.offsetHeight;
+        const p = Math.min(1, Math.max(0, (window.scrollY - hero.offsetTop + stage.offsetTop * 0) / Math.max(1, range)));
+        hero.style.setProperty('--p', p.toFixed(3));
+      };
+      window.addEventListener('scroll', () => { if (!raf) raf = requestAnimationFrame(tick); }, { passive: true });
+      window.addEventListener('resize', tick);
+      tick();
+    }
+
+    // Slides: cross-fade every seven seconds, pause on demand or when hidden.
+    const slides = Array.from(hero.querySelectorAll<HTMLElement>('[data-slide]'));
+    const segs = Array.from(hero.querySelectorAll<HTMLElement>('[data-seg]'));
+    const place = hero.querySelector<HTMLElement>('[data-pc-place]')!;
+    const caption = hero.querySelector<HTMLElement>('[data-pc-caption]')!;
+    const toggle = hero.querySelector<HTMLButtonElement>('[data-pc-toggle]')!;
+    const data: { place: string; caption: string }[] = JSON.parse(hero.querySelector('[data-pc-data]')?.textContent ?? '[]');
+    let index = 0;
+    let timer: number | undefined;
+    let paused = reduce;
+    const show = (i: number) => {
+      index = (i + slides.length) % slides.length;
+      slides.forEach((s, k) => { s.classList.toggle('is-active', k === index); s.setAttribute('aria-hidden', String(k !== index)); });
+      segs.forEach((s, k) => {
+        s.classList.remove('is-active');
+        s.classList.toggle('is-done', k < index);
+        if (k === index) { void s.offsetWidth; s.classList.add('is-active'); }
+      });
+      place.textContent = data[index]?.place ?? '';
+      caption.textContent = data[index]?.caption ?? '';
+    };
+    const schedule = () => {
+      window.clearTimeout(timer);
+      if (!paused) timer = window.setTimeout(() => { show(index + 1); schedule(); }, 7000);
+    };
+    const setPaused = (p: boolean) => {
+      paused = p;
+      hero.classList.toggle('is-paused', p);
+      toggle.setAttribute('aria-label', (p ? toggle.dataset.labelPlay : toggle.dataset.labelPause) ?? '');
+      schedule();
+    };
+    toggle.addEventListener('click', () => setPaused(!paused));
+    document.addEventListener('visibilitychange', () => { if (document.hidden) window.clearTimeout(timer); else schedule(); });
+    show(0);
+    setPaused(paused);
+  }
+</script>

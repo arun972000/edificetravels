@@ -1,0 +1,21 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import SectionHeading from '../components/SectionHeading.astro';
+import Button from '../components/Button.astro';
+import JourneyCard from '../components/JourneyCard.astro';
+import { featuredJourneys } from '../lib/content';
+const journeys = await featuredJourneys(3);
+---
+
+<BaseLayout title="Page not found" description="That page does not exist." noindex>
+  <div class="container-x py-20 md:py-28">
+    <SectionHeading as="h1" size="h1" title="That road does not go anywhere" lead="The page may have moved. These journeys are all still here." />
+    <div class="mt-8 flex flex-wrap gap-3">
+      <Button href="/">Home</Button>
+      <Button href="/journeys" variant="secondary">All journeys</Button>
+    </div>
+    <div class="mt-12 grid gap-x-4 gap-y-10 sm:grid-cols-2 md:grid-cols-3">
+      {journeys.map(j => <JourneyCard journey={j} />)}
+    </div>
+  </div>
+</BaseLayout>

@@ -1,0 +1,97 @@
+---
+import { getImage } from 'astro:assets';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Hero from '../../components/Hero.astro';
+import SectionHeading from '../../components/SectionHeading.astro';
+import JourneyCard from '../../components/JourneyCard.astro';
+import Button from '../../components/Button.astro';
+import { photo } from '../../lib/photos';
+import { photoAlt } from '../../data/photo-alt';
+import { allJourneys, allRegions } from '../../lib/content';
+import { THEME_LABEL } from '../../lib/format';
+import { breadcrumbLd } from '../../lib/seo';
+import { waMessages } from '../../lib/whatsapp';
+
+const journeys = await allJourneys();
+const regions = await allRegions();
+const themes = [...new Set(journeys.flatMap(j => j.data.themes))];
+const crumbs = [{ name: 'Home', href: '/' }, { name: 'Journeys', href: '/journeys' }];
+---
+
+<BaseLayout
+  title="Private India journeys"
+  description="Every private India journey we design, from ten days in Rajasthan to three weeks north and south. Each is a starting point, quoted personally within 48 hours."
+  transparentHeader
+  jsonLd={[breadcrumbLd(crumbs)]}
+  image={(await getImage({ src: photo('hero-ladakh'), width: 1200, format: 'jpeg' })).src}
+>
+  <Hero
+    image={photo('hero-ladakh')}
+    alt={photoAlt('hero-ladakh')}
+    title="Every route we have drawn through India"
+    lead="Nine to twenty-one days, private throughout, in three styles of stay. Each is a starting point your specialist redraws around you."
+    height="medium"
+    breadcrumbs={crumbs}
+    whatsapp={waMessages.general()}
+    primary={{ href: '/plan', label: 'Design my own', track: 'plan_click' }}
+  />
+
+  <section class="pb-14 pt-4 md:pb-20" aria-labelledby="all-journeys">
+    <h2 id="all-journeys" class="sr-only">All journeys</h2>
+    <div class="sticky top-[calc(var(--header-h)+var(--notice-h,0px))] z-30 border-b border-line bg-bg/90 backdrop-blur-xl">
+      <div class="no-scrollbar container-x flex gap-1.5 overflow-x-auto py-2.5" id="filters" role="group" aria-label="Filter journeys">
+        <button type="button" data-filter="all" aria-pressed="true" class="filter-btn chip shrink-0">All ({journeys.length})</button>
+        {regions.map(r => (
+          <button type="button" data-filter={`region:${r.id}`} aria-pressed="false" class="filter-btn chip shrink-0">{r.data.title}</button>
+        ))}
+        {themes.map(t => (
+          <button type="button" data-filter={`theme:${t}`} aria-pressed="false" class="filter-btn chip shrink-0 !text-ink-soft aria-pressed:!text-bg">{THEME_LABEL[t] ?? t}</button>
+        ))}
+      </div>
+    </div>
+
+    <p class="container-x mt-6 text-small font-semibold text-ink-muted" id="filter-count" aria-live="polite">{journeys.length} journeys</p>
+
+    <div class="container-x mt-5 grid gap-x-4 gap-y-10 sm:grid-cols-2 lg:grid-cols-3 lg:gap-x-6" id="journey-grid">
+      {journeys.map(j => (
+        <div data-region={j.data.region} data-themes={j.data.themes.join(' ')}>
+          <JourneyCard journey={j} vt />
+        </div>
+      ))}
+    </div>
+
+    <div class="container-x mt-16">
+      <div class="reveal rounded-[30px] bg-night p-6 text-white sm:p-10 md:p-14">
+        <SectionHeading title="The journey you want may be two of these joined together" lead="Rajasthan then Kerala. Tigers then the Taj. Tell us the pieces and we make one line of them." dark />
+        <div class="mt-7"><Button href="/plan" size="lg" track="plan_click">Plan your trip</Button></div>
+      </div>
+    </div>
+  </section>
+
+  <style>
+    .deal { animation: deal 0.7s cubic-bezier(0.16, 1, 0.3, 1) both; }
+    @keyframes deal { from { opacity: 0; transform: translateY(16px) scale(0.98); filter: blur(4px); } to { opacity: 1; transform: none; filter: none; } }
+    @media (prefers-reduced-motion: reduce) { .deal { animation: none; } }
+  </style>
+
+  <script>
+    const buttons = document.querySelectorAll<HTMLButtonElement>('.filter-btn');
+    const cards = document.querySelectorAll<HTMLElement>('#journey-grid > div');
+    const count = document.getElementById('filter-count');
+    buttons.forEach(b =>
+      b.addEventListener('click', () => {
+        const f = b.dataset.filter!;
+        buttons.forEach(x => x.setAttribute('aria-pressed', String(x === b)));
+        let n = 0;
+        cards.forEach(c => {
+          const [kind, val] = f.split(':');
+          const show = f === 'all' || (kind === 'region' && c.dataset.region === val) || (kind === 'theme' && (c.dataset.themes ?? '').split(' ').includes(val));
+          c.hidden = !show;
+          if (show) { c.classList.remove('deal'); void c.offsetWidth; c.classList.add('deal'); }
+          if (show) n += 1;
+        });
+        if (count) count.textContent = `${n} journey${n === 1 ? '' : 's'}`;
+      }),
+    );
+  </script>
+</BaseLayout>

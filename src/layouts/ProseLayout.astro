@@ -1,0 +1,30 @@
+---
+import BaseLayout from './BaseLayout.astro';
+import SectionHeading from '../components/SectionHeading.astro';
+import Breadcrumbs from '../components/Breadcrumbs.astro';
+import { breadcrumbLd } from '../lib/seo';
+import { pagePath } from '../i18n/config';
+
+interface Props {
+  title: string;
+  description: string;
+  eyebrow?: string;
+  lead?: string;
+  updated?: string;
+  noindex?: boolean;
+  crumbs?: { name: string; href: string }[];
+}
+const { title, description, eyebrow, lead, updated, noindex = false, crumbs } = Astro.props;
+const items = crumbs ?? [{ name: 'Home', href: '/' }, { name: title, href: pagePath(Astro.url.pathname) }];
+---
+
+<BaseLayout title={title} description={description} noindex={noindex} jsonLd={[breadcrumbLd(items)]}>
+  <div class="container-x py-8 md:py-14">
+    <Breadcrumbs items={items} class="mb-6" />
+    <SectionHeading as="h1" size="h1" eyebrow={eyebrow} title={title} lead={lead} />
+    {updated && <p class="mt-5 inline-flex rounded-pill bg-bg-muted px-3.5 py-1.5 text-[0.85rem] font-semibold text-ink-soft">Last updated {updated}</p>}
+    <div class="prose-editorial mt-10">
+      <slot />
+    </div>
+  </div>
+</BaseLayout>

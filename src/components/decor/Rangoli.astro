@@ -1,0 +1,55 @@
+---
+/**
+ * A rangoli: the line drawing made at a doorway to welcome guests. Drawn in
+ * fine saffron line, very faint, behind a block of text. It draws itself
+ * once when it comes into view, then turns very slowly. Decorative only.
+ */
+import { site } from '../../data/site';
+interface Props { class?: string; size?: string }
+const { class: className = '', size = 'min(34rem, 92vw)' } = Astro.props;
+const ring = (n: number) => Array.from({ length: n }, (_, i) => (360 / n) * i);
+---
+
+{site.decor && (
+  <div class:list={['rangoli pointer-events-none select-none text-brand', className]} style={`width:${size};height:${size}`} aria-hidden="true" data-rangoli>
+    <svg viewBox="-100 -100 200 200" class="h-full w-full" fill="none" stroke="currentColor" stroke-width="0.55" stroke-linecap="round" stroke-linejoin="round">
+      <g class="rg-spin">
+        <circle r="5" pathLength="1" />
+        <circle r="11" pathLength="1" />
+        {ring(8).map(a => <path pathLength="1" transform={`rotate(${a})`} d="M0 -11 C 6 -18, 6 -27, 0 -34 C -6 -27, -6 -18, 0 -11 Z" />)}
+        {ring(8).map(a => <path pathLength="1" transform={`rotate(${a + 22.5})`} d="M0 -14 C 3 -19, 3 -23, 0 -27 C -3 -23, -3 -19, 0 -14 Z" />)}
+        <circle r="38" pathLength="1" />
+        {ring(24).map(a => <circle transform={`rotate(${a})`} cx="0" cy="-43" r="1.2" fill="currentColor" stroke="none" class="rg-dot" />)}
+        <circle r="48" pathLength="1" />
+        {ring(16).map(a => <path pathLength="1" transform={`rotate(${a})`} d="M0 -48 C 9 -57, 9 -69, 0 -79 C -9 -69, -9 -57, 0 -48 Z" />)}
+        {ring(16).map(a => <path pathLength="1" transform={`rotate(${a})`} d="M0 -54 C 4 -59, 4 -65, 0 -70 C -4 -65, -4 -59, 0 -54 Z" />)}
+        {ring(16).map(a => <path pathLength="1" transform={`rotate(${a + 11.25})`} d="M-5 -78 Q 0 -86 5 -78" />)}
+        <circle r="86" pathLength="1" stroke-dasharray="0.004 0.012" />
+        {ring(32).map(a => <circle transform={`rotate(${a})`} cx="0" cy="-92" r="2.2" pathLength="1" />)}
+      </g>
+    </svg>
+  </div>
+)}
+
+<style>
+  .rangoli { opacity: 0.16; }
+  :global(html.js) .rangoli :is(path, circle:not(.rg-dot)) { stroke-dasharray: 1; stroke-dashoffset: 1; transition: stroke-dashoffset 3.2s cubic-bezier(0.16, 1, 0.3, 1); }
+  :global(html.js) .rangoli circle[stroke-dasharray] { stroke-dasharray: 0.004 0.012; stroke-dashoffset: 0; opacity: 0; transition: opacity 2s ease 1.6s; }
+  :global(html.js) .rangoli .rg-dot { opacity: 0; transition: opacity 1.4s ease 1.2s; }
+  :global(html.js) .rangoli.is-drawn :is(path, circle:not(.rg-dot)) { stroke-dashoffset: 0; }
+  :global(html.js) .rangoli.is-drawn :is(.rg-dot, circle[stroke-dasharray]) { opacity: 1; }
+  .rg-spin { transform-origin: 0 0; animation: rg-turn 240s linear infinite; }
+  @keyframes rg-turn { to { transform: rotate(360deg); } }
+  @media (prefers-reduced-motion: reduce) {
+    .rg-spin { animation: none; }
+    :global(html.js) .rangoli :is(path, circle, .rg-dot) { stroke-dashoffset: 0 !important; opacity: 1 !important; transition: none !important; }
+  }
+</style>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-rangoli]').forEach(el => {
+    if (!('IntersectionObserver' in window)) { el.classList.add('is-drawn'); return; }
+    const io = new IntersectionObserver(es => { if (es.some(e => e.isIntersecting)) { el.classList.add('is-drawn'); io.disconnect(); } }, { threshold: 0.2 });
+    io.observe(el);
+  });
+</script>

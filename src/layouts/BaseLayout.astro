@@ -1,0 +1,210 @@
+---
+import { safeJson } from '../lib/json';
+/**
+ * The page shell: head metadata (with hreflang on translated routes), fonts,
+ * global styles, header, footer, consent banner, the country and language
+ * flow, structured data and the reveal observer.
+ */
+import '@fontsource-variable/fraunces/opsz.css';
+import '@fontsource-variable/manrope';
+// The two font files every page needs first, preloaded so headlines do not swap typeface.
+import frauncesLatin from '@fontsource-variable/fraunces/files/fraunces-latin-opsz-normal.woff2?url';
+import manropeLatin from '@fontsource-variable/manrope/files/manrope-latin-wght-normal.woff2?url';
+import '../styles/global.css';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import ConsentBanner from '../components/ConsentBanner.astro';
+import LocaleDialog from '../components/LocaleDialog.astro';
+import MobileDock from '../components/MobileDock.astro';
+import FlagWave from '../components/FlagWave.astro';
+import { site } from '../data/site';
+import { COUNTRIES, TZ_TO_COUNTRY } from '../data/countries';
+import { organizationLd, websiteLd } from '../lib/seo';
+import { getDict } from '../i18n';
+import {
+  LOCALES, LOCALE_NAMES, LOCALE_NAMES_INLINE, LOCALE_TAGS, DEFAULT_LOCALE,
+  basePath, isTranslated, localizedPath, pagePath, type Locale,
+} from '../i18n/config';
+
+interface Props {
+  title: string;
+  description: string;
+  /** Absolute or site-relative path to the social image. */
+  image?: string;
+  /** Header floats over a full-bleed hero. */
+  transparentHeader?: boolean;
+  jsonLd?: unknown[];
+  noindex?: boolean;
+  type?: 'website' | 'article';
+  /** Kept for old call sites; the phone dock replaces the sticky bar. */
+  stickyBar?: boolean;
+  /** Phone dock: false hides it (the planner), an object customises it (journeys). */
+  dock?: false | { href?: string; label?: string; whatsapp?: string; context?: string };
+  locale?: Locale;
+  /** Thin reading-progress bar at the top (long pages). */
+  progress?: boolean;
+}
+
+const {
+  title,
+  description,
+  image = site.defaultOgImage,
+  transparentHeader = false,
+  jsonLd = [],
+  noindex = false,
+  type = 'website',
+  dock = {},
+  locale = DEFAULT_LOCALE,
+  progress = false,
+} = Astro.props;
+
+const t = getDict(locale);
+const siteUrl = Astro.site ?? new URL(site.url);
+const base = basePath(Astro.url.pathname);
+const translated = isTranslated(base);
+const canonical = new URL(pagePath(Astro.url.pathname), siteUrl).toString();
+const fullTitle = title.includes(site.name) || title.length > 42 ? title : `${title} | ${site.name}`;
+const ogImage = new URL(image, siteUrl).toString();
+const ld = [organizationLd(), websiteLd(), ...jsonLd];
+
+const alternates = translated
+  ? LOCALES.map(l => ({ hreflang: LOCALE_TAGS[l], href: new URL(localizedPath(base, l), siteUrl).toString() }))
+  : [];
+
+// Everything the client-side locale flow needs, in one small JSON island.
+const boot = {
+  locale,
+  base,
+  translated,
+  routes: Object.fromEntries(LOCALES.map(l => [l, localizedPath(base, l)])),
+  homes: Object.fromEntries(LOCALES.map(l => [l, localizedPath('/', l)])),
+  copy: Object.fromEntries(
+    LOCALES.map(l => {
+      const d = getDict(l);
+      return [l, {
+        name: LOCALE_NAMES[l],
+        inline: LOCALE_NAMES_INLINE[l],
+        notice: d.common.englishOnlyNotice,
+        back: d.common.englishOnlyBack.replace('{language}', LOCALE_NAMES_INLINE[l]),
+        home: localizedPath('/', l),
+        suggestTitle: d.locale.suggestTitle,
+        suggestAction: d.locale.suggestAction,
+        suggestDismiss: d.locale.suggestDismiss,
+      }];
+    }),
+  ),
+  countries: COUNTRIES,
+  tzMap: TZ_TO_COUNTRY,
+  oneStop: (t.local as Record<string, string>).oneStop ?? 'with one stop',
+};
+---
+
+<!doctype html>
+<html lang={LOCALE_TAGS[locale]} class="no-js">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    {alternates.map(a => <link rel="alternate" hreflang={a.hreflang} href={a.href} />)}
+    {translated && <link rel="alternate" hreflang="x-default" href={new URL(base, siteUrl).toString()} />}
+    {noindex && <meta name="robots" content="noindex, nofollow" />}
+    <meta property="og:type" content={type} />
+    <meta property="og:site_name" content={site.name} />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:locale" content={locale === 'en' ? 'en_GB' : `${locale}_${locale.toUpperCase()}`} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={fullTitle} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
+    <link rel="preload" href={frauncesLatin} as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href={manropeLatin} as="font" type="font/woff2" crossorigin />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+    <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#0f1012" media="(prefers-color-scheme: dark)" />
+    <script is:inline>
+      // Before paint: mark JS as available (for reveal styles) and apply a saved theme.
+      document.documentElement.classList.remove('no-js');
+      document.documentElement.classList.add('js');
+      try {
+        var t = localStorage.getItem('theme');
+        if (t === 'dark' || t === 'light') document.documentElement.setAttribute('data-theme', t);
+      } catch (e) {}
+    </script>
+    {ld.map(obj => <script type="application/ld+json" set:html={safeJson(obj)} />)}
+  </head>
+  <body class="flex min-h-dvh flex-col bg-bg text-ink-soft">
+    {progress && <div class="read-progress" aria-hidden="true"></div>}
+    <a href="#main" class="skip-link">{t.nav.skip}</a>
+
+    <Header locale={locale} />
+    <div style="height: calc(var(--header-h) + var(--notice-h, 0px))" aria-hidden="true"></div>
+    <main id="main" class="flex-1">
+      <slot />
+    </main>
+    <Footer locale={locale} />
+    <ConsentBanner locale={locale} />
+    <LocaleDialog locale={locale} />
+    {dock !== false && <MobileDock locale={locale} {...dock} />}
+
+    <div id="locale-suggest" class="locale-suggest fixed left-1/2 top-[calc(var(--header-h)+10px)] z-[58] flex w-max max-w-[calc(100vw-1.5rem)] items-center gap-2 rounded-pill border border-line bg-bg-elevated py-1.5 pl-2 pr-1.5 shadow-2" role="status" hidden>
+      <FlagWave size="md" fly data-suggest-flag class="ml-1" />
+      <p class="min-w-0 flex-1 text-[0.85rem] font-semibold leading-tight text-ink" data-suggest-title></p>
+      <div class="flex shrink-0 items-center gap-1">
+        <button type="button" data-suggest-go class="press h-9 rounded-pill bg-ink px-3.5 text-[0.82rem] font-bold text-bg"></button>
+        <button type="button" data-suggest-stay class="press grid h-9 w-9 place-items-center rounded-full text-ink-muted hover:bg-bg-muted hover:text-ink"><svg width="11" height="11" viewBox="0 0 20 20" aria-hidden="true"><path d="M5 5l10 10M15 5L5 15" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" /></svg></button>
+      </div>
+    </div>
+
+    <script type="application/json" id="locale-boot" set:html={safeJson(boot)} />
+    <script src="../scripts/locale.ts"></script>
+    <script>
+      // Reveal on scroll, once per element. Headings, images and blocks share one observer.
+      const els = document.querySelectorAll<HTMLElement>('.reveal, .split, .reveal-img');
+      const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (reduce || !('IntersectionObserver' in window)) {
+        els.forEach(el => el.classList.add('is-visible'));
+      } else {
+        const io = new IntersectionObserver(
+          entries => {
+            for (const e of entries) {
+              if (e.isIntersecting) {
+                e.target.classList.add('is-visible');
+                io.unobserve(e.target);
+              }
+            }
+          },
+          { rootMargin: '0px 0px -8% 0px', threshold: 0.1 },
+        );
+        els.forEach(el => {
+          // Siblings that arrive together are staggered, gently.
+          const kind = el.classList.contains('reveal') ? 'reveal' : el.classList.contains('reveal-img') ? 'reveal-img' : '';
+          if (kind && el.parentElement && !el.style.getPropertyValue('--delay')) {
+            const siblings = Array.from(el.parentElement.children).filter(c => c.classList.contains(kind));
+            el.style.setProperty('--delay', `${Math.min(Math.max(0, siblings.indexOf(el)), 6) * 90}ms`);
+          }
+          io.observe(el);
+        });
+      }
+
+      // Conversion events for GA4 when present. Links carry data-track.
+      document.addEventListener('click', ev => {
+        const a = (ev.target as HTMLElement).closest<HTMLElement>('[data-track]');
+        if (!a) return;
+        const w = window as unknown as { gtag?: (...args: unknown[]) => void };
+        w.gtag?.('event', a.dataset.track, { page: location.pathname, label: a.dataset.label ?? '' });
+      });
+    </script>
+  </body>
+</html>
+
+<style is:global>
+  .locale-suggest { opacity: 0; transform: translate(-50%, -10px) scale(0.98); transition: opacity 0.45s var(--ease-out), transform 0.6s var(--ease-out); }
+  .locale-suggest.is-in { opacity: 1; transform: translate(-50%, 0); }
+</style>

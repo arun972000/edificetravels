@@ -1,0 +1,49 @@
+---
+/**
+ * Lines that adapt to the visitor's country: India time, their time, our reply
+ * window in their clock, a typical flight time and an e-Visa note. Server-
+ * rendered with neutral text; scripts/locale.ts fills in the specifics.
+ */
+import { getDict } from '../i18n';
+import type { Locale } from '../i18n/config';
+
+interface Props {
+  locale?: Locale;
+  show?: ('india-time' | 'your-time' | 'reply-window' | 'flight' | 'visa')[];
+  class?: string;
+  light?: boolean;
+  layout?: 'stack' | 'inline';
+}
+const { locale = 'en', show = ['india-time', 'reply-window', 'flight', 'visa'], class: className = '', light = false, layout = 'stack' } = Astro.props;
+const t = getDict(locale);
+const items = {
+  'india-time': { template: t.local.nowInIndia, fallback: t.local.nowInIndia.replace(' {time}', '').replace('{time}', ''), icon: 'clock' },
+  'your-time': { template: t.local.yourTime, fallback: '', icon: 'clock' },
+  'reply-window': { template: t.local.replyWindow, fallback: t.common.replyPromise.replace('{hours}', '12'), icon: 'chat' },
+  flight: { template: t.local.flight, fallback: '', icon: 'plane' },
+  visa: { template: t.local.visa, fallback: '', icon: 'doc' },
+} as const;
+const icons: Record<string, string> = {
+  clock: 'M12 7v5l3 2M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z',
+  chat: 'M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12Z',
+  plane: 'M10.5 13.5 3 11l1.5-1.5 7.5 1L16 6.5a2.1 2.1 0 0 1 3 3L15 13.5l1 7.5-1.5 1.5L12 15l-3 3v2.5L7.5 22 6 18l-4-1.5L3.5 15H6l3-3',
+  doc: 'M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8l-5-5Zm0 0v5h5M9 13h6M9 17h4',
+};
+---
+
+<ul class:list={[layout === 'inline' ? 'flex flex-wrap gap-x-6 gap-y-2' : 'space-y-2.5', 'text-small', light ? 'text-white/85' : 'text-ink-soft', className]}>
+  {show.map(key => {
+    const it = items[key];
+    return (
+      <li class="flex items-start gap-2.5" data-local={key} data-template={it.template} hidden={key !== 'reply-window'}>
+        <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true" class:list={['mt-[0.2em] shrink-0', light ? 'text-[#ffb36b]' : 'text-brand-deep']}>
+          <path d={icons[it.icon]} fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+        <span>
+          <span data-local-text>{key === 'reply-window' ? it.fallback : ''}</span>
+          {key === 'visa' && <> <a href="/guide/india-e-visa-guide" class="whitespace-nowrap underline underline-offset-2 hover:opacity-80">{t.local.visaLink}</a></>}
+        </span>
+      </li>
+    );
+  })}
+</ul>

@@ -1,0 +1,56 @@
+---
+/**
+ * A toran (bandhanwar): the garland of marigolds and mango leaves hung over
+ * a doorway to welcome guests. A slim strip that swings very gently once,
+ * as if just hung, when it comes into view. Decorative only.
+ *
+ * Built from one repeating unit so it fits any width without stretching.
+ */
+import { site } from '../../data/site';
+interface Props { class?: string }
+const { class: className = '' } = Astro.props;
+
+// One 72px unit: a swag of string, a marigold at the dip, a mango leaf at each hook.
+const unit = `<svg xmlns='http://www.w3.org/2000/svg' width='72' height='44' viewBox='0 0 72 44'>
+<path d='M0 4 Q 36 18 72 4' fill='none' stroke='%239c4b0a' stroke-opacity='.55' stroke-width='1'/>
+<path d='M0 4 C 4 12, 3 22, 0 30 C -3 22, -4 12, 0 4 Z' fill='%234f7d3a'/>
+<path d='M72 4 C 76 12, 75 22, 72 30 C 69 22, 68 12, 72 4 Z' fill='%234f7d3a'/>
+<path d='M0 8 L 0 27' stroke='%23a3c585' stroke-width='.7'/>
+<path d='M72 8 L 72 27' stroke='%23a3c585' stroke-width='.7'/>
+<circle cx='36' cy='18' r='7.2' fill='%23ed7717'/>
+<circle cx='36' cy='18' r='5' fill='%23f59e0b'/>
+<circle cx='36' cy='18' r='2.4' fill='%23c25f0f'/>
+<circle cx='36' cy='29' r='3.6' fill='%23ffb000'/>
+<circle cx='36' cy='35.5' r='2.2' fill='%23ed7717'/>
+<circle cx='18' cy='10.6' r='1.6' fill='%23c25f0f'/>
+<circle cx='54' cy='10.6' r='1.6' fill='%23c25f0f'/>
+</svg>`.replace(/\n/g, '').replace(/#/g, '%23');
+const bg = `url("data:image/svg+xml;utf8,${unit}")`;
+---
+
+{site.decor && (
+  <div class:list={['toran pointer-events-none h-11 w-full select-none', className]} style={`background-image:${bg}`} aria-hidden="true" data-toran></div>
+)}
+
+<style>
+  .toran { background-repeat: repeat-x; background-position: center top; background-size: 72px 44px; transform-origin: 50% 0; }
+  :global(html.js) .toran { opacity: 0; transform: translateY(-10px) rotate(-0.6deg); }
+  :global(html.js) .toran.is-hung { animation: hang 1.8s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+  @keyframes hang {
+    0% { opacity: 0; transform: translateY(-10px) rotate(-0.6deg); }
+    40% { opacity: 1; transform: translateY(1px) rotate(0.35deg); }
+    70% { transform: translateY(0) rotate(-0.15deg); }
+    100% { opacity: 1; transform: none; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    :global(html.js) .toran, :global(html.js) .toran.is-hung { opacity: 1; transform: none; animation: none; }
+  }
+</style>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-toran]').forEach(el => {
+    if (!('IntersectionObserver' in window)) { el.classList.add('is-hung'); return; }
+    const io = new IntersectionObserver(es => { if (es.some(e => e.isIntersecting)) { el.classList.add('is-hung'); io.disconnect(); } }, { threshold: 0.5 });
+    io.observe(el);
+  });
+</script>

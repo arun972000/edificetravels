@@ -1,0 +1,18 @@
+---
+/** Key facts as small tiles: a swipeable row on phones, a grid above. */
+interface Props {
+  facts: { label: string; value: string }[];
+  class?: string;
+}
+const { facts, class: className = '' } = Astro.props;
+---
+
+<dl tabindex="0" aria-label="Key facts" class:list={['no-scrollbar -mx-4 flex gap-2 overflow-x-auto px-4 sm:mx-0 sm:grid sm:grid-cols-3 sm:overflow-visible sm:px-0 lg:grid-cols-5', className]}>
+  {facts.map(f => (
+    <div class="reveal min-w-[10rem] shrink-0 rounded-[18px] bg-bg-muted px-4 py-3.5 sm:min-w-0">
+      <dt class="text-[0.8rem] font-semibold text-ink-muted">{f.label}</dt>
+      <dd class="mt-1 text-[1rem] font-bold leading-snug text-ink">{f.value}</dd>
+    </div>
+  ))}
+  <slot />
+</dl>

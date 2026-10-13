@@ -1,0 +1,71 @@
+---
+/**
+ * Phone dock: the two ways to start, always within thumb reach. Slides up
+ * after the first screen, steps aside while a form field has focus, and shows
+ * a green dot on WhatsApp during office hours in India (9 am to 8 pm IST).
+ * Hidden from 1024px up, where the header carries the same actions.
+ */
+import { getDict } from '../i18n';
+import { localizedPath, type Locale } from '../i18n/config';
+import { waMessages } from '../lib/whatsapp';
+
+interface Props {
+  locale?: Locale;
+  /** Overrides for journey pages. */
+  href?: string;
+  label?: string;
+  whatsapp?: string;
+  context?: string;
+}
+const { locale = 'en', context } = Astro.props;
+const t = getDict(locale);
+const href = Astro.props.href ?? localizedPath('/plan', locale);
+const label = Astro.props.label ?? t.common.planTrip;
+const wa = Astro.props.whatsapp ?? waMessages.general();
+---
+
+<div class="dock fixed inset-x-0 bottom-0 z-40 px-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))] lg:hidden" data-dock>
+  <div class="mx-auto flex max-w-xl items-center gap-2 rounded-[22px] border border-line/70 bg-bg-elevated/90 p-2 shadow-3 backdrop-blur-xl">
+    <a href={wa} target="_blank" rel="noopener" data-track="whatsapp_click" data-label="dock" class="press relative grid h-12 w-12 shrink-0 place-items-center rounded-[16px] bg-whatsapp text-[#0b3d1f]" aria-label={`${t.common.whatsappSpecialist} (${t.common.opensWhatsapp})`}>
+      <svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2 22l5.25-1.38a9.9 9.9 0 0 0 4.79 1.22c5.46 0 9.91-4.45 9.91-9.91C21.95 6.45 17.5 2 12.04 2m0 18.15c-1.48 0-2.93-.4-4.2-1.15l-.3-.18-3.12.82.83-3.04-.2-.31a8.26 8.26 0 0 1-1.26-4.38c0-4.54 3.7-8.24 8.24-8.24 4.54 0 8.24 3.7 8.24 8.24 0 4.54-3.69 8.24-8.23 8.24m4.52-6.16c-.25-.12-1.47-.72-1.69-.81-.23-.08-.39-.12-.56.12-.17.25-.64.81-.78.97-.14.17-.29.19-.54.06-.25-.12-1.050-.39-1.99-1.23-.74-.66-1.23-1.47-1.38-1.72-.14-.25-.02-.38.11-.51.11-.11.25-.29.37-.43.12-.14.17-.25.25-.41.08-.17.04-.31-.02-.43-.06-.12-.56-1.34-.76-1.84-.2-.48-.41-.42-.56-.43h-.48c-.17 0-.43.06-.66.31-.22.25-.86.85-.86 2.07 0 1.22.89 2.4 1.01 2.56.12.17 1.75 2.67 4.23 3.74.59.26 1.05.41 1.41.52.59.19 1.13.16 1.56.1.48-.07 1.47-.6 1.67-1.18.21-.58.21-1.07.14-1.18-.06-.1-.22-.16-.47-.28" /></svg>
+      <span class="live-dot absolute -right-0.5 -top-0.5 ring-2 ring-bg-elevated" data-office-dot hidden></span>
+    </a>
+    <a href={href} data-track="plan_click" class="press flex h-12 min-w-0 flex-1 items-center justify-between gap-3 rounded-[16px] bg-brand pl-4 pr-3 font-bold text-[#1b1d21]">
+      <span class="min-w-0">
+        {context && <span class="block truncate text-[0.72rem] font-semibold opacity-75">{context}</span>}
+        <span class="block truncate text-[0.98rem] leading-tight">{label}</span>
+      </span>
+      <span class="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-[#1b1d21] text-white" aria-hidden="true">
+        <svg width="14" height="14" viewBox="0 0 16 16"><path d="M8 3v10M3 8h10" stroke="currentColor" stroke-width="2" stroke-linecap="round" /></svg>
+      </span>
+    </a>
+  </div>
+</div>
+
+<style>
+  .dock { transform: translateY(130%); transition: transform 0.6s var(--ease-out); }
+  .dock.is-in { transform: none; }
+  @media (prefers-reduced-motion: reduce) { .dock { transition: none; } }
+</style>
+
+<script>
+  const dock = document.querySelector<HTMLElement>('[data-dock]');
+  if (dock) {
+    document.body.classList.add('has-dock');
+    let typing = false;
+    const update = () => dock.classList.toggle('is-in', window.scrollY > window.innerHeight * 0.35 && !typing);
+    update();
+    window.addEventListener('scroll', update, { passive: true });
+    // Step aside while someone is typing, so the keyboard and the dock never fight.
+    document.addEventListener('focusin', e => {
+      const el = e.target as HTMLElement;
+      typing = el.matches('input:not([type=radio]):not([type=checkbox]), textarea, select');
+      update();
+    });
+    document.addEventListener('focusout', () => { typing = false; update(); });
+    // Office hours in India: 9 am to 8 pm.
+    const hour = Number(new Intl.DateTimeFormat('en-GB', { timeZone: 'Asia/Kolkata', hour: '2-digit', hourCycle: 'h23' }).format(new Date()));
+    const dot = dock.querySelector<HTMLElement>('[data-office-dot]');
+    if (dot) dot.hidden = !(hour >= 9 && hour < 20);
+  }
+</script>

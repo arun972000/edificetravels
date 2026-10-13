@@ -1,0 +1,66 @@
+---
+/**
+ * Cookie consent. Analytics loads only after "Accept". Shown to everyone,
+ * once, because reliable EU/UK detection is not possible client-side and the
+ * cost of asking everybody is one small card.
+ */
+import { site } from '../data/site';
+import { getDict } from '../i18n';
+import type { Locale } from '../i18n/config';
+interface Props { locale?: Locale }
+const { locale = 'en' } = Astro.props;
+const t = getDict(locale);
+---
+
+<div
+  id="consent"
+  class="fixed inset-x-3 bottom-3 z-[45] mx-auto hidden max-w-[26rem] rounded-[18px] border border-line bg-bg-elevated p-3.5 text-[0.85rem] shadow-2 md:inset-x-auto md:right-5 md:bottom-5"
+  role="dialog"
+  aria-labelledby="consent-title"
+  aria-describedby="consent-desc"
+  hidden
+>
+  <p id="consent-title" class="sr-only">{t.consent.title}</p>
+  <p id="consent-desc" class="leading-snug text-ink-soft">
+    {t.consent.text} <a href="/cookies" class="underline underline-offset-2">{t.consent.link}</a>.
+  </p>
+  <div class="mt-2.5 flex justify-end gap-1.5">
+    <button type="button" data-consent="granted" class="press h-9 rounded-pill bg-ink px-4 text-[0.82rem] font-bold text-bg">{t.consent.accept}</button>
+    <button type="button" data-consent="denied" class="press h-9 rounded-pill px-3 text-[0.82rem] font-bold text-ink-soft hover:text-ink">{t.consent.decline}</button>
+  </div>
+</div>
+
+<script define:vars={{ ga4: site.ga4 }}>
+  const box = document.getElementById('consent');
+  const KEY = 'consent';
+  const read = () => { try { return localStorage.getItem(KEY); } catch { return null; } };
+  const write = v => { try { localStorage.setItem(KEY, v); } catch {} };
+
+  function loadAnalytics() {
+    if (!ga4 || window.gtag) return;
+    const s = document.createElement('script');
+    s.async = true;
+    s.src = `https://www.googletagmanager.com/gtag/js?id=${ga4}`;
+    document.head.appendChild(s);
+    window.dataLayer = window.dataLayer || [];
+    window.gtag = function () { window.dataLayer.push(arguments); };
+    window.gtag('js', new Date());
+    window.gtag('config', ga4, { anonymize_ip: true });
+  }
+
+  const choice = read();
+  if (choice === 'granted') loadAnalytics();
+  if (!choice && box) {
+    box.hidden = false;
+    box.classList.remove('hidden');
+    box.querySelectorAll('[data-consent]').forEach(b =>
+      b.addEventListener('click', () => {
+        const v = b.getAttribute('data-consent');
+        write(v);
+        if (v === 'granted') loadAnalytics();
+        box.hidden = true;
+        box.classList.add('hidden');
+      }),
+    );
+  }
+</script>

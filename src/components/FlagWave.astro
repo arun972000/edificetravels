@@ -1,0 +1,30 @@
+---
+/**
+ * A flag flying in the wind. The flag is cut into 3 px strips that rise and
+ * fall one after another, so a wave travels away from the pole. Transform
+ * and opacity only, so it stays smooth on phones.
+ *
+ * With `fly` it always waves. Without it the flag rests with a gentle static
+ * curl and starts flying when a parent `.fly-host` is hovered, focused or
+ * selected. Reduced-motion visitors always see the still curl. Change the
+ * flag from script by setting `--flag` on the element.
+ */
+import type { HTMLAttributes } from 'astro/types';
+
+const SIZES = { xs: [15, 10], sm: [21, 14], md: [24, 16], lg: [30, 20] } as const;
+
+interface Props extends HTMLAttributes<'span'> {
+  /** ISO country code; leave empty when script fills the flag in. */
+  code?: string;
+  size?: keyof typeof SIZES;
+  fly?: boolean;
+}
+const { code = '', size = 'sm', fly = false, class: className = '', style, ...rest } = Astro.props;
+const [w, h] = SIZES[size];
+const n = w / 3;
+const vars = `--w:${w}px;--h:${h}px;--n:${n};${code ? `--flag:url(/flags/${code.toLowerCase()}.svg);` : ''}${typeof style === 'string' ? style : ''}`;
+---
+
+<span class:list={['flagwave', fly && 'fly', className]} style={vars} aria-hidden="true" {...rest}>
+  {Array.from({ length: n }, (_, i) => <i style={`--i:${i}`}></i>)}
+</span>

@@ -1,0 +1,58 @@
+---
+/**
+ * How planning works, in three steps. A line draws itself through the steps
+ * as they come into view: down the page on phones, across on wide screens.
+ */
+import SectionHeading from '../SectionHeading.astro';
+import Button from '../Button.astro';
+import WhatsAppButton from '../WhatsAppButton.astro';
+import { waMessages } from '../../lib/whatsapp';
+import { getDict } from '../../i18n';
+import { localizedPath, type Locale } from '../../i18n/config';
+
+interface Props { locale: Locale }
+const { locale } = Astro.props;
+const t = getDict(locale);
+const steps = t.home.howSteps.map((title, i) => ({ title, text: t.plan.next[i] ?? '' }));
+---
+
+<section class="py-14 md:py-24" data-how>
+  <div class="container-x">
+    <div class="rounded-[32px] bg-bg-muted px-5 py-10 sm:px-8 md:px-12 md:py-16">
+      <SectionHeading title={t.home.howTitle} />
+      <ol class="how relative mt-10 grid gap-8 md:mt-14 md:grid-cols-3 md:gap-8">
+        <span class="how-line absolute left-[1.35rem] top-2 bottom-2 w-0.5 rounded-full bg-line md:bottom-auto md:left-6 md:right-6 md:top-[1.35rem] md:h-0.5 md:w-auto" aria-hidden="true"><span class="how-fill absolute inset-0 rounded-full bg-brand" data-how-fill></span></span>
+        {steps.map((s, i) => (
+          <li class="reveal relative grid grid-cols-[2.75rem_1fr] gap-4 md:block" style={`--delay:${i * 160}ms`}>
+            <span class="relative z-10 grid h-11 w-11 place-items-center rounded-full bg-ink text-[1rem] font-extrabold text-bg ring-[6px] ring-bg-muted">{i + 1}</span>
+            <div class="md:mt-5">
+              <h3 class="text-[1.2rem] font-extrabold leading-snug text-ink md:text-[1.3rem]">{s.title}</h3>
+              <p class="mt-1.5 max-w-sm text-[0.98rem] leading-relaxed text-ink-soft">{s.text}</p>
+            </div>
+          </li>
+        ))}
+      </ol>
+      <div class="reveal mt-10 flex flex-wrap gap-2.5 md:mt-12">
+        <Button href={localizedPath('/plan', locale)} size="lg" track="plan_click">{t.common.planTrip}</Button>
+        <WhatsAppButton href={waMessages.general()} size="lg" trackLabel="how" locale={locale} />
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .how-fill { transform-origin: 0 0; transform: scaleY(0); transition: transform 1.6s var(--ease-out) 0.2s; }
+  @media (min-width: 48rem) { .how-fill { transform: scaleX(0); } }
+  .how.is-drawn .how-fill { transform: none; }
+  @media (prefers-reduced-motion: reduce) { .how-fill { transform: none; transition: none; } }
+</style>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-how] .how').forEach(list => {
+    if (!('IntersectionObserver' in window)) { list.classList.add('is-drawn'); return; }
+    const io = new IntersectionObserver(es => {
+      if (es.some(e => e.isIntersecting)) { list.classList.add('is-drawn'); io.disconnect(); }
+    }, { threshold: 0.35 });
+    io.observe(list);
+  });
+</script>

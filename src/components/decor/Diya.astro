@@ -1,0 +1,46 @@
+---
+/**
+ * A diya, the small clay oil lamp lit to welcome someone home. Its flame
+ * breathes gently. Decorative only.
+ */
+import { site } from '../../data/site';
+interface Props { class?: string; size?: number }
+const { class: className = '', size = 56 } = Astro.props;
+---
+
+{site.decor && (
+  <span class:list={['diya inline-block', className]} aria-hidden="true">
+    <svg width={size} height={size} viewBox="0 0 64 64">
+      <defs>
+        <radialGradient id="diya-glow" cx="50%" cy="45%" r="50%">
+          <stop offset="0%" stop-color="#ffb347" stop-opacity="0.55" />
+          <stop offset="100%" stop-color="#ffb347" stop-opacity="0" />
+        </radialGradient>
+        <linearGradient id="diya-flame" x1="0" y1="1" x2="0" y2="0">
+          <stop offset="0%" stop-color="#ed7717" />
+          <stop offset="55%" stop-color="#ffb000" />
+          <stop offset="100%" stop-color="#fff1b8" />
+        </linearGradient>
+      </defs>
+      <circle class="diya-glow" cx="32" cy="24" r="20" fill="url(#diya-glow)" />
+      <path class="diya-flame" d="M32 8 C 37 15, 38 21, 32 28 C 26 21, 27 15, 32 8 Z" fill="url(#diya-flame)" />
+      <path d="M31 27.5 L 33 27.5 L 32.6 31 L 31.4 31 Z" fill="#7a3808" />
+      <path d="M10 33 Q 32 30 54 33 Q 52 46 32 49 Q 12 46 10 33 Z" fill="#c25f0f" />
+      <path d="M10 33 Q 32 30 54 33 Q 32 37 10 33 Z" fill="#9c4b0a" />
+      <path d="M18 40 Q 32 43 46 40" fill="none" stroke="#ffb36b" stroke-width="1.2" stroke-linecap="round" stroke-dasharray="1.5 2.5" />
+      <path d="M24 49 Q 32 52 40 49 L 38 53 Q 32 55 26 53 Z" fill="#9c4b0a" />
+    </svg>
+  </span>
+)}
+
+<style>
+  .diya-flame { transform-origin: 32px 28px; animation: flicker 2.6s ease-in-out infinite; }
+  .diya-glow { transform-origin: 32px 24px; animation: glow 2.6s ease-in-out infinite; }
+  @keyframes flicker {
+    0%, 100% { transform: scale(1, 1) rotate(0deg); }
+    30% { transform: scale(0.94, 1.06) rotate(-2deg); }
+    60% { transform: scale(1.04, 0.95) rotate(1.5deg); }
+  }
+  @keyframes glow { 0%, 100% { opacity: 0.85; transform: scale(1); } 50% { opacity: 1; transform: scale(1.08); } }
+  @media (prefers-reduced-motion: reduce) { .diya-flame, .diya-glow { animation: none; } }
+</style>

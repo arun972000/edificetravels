@@ -1,0 +1,54 @@
+---
+/**
+ * Journey card: a tall rounded photograph with the length and title set on
+ * it, the route and season beneath. No prices: journeys are quoted on
+ * enquiry. `vt` gives the image a view-transition name so it opens into the
+ * journey hero on navigation (only one card per journey per page may carry it).
+ */
+import { Image } from 'astro:assets';
+import type { CollectionEntry } from 'astro:content';
+import { photo } from '../lib/photos';
+import { getDict, fmt, monthRange, journeyCopy } from '../i18n';
+import type { Locale } from '../i18n/config';
+
+interface Props {
+  journey: CollectionEntry<'journeys'>;
+  class?: string;
+  index?: number;
+  vt?: boolean;
+  locale?: Locale;
+  sizes?: string;
+}
+const { journey, class: className = '', vt = false, locale = 'en', sizes = '(min-width: 1024px) 23rem, (min-width: 640px) 46vw, 80vw' } = Astro.props;
+const d = journey.data;
+const t = getDict(locale);
+const copy = journeyCopy(journey.id, locale, { title: d.title, tagline: d.tagline });
+const first = d.stops[0].name, last = d.stops[d.stops.length - 1].name;
+const route = first === last ? fmt(t.home.journeyLoop, { from: first }) : fmt(t.home.journeyRoute, { from: first, to: last });
+---
+
+<a href={`/journeys/${journey.id}`} class:list={['journey-card group press block', className]}>
+  <div class="frame aspect-[4/5]">
+    <Image
+      src={photo(d.heroImage)}
+      alt=""
+      widths={[420, 640, 900]}
+      sizes={sizes}
+      class="h-full w-full object-cover"
+      loading="lazy"
+      decoding="async"
+      style={vt ? `view-transition-name: j-${journey.id}` : undefined}
+    />
+    <div class="absolute inset-0 bg-[linear-gradient(to_top,rgba(10,11,13,0.78)_0%,rgba(10,11,13,0.15)_45%,transparent_70%)]" aria-hidden="true"></div>
+    <span class="absolute left-3 top-3 rounded-pill bg-white/90 px-3 py-1 text-[0.8rem] font-bold text-[#1b1d21] backdrop-blur-md">{fmt(t.common.days, { n: d.days })}</span>
+    <div class="absolute inset-x-4 bottom-4 text-white">
+      <p class="text-[0.85rem] font-semibold text-white/80">{route}</p>
+      <h3 class="mt-1 font-display text-[1.65rem] font-normal leading-[1.05] tracking-[-0.02em] text-white">{copy.title}</h3>
+    </div>
+  </div>
+  <p class="mt-3 line-clamp-2 px-1 text-[0.95rem] leading-snug text-ink-soft">{copy.tagline}</p>
+  <p class="mt-2 flex items-center gap-1.5 px-1 text-[0.85rem] font-semibold text-ink-muted">
+    <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3v3M17 3v3M4 9h16M5 5h14a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+    {fmt(t.common.bestMonths, { months: monthRange(d.bestMonths, locale) })}
+  </p>
+</a>

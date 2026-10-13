@@ -1,0 +1,45 @@
+---
+/**
+ * The five regions as a mosaic of rounded photographs: one large tile and
+ * four smaller ones on wide screens, two columns on phones with the first
+ * tile across the top. Each tile develops into view.
+ */
+import { Image } from 'astro:assets';
+import type { CollectionEntry } from 'astro:content';
+import SectionHeading from '../SectionHeading.astro';
+import { photo } from '../../lib/photos';
+import { getDict, fmt, regionCopy } from '../../i18n';
+import type { Locale } from '../../i18n/config';
+
+interface Props { regions: CollectionEntry<'regions'>[]; locale: Locale }
+const { regions, locale } = Astro.props;
+const t = getDict(locale);
+---
+
+<section class="py-14 md:py-24">
+  <div class="container-x">
+    <SectionHeading title={t.home.regionsTitle} lead={t.home.regionsLead}>
+      <a slot="action" href="/destinations" class="chip">{t.nav.destinations}</a>
+    </SectionHeading>
+    <ul class="mt-8 grid grid-cols-2 gap-2.5 md:mt-12 md:gap-3 lg:grid-cols-4 lg:grid-rows-2" role="list">
+      {regions.map((r, i) => {
+        const copy = regionCopy(r.id, locale, { title: r.data.title, tagline: r.data.tagline });
+        const big = i === 0;
+        return (
+          <li class:list={[big ? 'col-span-2 lg:row-span-2' : '']}>
+            <a href={`/regions/${r.id}`} class="group press block h-full" aria-label={fmt(t.home.regionsExplore, { region: copy.title })}>
+              <div class:list={['frame reveal-img h-full', big ? 'aspect-[16/11] lg:aspect-auto lg:min-h-[34rem]' : 'aspect-[3/4] lg:aspect-[4/5]']}>
+                <Image src={photo(r.data.heroImage)} alt="" widths={[420, 720, 1100, 1500]} sizes={big ? '(min-width: 1024px) 40rem, 100vw' : '(min-width: 1024px) 19rem, 50vw'} class="absolute inset-0 h-full w-full object-cover" loading="lazy" decoding="async" />
+                <div class="absolute inset-0 bg-[linear-gradient(to_top,rgba(10,11,13,0.8)_0%,rgba(10,11,13,0.1)_50%,transparent_70%)]" aria-hidden="true"></div>
+                <div class="absolute inset-x-3 bottom-3 text-white sm:inset-x-5 sm:bottom-5">
+                  <h3 class:list={['font-display font-normal leading-[1.02] tracking-[-0.02em] text-white', big ? 'text-[clamp(1.9rem,1.5rem+1.6vw,3rem)]' : 'text-[1.35rem] sm:text-[1.6rem]']}>{copy.title}</h3>
+                  <p class:list={['mt-1.5 max-w-md text-white/82', big ? 'line-clamp-2 text-[0.95rem]' : 'hidden text-[0.88rem] sm:line-clamp-2 sm:block']}>{copy.tagline}</p>
+                </div>
+              </div>
+            </a>
+          </li>
+        );
+      })}
+    </ul>
+  </div>
+</section>

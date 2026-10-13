@@ -1,0 +1,46 @@
+---
+/**
+ * A sticky row of chips that jumps to each part of a long page and follows
+ * the reader: the chip for the section on screen fills in and scrolls into
+ * view. Sits under the header, and moves up when the header slides away.
+ */
+interface Props { items: { id: string; label: string }[]; label?: string }
+const { items, label = 'On this page' } = Astro.props;
+---
+
+<nav class="section-tabs sticky top-[calc(var(--header-h)+var(--notice-h,0px))] z-30 border-b border-line bg-bg/90 backdrop-blur-xl" aria-label={label} data-tabs>
+  <ul class="no-scrollbar container-x flex gap-1.5 overflow-x-auto py-2.5">
+    {items.map(it => (
+      <li class="shrink-0"><a href={`#${it.id}`} class="chip !h-10" data-tab={it.id}>{it.label}</a></li>
+    ))}
+  </ul>
+</nav>
+
+<style is:global>
+  .section-tabs { transition: top 0.5s var(--ease-out); }
+  .site-header.is-hidden ~ main .section-tabs { top: 0; }
+  [data-tab-target] { scroll-margin-top: calc(var(--header-h) + 4.5rem); }
+</style>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-tabs]').forEach(nav => {
+    const links = Array.from(nav.querySelectorAll<HTMLAnchorElement>('[data-tab]'));
+    const strip = nav.querySelector<HTMLElement>('ul');
+    const targets = links.map(a => document.getElementById(a.dataset.tab!)).filter((x): x is HTMLElement => !!x);
+    targets.forEach(t => t.setAttribute('data-tab-target', ''));
+    const setActive = (id: string) => {
+      links.forEach(a => {
+        const on = a.dataset.tab === id;
+        if (on) a.setAttribute('aria-current', 'true'); else a.removeAttribute('aria-current');
+        // Scroll only the chip row sideways: scrollIntoView on a sticky child can move the page.
+        if (on && strip) strip.scrollTo({ left: a.offsetLeft - strip.clientWidth / 2 + a.offsetWidth / 2, behavior: 'smooth' });
+      });
+    };
+    if (!('IntersectionObserver' in window)) return;
+    const io = new IntersectionObserver(entries => {
+      const visible = entries.filter(e => e.isIntersecting).sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top);
+      if (visible[0]) setActive((visible[0].target as HTMLElement).id);
+    }, { rootMargin: '-35% 0px -55% 0px' });
+    targets.forEach(t => io.observe(t));
+  });
+</script>

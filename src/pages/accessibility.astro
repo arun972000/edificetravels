@@ -1,0 +1,32 @@
+---
+import ProseLayout from '../layouts/ProseLayout.astro';
+import { site } from '../data/site';
+---
+
+<ProseLayout title="Accessibility statement" description="How the Edifice Travels website meets WCAG 2.2 AA, the limitations we know about, and how to get help or report a problem with any page." eyebrow="Accessibility" updated="10 October 2026">
+  <p>We want everyone to be able to plan an India journey here, whatever device or assistive technology they use. This site is built to the Web Content Accessibility Guidelines (WCAG) 2.2 at level AA.</p>
+
+  <h2>What we have done</h2>
+  <ul>
+    <li>Every page works with keyboard alone, with a visible focus indicator and a skip link to the main content.</li>
+    <li>Text and background colours meet contrast requirements in both light and dark mode; information is never conveyed by colour alone.</li>
+    <li>Images carry descriptive alternative text; decorative images are hidden from screen readers.</li>
+    <li>Headings, landmarks and lists are used so screen readers can navigate the structure.</li>
+    <li>Forms have visible labels, clear error messages and no time limits.</li>
+    <li>Motion is minimal and switched off entirely when your system asks for reduced motion. Nothing auto-plays with sound.</li>
+    <li>Text can be resized to 200% without loss of content, and the layout adapts to any screen width.</li>
+    <li>Touch targets are at least 24 pixels, and 44 pixels on primary buttons.</li>
+  </ul>
+
+  <h2>Known limitations</h2>
+  <ul>
+    <li>The route map is an SVG with keyboard-accessible stops; the drawn line itself is decorative and described in text.</li>
+    <li>PDF proposals we send by email are produced from a template we are still improving for screen readers; ask for a plain-text or HTML version and we will send one.</li>
+  </ul>
+
+  <h2>Travelling with a disability</h2>
+  <p>India's monuments and hotels vary widely in access. Tell us what you need and we will design around it and tell you what we know: which forts have step-free routes, which hotels have accessible rooms that work, and where a day should be shortened.</p>
+
+  <h2>Tell us if something does not work</h2>
+  <p>Email <a href={`mailto:${site.email}`}>{site.email}</a> or WhatsApp {site.phoneDisplay} and describe the page and the problem. We reply within two working days and fix what we can quickly.</p>
+</ProseLayout>

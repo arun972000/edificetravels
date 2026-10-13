@@ -1,0 +1,77 @@
+---
+import { Image } from 'astro:assets';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import SectionHeading from '../components/SectionHeading.astro';
+import Breadcrumbs from '../components/Breadcrumbs.astro';
+import WhatsAppButton from '../components/WhatsAppButton.astro';
+import Button from '../components/Button.astro';
+import SpecialistCard from '../components/SpecialistCard.astro';
+import LocalInfo from '../components/LocalInfo.astro';
+import { site } from '../data/site';
+import { photo } from '../lib/photos';
+import { photoAlt } from '../data/photo-alt';
+import { waMessages } from '../lib/whatsapp';
+import { allSpecialists } from '../lib/content';
+import { breadcrumbLd } from '../lib/seo';
+import { getDict } from '../i18n';
+import { localizedPath, type Locale } from '../i18n/config';
+
+interface Props { locale: Locale }
+const { locale } = Astro.props;
+const t = getDict(locale);
+const specialists = await allSpecialists();
+const crumbs = [{ name: t.nav.home, href: localizedPath('/', locale) }, { name: t.nav.contact, href: localizedPath('/contact', locale) }];
+const cards = [
+  { kicker: t.contact.fastest, title: 'WhatsApp', text: t.contact.whatsappText },
+  { kicker: t.contact.detail, title: t.contact.emailTitle, text: t.contact.emailText },
+  { kicker: t.contact.talk, title: t.contact.phoneTitle, text: t.contact.phoneText },
+];
+---
+
+<BaseLayout title={t.meta.contactTitle} description={t.meta.contactDescription} jsonLd={[breadcrumbLd(crumbs)]} locale={locale}>
+  <div class="container-x py-8 md:py-14">
+    <Breadcrumbs items={crumbs} class="mb-6" />
+    <div class="grid grid-cols-1 gap-8 lg:grid-cols-[1.2fr_1fr] lg:items-end lg:gap-12">
+      <SectionHeading as="h1" size="h1" title={t.contact.title} lead={t.contact.lead} />
+      <div class="reveal-img relative aspect-[16/10] overflow-hidden rounded-[28px] lg:aspect-[4/3]">
+        <Image src={photo('kochi-nets')} alt={locale === 'en' ? photoAlt('kochi-nets') : ''} widths={[600, 900]} sizes="40vw" class="h-full w-full object-cover" loading="eager" />
+      </div>
+    </div>
+
+    <div class="mt-8 grid gap-2.5 md:mt-12 lg:grid-cols-3 lg:gap-3">
+      <div class="reveal flex flex-col rounded-[24px] bg-bg-muted p-6">
+        <p class="eyebrow">{cards[0].kicker}</p>
+        <p class="mt-1.5 text-[1.3rem] font-extrabold leading-snug text-ink">{cards[0].title}</p>
+        <p class="mt-2 text-small text-ink-soft">{cards[0].text}</p>
+        <div class="mt-6"><WhatsAppButton href={waMessages.general()} trackLabel="contact-page" locale={locale} /></div>
+        <p class="mt-3 text-small text-ink-muted">{site.phoneDisplay}</p>
+      </div>
+      <div class="reveal flex flex-col rounded-[24px] bg-bg-muted p-6">
+        <p class="eyebrow">{cards[1].kicker}</p>
+        <p class="mt-1.5 text-[1.3rem] font-extrabold leading-snug text-ink">{cards[1].title}</p>
+        <p class="mt-2 text-small text-ink-soft">{cards[1].text}</p>
+        <p class="mt-6"><a href={`mailto:${site.email}`} class="font-semibold text-brand-deep underline underline-offset-4">{site.email}</a></p>
+      </div>
+      <div class="reveal flex flex-col rounded-[24px] bg-bg-muted p-6">
+        <p class="eyebrow">{cards[2].kicker}</p>
+        <p class="mt-1.5 text-[1.3rem] font-extrabold leading-snug text-ink">{cards[2].title}</p>
+        <p class="mt-2 text-small text-ink-soft">{cards[2].text}</p>
+        <p class="mt-6 space-y-1 text-small">
+          <a href={`tel:${site.phoneTel}`} class="block font-semibold text-ink">{site.phoneDisplay}</a>
+          <a href={`tel:${site.landlineTel}`} class="block text-ink-soft">{site.landlineDisplay} {t.contact.officeLine}</a>
+        </p>
+      </div>
+    </div>
+
+    <div class="mt-3 grid gap-3 lg:mt-6 lg:grid-cols-2">
+      <div class="reveal rounded-[24px] bg-night p-6 text-small text-white/80 sm:p-7">
+        <h2 class="font-sans text-[1.1rem] font-extrabold tracking-normal text-white">{t.contact.office}</h2>
+        <p class="mt-3 font-semibold text-white">{site.legalName}</p>
+        <p>{site.address.street && <span>{site.address.street}, </span>}{site.address.locality} {site.address.postalCode}, India</p>
+        <div class="mt-6"><LocalInfo locale={locale} show={['india-time', 'your-time', 'reply-window', 'flight', 'visa']} light /></div>
+        <div class="mt-6"><Button href={localizedPath('/plan', locale)} track="plan_click">{t.contact.startPlanner}</Button></div>
+      </div>
+      {specialists[0] && <SpecialistCard specialist={specialists[0]} whatsapp={waMessages.general()} context={t.contact.whoAnswers} locale={locale} />}
+    </div>
+  </div>
+</BaseLayout>

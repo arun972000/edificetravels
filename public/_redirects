@@ -1,0 +1,56 @@
+# Cloudflare Pages redirects. First match wins, so specific lines come first.
+#
+# The old edificetravels.com was a Shopify store. These permanent redirects
+# keep its links, bookmarks and search rankings pointing somewhere useful.
+# Source: the old site's sitemaps, read on 12 October 2026 (28 URLs).
+
+# Pages
+/pages/about-us                 /about                                   301
+/pages/contact-us               /contact                                 301
+/pages/ccpa-opt-out             /privacy                                 301
+
+# Blog posts that were really policy pages
+/blogs/about-us                 /about                                   301
+/blogs/about-us/*               /about                                   301
+/blogs/cancellation-policy      /booking-terms                           301
+/blogs/refund-policy            /booking-terms                           301
+/blogs/terms-conditions         /terms                                   301
+
+# Tour collections
+/collections/kerala             /journeys/spice-coast-and-backwaters     301
+/collections/kerala-monsoon     /regions/south                           301
+/collections/leh-ladakh         /journeys/ladakh-the-high-desert         301
+/collections/shimla-kullu-manali /regions/himalaya                       301
+/collections/delhi-agra-srinagar-delhi /regions/himalaya                 301
+/collections/the-golden-triangle-delhi-agra-jaipurz /journeys/golden-triangle-and-the-ganges 301
+/collections/andaman-nicobar-islands /journeys                           301
+
+# Tour packages
+/products/delhi-agra-jaipur-5n-6d /journeys/golden-triangle-and-the-ganges 301
+/products/kerala-tour-package-5-nights-6-days /journeys/spice-coast-and-backwaters 301
+/products/kerala-monsoon-package-5-nights-6-days /regions/south           301
+/products/kerala-monsoon-package-5-nights-6-days-luxury /regions/south    301
+/products/leh-ladakh-5-nights-6-days /journeys/ladakh-the-high-desert     301
+/products/chandigarh-shimla-kullu-manali-5-nights-6-days-3-star-hotel-category /regions/himalaya 301
+/products/chandigarh-shimla-kullu-manali-5-nights-6-days-4-star-hotel-category /regions/himalaya 301
+/products/delhi-agra-srinagar-delhi-4-nights-5-days /regions/himalaya     301
+/products/sikkim-tour-package-darjeeling-gangtok-5-nights-6-days /regions/east-northeast 301
+/products/andaman-tour-package-4-nights-5-days-4-star-hotel-category /journeys 301
+/products/maldives-tour-package-4-nights-5-days /plan                     301
+
+# Shopify's standard URLs, and anything not in the old sitemap
+/policies/privacy-policy        /privacy                                 301
+/policies/refund-policy         /booking-terms                           301
+/policies/terms-of-service      /terms                                   301
+/policies/*                     /terms                                   301
+/collections                    /journeys                                301
+/collections/*                  /journeys                                301
+/products/*                     /journeys                                301
+/blogs/*                        /guide                                   301
+/pages/*                        /                                        301
+/cart                           /plan                                    301
+/search                         /journeys                                301
+/account                        /                                        301
+/account/*                      /                                        301
+/en-us                          /                                        301
+/en-us/*                        /:splat                                  301

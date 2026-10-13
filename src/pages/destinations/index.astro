@@ -1,0 +1,55 @@
+---
+import { getImage } from 'astro:assets';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Hero from '../../components/Hero.astro';
+import SectionHeading from '../../components/SectionHeading.astro';
+import DestinationCard from '../../components/DestinationCard.astro';
+import Button from '../../components/Button.astro';
+import RouteMap from '../../islands/RouteMap';
+import { photo } from '../../lib/photos';
+import { photoAlt } from '../../data/photo-alt';
+import { allDestinations, allRegions } from '../../lib/content';
+import { breadcrumbLd } from '../../lib/seo';
+import { waMessages } from '../../lib/whatsapp';
+
+const destinations = await allDestinations();
+const regions = await allRegions();
+const crumbs = [{ name: 'Home', href: '/' }, { name: 'Destinations', href: '/destinations' }];
+const stops = destinations.map(d => ({ name: d.data.title, lat: d.data.lat, lng: d.data.lng, href: `/destinations/${d.id}` }));
+---
+
+<BaseLayout
+  title="Destinations in India, place by place"
+  description="Where to go in India and how long to stay: our specialists' notes on every destination we design journeys through, from Ladakh to Kerala."
+  transparentHeader
+  jsonLd={[breadcrumbLd(crumbs)]}
+  image={(await getImage({ src: photo('varanasi-ghats'), width: 1200, format: 'jpeg' })).src}
+>
+  <Hero image={photo('varanasi-ghats')} alt={photoAlt('varanasi-ghats')} title="India, place by place" lead="How long to stay, when to go, what to do early and what to skip. Written by the people who send you there." height="medium" breadcrumbs={crumbs} whatsapp={waMessages.general()} />
+
+  <section class="container-x py-14 md:py-20">
+    <div class="grid grid-cols-1 gap-10 lg:grid-cols-[1fr_1.1fr] lg:items-start">
+      <div>
+        <SectionHeading title="Every place we send guests, on one map" lead="Tap a dot to open that place. Most journeys join three to six of them, travelling in one direction." />
+        <div class="mt-6 flex flex-wrap gap-2">
+          {regions.map(r => <a href={`/regions/${r.id}`} class="chip">{r.data.title}</a>)}
+        </div>
+      </div>
+      {stops.length >= 2 && <RouteMap client:visible stops={stops} mode="constellation" title="Destinations" fitIndia />}
+    </div>
+  </section>
+
+  {regions.map(r => {
+    const list = destinations.filter(d => d.data.region === r.id);
+    return list.length > 0 && (
+      <section class="container-x py-10 md:py-14">
+        <SectionHeading title={r.data.title}>
+          <a slot="action" href={`/regions/${r.id}`} class="chip">About {r.data.title}</a>
+        </SectionHeading>
+        <div class="mt-7 grid grid-cols-2 gap-x-3 gap-y-8 sm:grid-cols-3 lg:grid-cols-4 lg:gap-x-5">
+          {list.map(d => <DestinationCard destination={d} />)}
+        </div>
+      </section>
+    );
+  })}
+</BaseLayout>

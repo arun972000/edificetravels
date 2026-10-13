@@ -1,0 +1,47 @@
+---
+import ProseLayout from '../layouts/ProseLayout.astro';
+import Button from '../components/Button.astro';
+import { site } from '../data/site';
+---
+
+<ProseLayout title="How booking and payment work" description="From first message to flight home: how a private India journey with Edifice Travels is planned, priced, confirmed and paid for, and what protects you." eyebrow="Plain terms" lead="No deposit until every day is right. Hotels confirmed in writing before the balance. One person throughout." updated="10 October 2026">
+  <h2>1. You tell us what matters</h2>
+  <p>Six questions on the <a href="/plan">planner</a>, or a WhatsApp message. Rough dates, a rough budget tier and a feeling are enough. A specialist, not a bot, replies within {site.replyHours} hours with first thoughts and the questions we need answered.</p>
+
+  <h2>2. A proposal within 48 hours</h2>
+  <p>You receive a day-by-day proposal with named hotels in your chosen tier, drive times, what is included and a firm price per person. It is a conversation, not a quote: most guests change two or three things, and some change everything. There is no charge for revisions and no obligation at this stage.</p>
+
+  <h2>3. Confirmation and deposit</h2>
+  <p>When every day is right, we send a booking summary and our terms. You confirm by paying a deposit of 25% of the journey price. We then book hotels, drivers and guides and send you the hotel confirmations as they arrive, in writing, so you can see your journey is real before the balance is due.</p>
+
+  <h2>4. Balance</h2>
+  <p>The balance is due 45 days before you travel. For bookings made inside 45 days, the full amount is due at confirmation. Luxury trains, some palace hotels and peak-season dates (20 December to 5 January) may require earlier or larger payments; we tell you before you commit.</p>
+
+  <h2>How you can pay</h2>
+  <ul>
+    <li>International credit or debit card through our Indian payment partner. A card processing charge may apply and is shown before you pay.</li>
+    <li>Bank transfer in INR, USD, EUR, GBP or AUD to our Indian bank account. Your bank's transfer fees are yours; ours are ours.</li>
+    <li>PayPal on request, with its fee shown.</li>
+  </ul>
+  <p>Prices are set in Indian rupees. Where we show other currencies they are approximate and marked as such; the amount charged is the rupee amount at the rate on the day of payment. We never insist on payment in a foreign currency.</p>
+
+  <h2>What protects you</h2>
+  <ul>
+    <li>A written contract and itinerary before any money changes hands.</li>
+    <li>Hotel confirmations forwarded to you as they are made.</li>
+    <li>A registered Indian company you deal with directly. Our registration details are in the footer of every page.</li>
+    <li>Travel insurance, which we require for every guest and which covers you for cancellation, medical care and delays. We can point you to insurers that cover India well.</li>
+    <li>The team that planned your journey on WhatsApp 24 hours a day while you travel.</li>
+  </ul>
+
+  <h2>If you need to cancel</h2>
+  <p>Our cancellation terms are on the <a href="/booking-terms">booking and cancellation</a> page. In short: the earlier you tell us, the more we can recover from hotels and return to you. Where a hotel or train operator has non-refundable terms, we say so on the proposal before you pay.</p>
+
+  <h2>If we need to change something</h2>
+  <p>India sometimes does. A flight is cancelled, a road closes, a hotel floods. We re-route around it at no extra cost where we can, tell you immediately, and refund any difference where we cannot. In fourteen years nobody has ever been left without a bed.</p>
+
+  <div class="not-prose mt-10 flex flex-wrap gap-3">
+    <Button href="/plan" track="plan_click">Start a plan</Button>
+    <Button href="/booking-terms" variant="secondary">Read the full terms</Button>
+  </div>
+</ProseLayout>

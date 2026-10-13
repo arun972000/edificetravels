@@ -1,0 +1,30 @@
+---
+import { Image } from 'astro:assets';
+import type { CollectionEntry } from 'astro:content';
+import { photo } from '../lib/photos';
+
+interface Props { destination: CollectionEntry<'destinations'>; class?: string; }
+const { destination, class: className = '' } = Astro.props;
+const d = destination.data;
+---
+
+<a href={`/destinations/${destination.id}`} class:list={['group press block', className]}>
+  <div class="frame aspect-[4/5]">
+    <Image
+      src={photo(d.heroImage)}
+      alt=""
+      widths={[360, 560, 800]}
+      sizes="(min-width: 1024px) 22vw, (min-width: 640px) 33vw, 50vw"
+      class="h-full w-full object-cover"
+      loading="lazy"
+      decoding="async"
+    />
+    <div class="absolute inset-0 bg-[linear-gradient(to_top,rgba(10,11,13,0.72)_0%,transparent_55%)]" aria-hidden="true"></div>
+    <div class="absolute inset-x-3 bottom-3 text-white">
+      <p class="text-[0.78rem] font-semibold text-white/80">{d.state}</p>
+      <h3 class="font-display text-[1.45rem] font-normal leading-[1.05] tracking-[-0.02em] text-white">{d.title}</h3>
+    </div>
+  </div>
+  <p class="mt-2.5 line-clamp-2 px-1 text-[0.9rem] leading-snug text-ink-soft">{d.tagline}</p>
+  <p class="mt-1.5 px-1 text-[0.82rem] font-semibold text-ink-muted">Ideal stay: {d.idealNights}</p>
+</a>

@@ -1,0 +1,57 @@
+---
+/**
+ * The one button. Renders an <a> when given href, otherwise a <button>.
+ * Pill shaped, at least 44px tall on phones, presses in slightly when tapped.
+ * No arrows: the label says what happens. `arrow` is accepted and ignored.
+ */
+interface Props {
+  href?: string;
+  variant?: 'primary' | 'secondary' | 'ghost' | 'inverse' | 'light' | 'dark';
+  size?: 'sm' | 'md' | 'lg';
+  type?: 'button' | 'submit';
+  class?: string;
+  arrow?: boolean;
+  track?: string;
+  external?: boolean;
+  ariaLabel?: string;
+}
+const {
+  href,
+  variant = 'primary',
+  size = 'md',
+  type = 'button',
+  class: className = '',
+  track,
+  external = false,
+  ariaLabel,
+} = Astro.props;
+
+const base =
+  'btn inline-flex items-center justify-center gap-2 rounded-pill font-sans font-bold whitespace-nowrap select-none transition-[background-color,color,border-color,box-shadow,transform] duration-300 ease-out active:scale-[0.97] focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-brand-deep disabled:pointer-events-none disabled:opacity-50';
+const sizes = {
+  sm: 'h-10 px-4 text-[0.9375rem]',
+  md: 'h-12 px-6 text-[0.98rem]',
+  lg: 'h-14 px-7 text-[1.03rem]',
+};
+const variants = {
+  primary: 'bg-brand text-[#1b1d21] shadow-[0_10px_24px_-12px_rgb(237_119_23/0.8)] hover:bg-[#f2852b] hover:shadow-[0_14px_30px_-12px_rgb(237_119_23/0.9)]',
+  dark: 'bg-ink text-bg hover:bg-[color-mix(in_oklab,var(--c-ink)_88%,var(--c-brand))]',
+  secondary: 'border border-line bg-bg-elevated text-ink hover:border-ink/40',
+  ghost: 'h-auto px-0 text-ink underline decoration-brand decoration-2 underline-offset-[7px] hover:decoration-[3px]',
+  inverse: 'bg-white text-[#1b1d21] hover:bg-white/90',
+  light: 'border border-white/45 bg-white/12 text-white backdrop-blur-md hover:bg-white/22',
+};
+const classes = [base, variant === 'ghost' ? 'text-[0.98rem] font-bold' : sizes[size], variants[variant], className].join(' ');
+---
+
+{href ? (
+  <a
+    href={href}
+    class={classes}
+    data-track={track}
+    aria-label={ariaLabel}
+    {...(external ? { target: '_blank', rel: 'noopener' } : {})}
+  ><slot /></a>
+) : (
+  <button type={type} class={classes} data-track={track} aria-label={ariaLabel}><slot /></button>
+)}

@@ -1,0 +1,68 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import SectionHeading from '../components/SectionHeading.astro';
+import SpecialistCard from '../components/SpecialistCard.astro';
+import Breadcrumbs from '../components/Breadcrumbs.astro';
+import LocalInfo from '../components/LocalInfo.astro';
+import Wizard from '../islands/Wizard';
+import { site } from '../data/site';
+import { COUNTRIES } from '../data/countries';
+import { waMessages } from '../lib/whatsapp';
+import { allJourneys, allSpecialists } from '../lib/content';
+import { breadcrumbLd } from '../lib/seo';
+import { getDict, journeyCopy } from '../i18n';
+import { LOCALE_TAGS, localizedPath, type Locale } from '../i18n/config';
+
+interface Props { locale: Locale }
+const { locale } = Astro.props;
+const t = getDict(locale);
+const journeys = (await allJourneys()).map(j => ({ id: j.id, title: journeyCopy(j.id, locale, { title: j.data.title, tagline: '' }).title, en: j.data.title, days: j.data.days }));
+const specialists = await allSpecialists();
+const names = new Intl.DisplayNames([LOCALE_TAGS[locale]], { type: 'region' });
+const namesEn = new Intl.DisplayNames(['en'], { type: 'region' });
+const countries = COUNTRIES.map(c => ({ code: c.code, name: names.of(c.code) ?? c.code, en: namesEn.of(c.code) ?? c.code }))
+  .sort((a, b) => a.name.localeCompare(b.name, LOCALE_TAGS[locale]));
+const crumbs = [{ name: t.nav.home, href: localizedPath('/', locale) }, { name: t.nav.plan, href: localizedPath('/plan', locale) }];
+const accessKey = import.meta.env.PUBLIC_FORM_ACCESS_KEY ?? '';
+---
+
+<BaseLayout title={t.meta.planTitle} description={t.meta.planDescription} jsonLd={[breadcrumbLd(crumbs)]} locale={locale} dock={false}>
+  <div>
+    <div class="container-x py-8 md:py-14">
+      <Breadcrumbs items={crumbs} class="mb-6" />
+      <SectionHeading as="h1" size="h1" title={t.plan.title} lead={t.plan.lead} />
+
+      <div class="mt-8 grid grid-cols-1 gap-8 md:mt-12 lg:grid-cols-[minmax(0,1fr)_minmax(0,23rem)] lg:items-start lg:gap-10">
+        <Wizard
+          client:load
+          endpoint={site.formEndpoint}
+          accessKey={accessKey}
+          whatsappNumber={site.whatsapp}
+          toEmail={site.email}
+          journeys={journeys}
+          countries={countries}
+          locale={LOCALE_TAGS[locale]}
+          t={t.wizard}
+          tEn={getDict('en').wizard}
+          daysLabel={t.common.days}
+          browseHref="/journeys"
+          privacyHref="/privacy"
+        />
+
+        <aside class="space-y-3 lg:sticky lg:top-[calc(var(--header-h)+1.5rem)]">
+          {specialists[0] && <SpecialistCard specialist={specialists[0]} whatsapp={waMessages.general()} context={t.plan.whoReplies} compact locale={locale} />}
+          <div class="reveal rounded-[24px] bg-bg-muted p-6">
+            <h2 class="font-sans text-[1.05rem] font-extrabold tracking-normal text-ink">{t.plan.nextTitle}</h2>
+            <ol class="mt-4 space-y-4 text-[0.95rem] text-ink-soft">
+              {t.plan.next.map((n, i) => <li class="flex gap-3"><span class="grid h-7 w-7 shrink-0 place-items-center rounded-full bg-ink text-[0.8rem] font-extrabold text-bg">{i + 1}</span><span>{n}</span></li>)}
+            </ol>
+          </div>
+          <div class="reveal rounded-[24px] border border-line p-6">
+            <LocalInfo locale={locale} show={['reply-window', 'flight', 'visa']} />
+            <p class="mt-4 border-t border-line pt-4 text-small text-ink-muted">{t.plan.privacy} <a href="/privacy" class="underline underline-offset-2">{t.plan.privacyLink}</a></p>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </div>
+</BaseLayout>

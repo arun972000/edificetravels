@@ -1,0 +1,35 @@
+---
+import ProseLayout from '../layouts/ProseLayout.astro';
+
+interface Credit {
+  slug: string;
+  file: string;
+  title: string;
+  author: string;
+  license: string;
+  licenseUrl?: string;
+  sourceUrl: string;
+}
+const modules = import.meta.glob<{ default: Credit[] }>('/src/data/photo-credits.json', { eager: true });
+const credits: Credit[] = Object.values(modules)[0]?.default ?? [];
+---
+
+<ProseLayout title="Photo credits" description="The photographers whose work appears on the Edifice Travels website, with the licence and source for every image, as their licences require." eyebrow="Credits" lead="Photographs are either our own or used under open licences that require attribution. Thank you to every photographer below.">
+  {credits.length === 0 ? (
+    <p>Photo credits will appear here once the photography set is finalised.</p>
+  ) : (
+    <table>
+      <thead><tr><th>Image</th><th>Photographer</th><th>Licence</th></tr></thead>
+      <tbody>
+        {credits.map(c => (
+          <tr>
+            <td><a href={c.sourceUrl} rel="noopener" target="_blank">{c.title}</a></td>
+            <td>{c.author}</td>
+            <td>{c.licenseUrl ? <a href={c.licenseUrl} rel="noopener" target="_blank">{c.license}</a> : c.license}</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  )}
+  <p>Images may have been cropped or colour-adjusted. If you are a photographer and would like a credit changed, email us.</p>
+</ProseLayout>

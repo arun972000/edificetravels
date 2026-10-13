@@ -1,0 +1,58 @@
+---
+import ProseLayout from '../layouts/ProseLayout.astro';
+import { site } from '../data/site';
+---
+
+<ProseLayout title="Booking and cancellation terms" description="The terms for booking a private India journey with Edifice Travels: deposit, balance, changes, cancellation charges, refunds, insurance and who is responsible." eyebrow="Legal" updated="10 October 2026">
+  <p>These terms apply once you confirm a journey with {site.legalName} ("we"). Please read them with the <a href="/how-booking-works">plain-English summary</a>. If anything is unclear, ask before you pay the deposit.</p>
+
+  <h2>1. The contract</h2>
+  <p>A contract exists when we have received your deposit and sent a written booking confirmation. The itinerary, hotels, inclusions and price in that confirmation are the agreed journey. The lead traveller confirms on behalf of everyone in the party and is responsible for payment.</p>
+
+  <h2>2. Prices</h2>
+  <p>Prices are in Indian rupees, per person, and include 5% GST on tour-operator services. They are guaranteed once the deposit is paid, except for changes in government taxes, park fees or monument entry charges imposed after confirmation, which are passed on at cost. Approximate foreign-currency figures on the website are not contractual.</p>
+
+  <h2>3. Payment</h2>
+  <ul>
+    <li>Deposit: 25% of the journey price at confirmation.</li>
+    <li>Balance: 45 days before the first day of the journey. Bookings made inside 45 days are payable in full at confirmation.</li>
+    <li>Some suppliers (luxury trains, certain palace hotels, peak dates 20 December to 5 January) require earlier or non-refundable payments; these are stated on the proposal and may increase the deposit.</li>
+    <li>Payment by international card, bank transfer or PayPal; processing fees are shown before payment.</li>
+  </ul>
+
+  <h2>4. If you cancel</h2>
+  <p>Cancellations must be in writing (email or WhatsApp from the lead traveller). Charges are a percentage of the total journey price, calculated from the day we receive your notice to the first day of the journey:</p>
+  <table>
+    <thead><tr><th>Days before departure</th><th>Charge</th></tr></thead>
+    <tbody>
+      <tr><td>More than 60 days</td><td>Deposit (25%), less any amounts we recover from suppliers, which we return to you</td></tr>
+      <tr><td>31 to 60 days</td><td>50%</td></tr>
+      <tr><td>15 to 30 days</td><td>75%</td></tr>
+      <tr><td>14 days or fewer, or no-show</td><td>100%</td></tr>
+    </tbody>
+  </table>
+  <p>Where a supplier's terms are stricter (for example a non-refundable luxury train fare), that supplier's charge applies to that element and is stated on your proposal. Travel insurance exists for exactly this situation and we require it for every guest.</p>
+
+  <h2>5. If you change the journey</h2>
+  <p>Changes before the balance is paid are free of our charges; supplier charges, if any, are passed on at cost. After the balance is paid we make changes where we can and charge only what suppliers charge us. Cutting a journey short after it has begun does not entitle you to a refund for unused services, but we will try to recover what we can.</p>
+
+  <h2>6. If we change or cancel</h2>
+  <p>We may need to change hotels, routes or the order of days because of weather, road closures, strikes, supplier failure or events beyond our control. We will tell you as soon as we know, offer an alternative of equal or better standard, and refund any difference if the alternative is cheaper. If we cancel a journey for reasons within our control, you receive a full refund. If we cancel for reasons outside anyone's control (force majeure), we refund everything we are able to recover from suppliers and work with your insurer on the rest.</p>
+
+  <h2>7. Your responsibilities</h2>
+  <ul>
+    <li>A passport valid for six months beyond your return and the correct visa. We help; the responsibility is yours.</li>
+    <li>Travel insurance covering cancellation, medical treatment, evacuation and personal belongings, in force from the day you pay the deposit.</li>
+    <li>Telling us about health conditions, mobility needs and dietary requirements before confirmation.</li>
+    <li>Reasonable conduct towards drivers, guides, hotel staff and other guests. We may end services without refund where conduct endangers others.</li>
+  </ul>
+
+  <h2>8. Our responsibilities and liability</h2>
+  <p>We arrange your journey with reasonable skill and care and choose suppliers we have vetted. We are responsible for the services we agree to provide. We are not liable for loss caused by events outside our control, by you, or by third parties unconnected with your journey, and our liability for the services we arrange is limited to the price you paid for them, except where the law does not allow such a limit. Carriers' and hotels' own conditions apply to the services they provide.</p>
+
+  <h2>9. Complaints</h2>
+  <p>Tell your specialist on WhatsApp while you travel so we can fix it on the spot. If something cannot be fixed, write to <a href={`mailto:${site.email}`}>{site.email}</a> within 28 days of returning home; we acknowledge within 48 hours and respond fully within 30 days.</p>
+
+  <h2>10. Law</h2>
+  <p>This contract is governed by the laws of India, with courts in New Delhi having jurisdiction, without affecting consumer protections you have where you live.</p>
+</ProseLayout>

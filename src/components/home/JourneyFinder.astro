@@ -1,0 +1,101 @@
+---
+/**
+ * "Find your journey": feeling chips over a swipeable row of journeys.
+ * Choosing a feeling re-deals the cards with a short, soft animation; the
+ * row always ends with an invitation to design one from scratch.
+ */
+import type { CollectionEntry } from 'astro:content';
+import JourneyCard from '../JourneyCard.astro';
+import SectionHeading from '../SectionHeading.astro';
+import Button from '../Button.astro';
+import { getDict } from '../../i18n';
+import { localizedPath, type Locale } from '../../i18n/config';
+
+interface Props { journeys: CollectionEntry<'journeys'>[]; locale: Locale }
+const { journeys, locale } = Astro.props;
+const t = getDict(locale);
+
+// How each feeling maps onto journey themes and regions.
+const MAP: Record<string, { themes: string[]; regions?: string[] }> = {
+  awe: { themes: ['heritage'] },
+  wild: { themes: ['wildlife'] },
+  still: { themes: ['wellness', 'slow-travel'] },
+  sacred: { themes: ['spiritual'] },
+  high: { themes: ['adventure'], regions: ['himalaya'] },
+  green: { themes: [], regions: ['south', 'east-northeast'] },
+  together: { themes: ['family'] },
+  hungry: { themes: ['culinary'] },
+};
+const moods = t.home.moods.filter(m => journeys.some(j => matches(j, m.key)));
+function matches(j: CollectionEntry<'journeys'>, key: string) {
+  const m = MAP[key];
+  return !!m && (j.data.themes.some(th => m.themes.includes(th)) || (m.regions?.includes(j.data.region) ?? false));
+}
+---
+
+<section class="py-14 md:py-24" data-finder>
+  <div class="container-x">
+    <SectionHeading title={t.home.findTitle} lead={t.home.findLead}>
+      <a slot="action" href="/journeys" class="chip !hidden md:!inline-flex">{t.common.allJourneys}</a>
+    </SectionHeading>
+  </div>
+
+  <div class="no-scrollbar mt-7 flex gap-2 overflow-x-auto px-4 sm:px-6 lg:px-[max(2.5rem,calc((100vw-82rem)/2+2.5rem))]" role="group" aria-label={t.home.feelTitle}>
+    <button type="button" class="chip shrink-0" aria-pressed="true" data-mood="all">{t.home.allMoods}</button>
+    {moods.map(m => (
+      <button type="button" class="chip shrink-0" aria-pressed="false" data-mood={m.key} title={m.sub}>{m.word}</button>
+    ))}
+  </div>
+
+  <ul class="swipe finder-row mt-5" role="list" data-finder-row>
+    {journeys.map(j => (
+      <li class="finder-item" data-moods={moods.filter(m => matches(j, m.key)).map(m => m.key).join(' ')}>
+        <JourneyCard journey={j} vt locale={locale} />
+      </li>
+    ))}
+    <li class="finder-item" data-moods="*">
+      <div class="flex aspect-[4/5] flex-col justify-end rounded-[26px] bg-night p-6 text-white">
+        <p class="font-display text-[1.9rem] leading-[1.05] tracking-[-0.02em] text-white">{t.home.designOwnTitle}</p>
+        <p class="mt-3 text-[0.98rem] leading-relaxed text-white/80">{t.home.designOwnText}</p>
+        <div class="mt-5"><Button href={localizedPath('/plan', locale)} track="plan_click">{t.home.designOwn}</Button></div>
+      </div>
+    </li>
+  </ul>
+  <div class="container-x mt-4 flex items-center justify-between gap-4 md:hidden"><p class="text-[0.85rem] font-semibold text-ink-muted" aria-live="polite" data-finder-sub></p><a href="/journeys" class="chip shrink-0">{t.common.allJourneys}</a></div>
+</section>
+
+<style>
+  .finder-item { transition: opacity 0.45s var(--ease-out), transform 0.6s var(--ease-out), filter 0.45s var(--ease-out); }
+  .finder-item.is-leaving { opacity: 0; transform: translateY(14px) scale(0.97); filter: blur(4px); }
+  .finder-item.is-entering { animation: deal 0.75s var(--ease-out) both; animation-delay: var(--deal, 0ms); }
+  @keyframes deal { from { opacity: 0; transform: translateX(28px) scale(0.97); filter: blur(4px); } to { opacity: 1; transform: none; filter: none; } }
+  @media (prefers-reduced-motion: reduce) { .finder-item, .finder-item.is-entering { transition: none; animation: none; } }
+</style>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-finder]').forEach(root => {
+    const chips = Array.from(root.querySelectorAll<HTMLButtonElement>('[data-mood]'));
+    const row = root.querySelector<HTMLElement>('[data-finder-row]')!;
+    const items = Array.from(row.querySelectorAll<HTMLElement>('.finder-item'));
+    const sub = root.querySelector<HTMLElement>('[data-finder-sub]');
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    chips.forEach(chip => chip.addEventListener('click', () => {
+      const key = chip.dataset.mood ?? 'all';
+      chips.forEach(c => c.setAttribute('aria-pressed', String(c === chip)));
+      if (sub) sub.textContent = chip.title ?? '';
+      const show = (el: HTMLElement) => key === 'all' || el.dataset.moods === '*' || (el.dataset.moods ?? '').split(' ').includes(key);
+      const swap = () => {
+        let n = 0;
+        items.forEach(el => {
+          el.classList.remove('is-leaving', 'is-entering');
+          el.hidden = !show(el);
+          if (!el.hidden && !reduce) { el.style.setProperty('--deal', `${Math.min(n++, 5) * 70}ms`); void el.offsetWidth; el.classList.add('is-entering'); }
+        });
+        row.scrollTo({ left: 0, behavior: reduce ? 'auto' : 'smooth' });
+      };
+      if (reduce) { swap(); return; }
+      items.forEach(el => { if (!el.hidden) el.classList.add('is-leaving'); });
+      setTimeout(swap, 280);
+    }));
+  });
+</script>

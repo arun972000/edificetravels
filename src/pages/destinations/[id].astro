@@ -1,0 +1,126 @@
+---
+import { getImage } from 'astro:assets';
+import { getCollection, render } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Hero from '../../components/Hero.astro';
+import FactsBar from '../../components/FactsBar.astro';
+import SectionHeading from '../../components/SectionHeading.astro';
+import JourneyCard from '../../components/JourneyCard.astro';
+import SpecialistCard from '../../components/SpecialistCard.astro';
+import DestinationCard from '../../components/DestinationCard.astro';
+import Button from '../../components/Button.astro';
+import { photo } from '../../lib/photos';
+import { photoAlt } from '../../data/photo-alt';
+import { formatMonths, REGION_LABEL } from '../../lib/format';
+import { waMessages } from '../../lib/whatsapp';
+import { breadcrumbLd, destinationLd } from '../../lib/seo';
+import { journeysForDestination, destinationsByRegion, specialistById, allRegions } from '../../lib/content';
+
+export async function getStaticPaths() {
+  const list = await getCollection('destinations');
+  return list.map(d => ({ params: { id: d.id }, props: { destination: d } }));
+}
+
+const { destination } = Astro.props;
+const d = destination.data;
+const { Content } = await render(destination);
+const journeys = await journeysForDestination(destination.id);
+const nearby = (await destinationsByRegion(d.region)).filter(x => x.id !== destination.id).slice(0, 4);
+const region = (await allRegions()).find(r => r.id === d.region);
+const specialist = await specialistById(region?.data.specialist ?? 'team');
+const wa = waMessages.destination(d.title);
+const og = await getImage({ src: photo(d.heroImage), width: 1200, format: 'jpeg' });
+const ld = [destinationLd({ id: destination.id, title: d.title, description: d.seo.description, image: og.src, lat: d.lat, lng: d.lng, state: d.state, highlights: d.highlights }), breadcrumbLd([
+  { name: 'Home', href: '/' },
+  { name: 'Destinations', href: '/destinations' },
+  { name: REGION_LABEL[d.region], href: `/regions/${d.region}` },
+  { name: d.title, href: `/destinations/${destination.id}` },
+])];
+const crumbs = [
+  { name: 'Home', href: '/' },
+  { name: 'Destinations', href: '/destinations' },
+  { name: REGION_LABEL[d.region], href: `/regions/${d.region}` },
+  { name: d.title, href: `/destinations/${destination.id}` },
+];
+// Rajasthan is both the state and the region: say it once.
+const sameAsState = REGION_LABEL[d.region] === d.state;
+const facts = [
+  { label: 'State', value: d.state },
+  { label: 'Best months', value: formatMonths(d.bestMonths) },
+  { label: 'Ideal stay', value: d.idealNights },
+  ...(sameAsState ? [] : [{ label: 'Region', value: REGION_LABEL[d.region] }]),
+];
+---
+
+<BaseLayout title={d.seo.title ?? `${d.title}: when to go, how long to stay`} description={d.seo.description} transparentHeader jsonLd={ld} image={og.src}>
+  <Hero image={photo(d.heroImage)} alt={photoAlt(d.heroImage, d.title)} eyebrow={sameAsState ? `${d.state}, India` : `${d.state}, ${REGION_LABEL[d.region]}`} title={d.title} lead={d.tagline} breadcrumbs={crumbs} height="tall" primary={{ href: '/plan', label: `Include ${d.title} in my trip`, track: 'plan_click' }} whatsapp={wa} />
+
+  <section class="container-x pt-6 md:pt-10">
+    <FactsBar facts={facts} />
+  </section>
+
+  <section class="container-x grid grid-cols-1 gap-12 py-12 lg:grid-cols-[minmax(0,1fr)_minmax(0,23rem)] lg:gap-16 md:py-16">
+    <div>
+      <div class="prose-editorial"><Content /></div>
+      <h2 class="mt-14 text-[clamp(1.75rem,1.4rem+1.4vw,2.5rem)] text-ink">Do not miss</h2>
+      <ul class="mt-6 grid gap-2.5 sm:grid-cols-2">
+        {d.highlights.map(h => (
+          <li class="reveal flex items-start gap-3 rounded-[20px] bg-bg-muted p-4 text-[1rem] leading-snug text-ink"><span class="mt-0.5 grid h-6 w-6 shrink-0 place-items-center rounded-full bg-brand text-[#1b1d21]" aria-hidden="true"><svg width="12" height="12" viewBox="0 0 12 12"><path d="M2.5 6.5l2.2 2.2L9.5 3.8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="font-semibold">{h}</span></li>
+        ))}
+      </ul>
+    </div>
+    <aside class="lg:sticky lg:top-[calc(var(--header-h)+1.5rem)] lg:self-start">
+      <SpecialistCard specialist={specialist} whatsapp={wa} context={`Ask us about ${d.title}`} />
+    </aside>
+  </section>
+
+  <section class="py-6 md:py-10">
+    <div class="container-x">
+      <div class="rounded-[32px] bg-bg-muted px-5 py-10 sm:px-8 md:px-12 md:py-14">
+      <SectionHeading title={`${d.title}, the way we arrange it`} />
+      <div class="mt-8 grid gap-3 md:grid-cols-2">
+        {d.experiences.map(e => (
+          <div class="reveal rounded-[22px] bg-bg-elevated p-5 sm:p-6">
+            <h3 class="text-h3 text-ink">{e.title}</h3>
+            <p class="mt-2 text-body text-ink-soft">{e.text}</p>
+          </div>
+        ))}
+      </div>
+      {d.tips.length > 0 && (
+        <div class="reveal mt-3 rounded-[22px] bg-night p-5 text-white sm:p-6">
+          <h3 class="text-[1rem] font-extrabold text-white">Good to know</h3>
+          <ul class="mt-3 space-y-2 text-[0.95rem] text-white/85">
+            {d.tips.map(t => <li>{t}</li>)}
+          </ul>
+        </div>
+      )}
+    </div>
+    </div>
+  </section>
+
+  {journeys.length > 0 && (
+    <section class="container-x py-16 md:py-20">
+      <SectionHeading title={`Journeys that pass through ${d.title}`} />
+      <div class="mt-8 grid gap-x-4 gap-y-10 sm:grid-cols-2 lg:grid-cols-3">
+        {journeys.map(j => <JourneyCard journey={j} />)}
+      </div>
+    </section>
+  )}
+
+  {nearby.length > 0 && (
+    <section class="container-x py-8 md:py-12">
+      <SectionHeading title={`Places that pair well with ${d.title}`} />
+      <div class="mt-8 grid grid-cols-2 gap-x-3 gap-y-8 lg:grid-cols-4 lg:gap-x-5">
+        {nearby.map(x => <DestinationCard destination={x} />)}
+      </div>
+    </section>
+  )}
+
+  <section class="container-x pb-16">
+    <div class="reveal rounded-[30px] bg-night p-6 text-white sm:p-10 md:p-14">
+      <h2 class="text-h2 !text-white">Put {d.title} in your journey</h2>
+      <p class="mt-3 max-w-2xl text-lead text-white/80">Tell us where else you want to go. We work out the order, the drives and how many nights each place needs.</p>
+      <div class="mt-6"><Button href="/plan" size="lg" track="plan_click">Plan your trip</Button></div>
+    </div>
+  </section>
+</BaseLayout>

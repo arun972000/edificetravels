@@ -1,0 +1,83 @@
+---
+import { Image, getImage } from 'astro:assets';
+import { getCollection, render } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import SectionHeading from '../../components/SectionHeading.astro';
+import Faq from '../../components/Faq.astro';
+import GuideCard from '../../components/GuideCard.astro';
+import SpecialistCard from '../../components/SpecialistCard.astro';
+import Button from '../../components/Button.astro';
+import { photo } from '../../lib/photos';
+import { photoAlt } from '../../data/photo-alt';
+import { formatDate } from '../../lib/format';
+import { waMessages } from '../../lib/whatsapp';
+import { articleLd, breadcrumbLd, faqLd } from '../../lib/seo';
+import { allGuides, specialistById } from '../../lib/content';
+
+export async function getStaticPaths() {
+  const list = await getCollection('guides');
+  return list.map(g => ({ params: { id: g.id }, props: { guide: g } }));
+}
+
+const { guide } = Astro.props;
+const g = guide.data;
+const { Content } = await render(guide);
+const author = await specialistById(g.author);
+const related = (await allGuides()).filter(x => x.id !== guide.id).slice(0, 3);
+const wa = waMessages.guide(g.title);
+const og = await getImage({ src: photo(g.heroImage), width: 1200, format: 'jpeg' });
+const crumbs = [{ name: 'Home', href: '/' }, { name: 'Travel guide', href: '/guide' }, { name: g.title, href: `/guide/${guide.id}` }];
+const ld = [
+  articleLd({ id: guide.id, title: g.title, description: g.description, image: og.src, authorName: author.data.name, authorIsTeam: author.id === 'team', publishedAt: g.publishedAt, updatedAt: g.updatedAt }),
+  breadcrumbLd(crumbs),
+  ...(g.faqs.length ? [faqLd(g.faqs)] : []),
+];
+---
+
+<BaseLayout title={g.seoTitle ?? g.title} description={g.description} jsonLd={ld} image={og.src} type="article" progress>
+  <article class="container-x py-8 md:py-14">
+    <Breadcrumbs items={crumbs} class="mb-8" />
+    <div class="grid grid-cols-1 gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,20rem)]">
+      <header class="max-w-3xl">
+        <SectionHeading as="h1" size="h1" title={g.title} lead={g.description} />
+        <p class="mt-5 inline-flex flex-wrap items-center gap-x-2 rounded-[18px] bg-bg-muted px-4 py-2.5 text-[0.88rem] font-semibold text-ink-soft">
+          By {author.id === 'team' ? 'the Edifice Travels team' : `${author.data.name}, ${author.data.role.toLowerCase()}`}. Updated {formatDate(g.updatedAt)}. About {g.readingMinutes} minutes to read.
+        </p>
+      </header>
+    </div>
+
+    <div class="reveal-img relative mt-8 overflow-hidden rounded-[28px] md:mt-10">
+      <Image src={photo(g.heroImage)} alt={photoAlt(g.heroImage)} widths={[720, 1200, 1800]} sizes="(min-width: 1280px) 1200px, 100vw" class="aspect-[4/3] w-full object-cover sm:aspect-[21/9]" loading="eager" />
+    </div>
+
+    <div class="mt-12 grid grid-cols-1 gap-12 lg:grid-cols-[minmax(0,1fr)_minmax(0,20rem)]">
+      <div class="min-w-0">
+        <div class="prose-editorial"><Content /></div>
+        {g.faqs.length > 0 && (
+          <div class="mt-14">
+            <h2 class="text-[clamp(1.75rem,1.4rem+1.4vw,2.5rem)] text-ink">Quick answers</h2>
+            <div class="mt-6"><Faq faqs={g.faqs} /></div>
+          </div>
+        )}
+      </div>
+      <aside class="space-y-3 lg:sticky lg:top-[calc(var(--header-h)+1.5rem)] lg:self-start">
+        <SpecialistCard specialist={author} whatsapp={wa} context="Written by" compact />
+        <div class="reveal rounded-[24px] bg-night p-6 text-white">
+          <p class="font-display text-[1.6rem] leading-tight text-white">Planning a trip?</p>
+          <p class="mt-2 text-[0.95rem] text-white/80">Six questions and a specialist replies within 12 hours with a first plan.</p>
+          <div class="mt-4"><Button href="/plan" track="plan_click">Plan your trip</Button></div>
+        </div>
+      </aside>
+    </div>
+  </article>
+
+  {related.length > 0 && (
+    <section class="py-12 md:py-16">
+      <div class="container-x"><SectionHeading title="More from the travel guide" /></div>
+      <ul class="swipe mt-8" role="list">
+        {related.map(x => <li class="reveal"><GuideCard guide={x} /></li>)}
+      </ul>
+    </section>
+  )}
+</BaseLayout>

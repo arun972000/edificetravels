@@ -1,0 +1,13 @@
+[
+  {
+    "id": "team",
+    "name": "The Edifice Travels team",
+    "role": "Travel specialists",
+    "bio": "We are a travel company in Rajouri Garden, New Delhi, planning experiential journeys through India for travellers from around the world. Tell us about the trip you have in mind and the people who will plan it reply.",
+    "languages": [
+      "English",
+      "Hindi"
+    ],
+    "basedIn": "New Delhi"
+  }
+]

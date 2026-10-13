@@ -67,8 +67,9 @@ The booking terms use defaults that must be confirmed with your accountant and l
 - [ ] Create a Web3Forms account (free tier, 250 submissions a month) and put the access key in `.env` as `PUBLIC_FORM_ACCESS_KEY`. Without it the planner still completes and hands the visitor to WhatsApp, but no email is sent. Enquiry summaries always arrive in English, whatever language the visitor used.
 - [ ] Set `ga4` in `src/data/site.ts` to the GA4 measurement id. Analytics loads only after cookie consent. Conversion events already fire: `whatsapp_click`, `plan_click`, `enquiry_submit`.
 - [ ] Add Microsoft Clarity if you want session recordings (gate it behind the same consent).
-- [ ] Verify the domain in Google Search Console and Bing Webmaster Tools, and submit `/sitemap-index.xml`.
-- [ ] `/llms.txt` is published for AI assistants. Nothing to do unless you add a new section of the site.
+- [ ] Verify the domain in Google Search Console and Bing Webmaster Tools: put the codes in `verification` in `src/data/site.ts` (the meta tags print only when filled), then submit `/sitemap-index.xml` in both.
+- [ ] In Cloudflare, turn on Caching, Configuration, Crawler Hints. It tells Bing and other IndexNow engines when a page changes.
+- [ ] `/llms.txt` (short map with key facts) and `/llms-full.txt` (every page in full) are built from the content. Nothing to do unless the company facts change, and those come from `src/data/site.ts`.
 
 ## 7. Hosting
 

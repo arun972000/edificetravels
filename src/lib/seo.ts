@@ -8,6 +8,8 @@
 import { site } from '../data/site';
 
 const abs = (path: string) => new URL(path, site.url).toString();
+const mapUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${site.address.street}, ${site.address.locality} ${site.address.postalCode}, India`)}`;
+const LANGS = ['en', 'de', 'fr', 'es', 'it'];
 
 export function organizationLd() {
   return {
@@ -16,8 +18,11 @@ export function organizationLd() {
     '@id': abs('/#organization'),
     name: site.name,
     legalName: site.legalName,
+    description: site.description,
+    slogan: site.tagline,
     url: site.url,
-    logo: abs('/logo.png'),
+    logo: { '@type': 'ImageObject', '@id': abs('/#logo'), url: abs('/logo.png'), width: 180, height: 180, caption: site.name },
+    image: abs(site.defaultOgImage),
     email: site.email,
     telephone: site.phoneTel,
     address: {
@@ -28,7 +33,18 @@ export function organizationLd() {
       postalCode: site.address.postalCode,
       addressCountry: site.address.country,
     },
-    areaServed: 'IN',
+    hasMap: mapUrl,
+    openingHoursSpecification: [{
+      '@type': 'OpeningHoursSpecification',
+      dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
+      opens: site.officeHours.start,
+      closes: site.officeHours.end,
+    }],
+    areaServed: { '@type': 'Country', name: 'India' },
+    knowsAbout: [
+      'Private tours of India', 'Tailor-made India itineraries', 'Rajasthan', 'Kerala', 'The Golden Triangle',
+      'Ladakh', 'South India temples', 'Ayurveda in Kerala', 'Wildlife safaris in India', 'India e-Visa',
+    ],
     knowsLanguage: ['en', 'hi'],
     sameAs: [site.social.instagram, site.social.facebook, site.social.twitter, site.social.youtube].filter(Boolean),
     contactPoint: [{
@@ -49,7 +65,51 @@ export function websiteLd() {
     url: site.url,
     name: site.name,
     publisher: { '@id': abs('/#organization') },
-    inLanguage: 'en',
+    description: site.description,
+    inLanguage: LANGS,
+  };
+}
+
+export type PageType = 'WebPage' | 'AboutPage' | 'ContactPage' | 'CollectionPage' | 'ItemPage';
+
+/**
+ * The page itself, tied to the site and the company, so search and answer
+ * engines can read what each URL is, in which language, and how fresh it is.
+ */
+export function webPageLd(p: {
+  url: string;
+  name: string;
+  description: string;
+  type?: PageType;
+  locale?: string;
+  image?: string;
+  published?: Date;
+  modified?: Date;
+}) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': p.type ?? 'WebPage',
+    '@id': `${p.url}#webpage`,
+    url: p.url,
+    name: p.name,
+    description: p.description,
+    inLanguage: p.locale ?? 'en',
+    isPartOf: { '@id': abs('/#website') },
+    about: { '@id': abs('/#organization') },
+    ...(p.image ? { primaryImageOfPage: { '@type': 'ImageObject', url: p.image } } : {}),
+    ...(p.published ? { datePublished: p.published.toISOString() } : {}),
+    ...(p.modified ? { dateModified: p.modified.toISOString() } : {}),
+  };
+}
+
+/** An ordered list of the pages a hub links to (journeys, places, guides). */
+export function itemListLd(name: string, items: { name: string; href: string }[]) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'ItemList',
+    name,
+    numberOfItems: items.length,
+    itemListElement: items.map((it, i) => ({ '@type': 'ListItem', position: i + 1, name: it.name, url: abs(it.href) })),
   };
 }
 
@@ -147,6 +207,7 @@ export function articleLd(a: {
   title: string;
   description: string;
   image: string;
+  section?: string;
   authorName: string;
   /** True when the author is the company team rather than one named person. */
   authorIsTeam?: boolean;
@@ -160,6 +221,8 @@ export function articleLd(a: {
     description: a.description,
     image: abs(a.image),
     url: abs(`/guide/${a.id}`),
+    mainEntityOfPage: { '@id': `${abs(`/guide/${a.id}`)}#webpage` },
+    ...(a.section ? { articleSection: a.section } : {}),
     datePublished: a.publishedAt.toISOString(),
     dateModified: a.updatedAt.toISOString(),
     author: a.authorIsTeam

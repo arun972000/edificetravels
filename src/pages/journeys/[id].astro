@@ -69,7 +69,7 @@ const facts = [
 ];
 ---
 
-<BaseLayout title={d.seo.title ?? `${d.title}: ${d.days}-day private journey`} description={d.seo.description} jsonLd={ld} image={og.src} progress dock={{ href: planHref, label: 'Ask for a quote', whatsapp: wa, context: `${d.days} days, ${d.title}` }}>
+<BaseLayout title={d.seo.title ?? `${d.title}: ${d.days}-day private journey`} description={d.seo.description} jsonLd={ld} image={og.src} imageAlt={photoAlt(d.heroImage, d.title)} progress dock={{ href: planHref, label: 'Ask for a quote', whatsapp: wa, context: `${d.days} days, ${d.title}` }}>
   <Hero
     image={photo(d.heroImage)}
     alt={photoAlt(d.heroImage, d.title)}
@@ -83,16 +83,14 @@ const facts = [
     vtName={`j-${journey.id}`}
   />
 
-  <div class="mt-4">
-    <SectionTabs items={[
-      { id: 'overview', label: 'Overview' },
-      { id: 'route', label: 'Route' },
-      { id: 'days', label: 'Day by day' },
-      { id: 'stays', label: 'Stays' },
-      { id: 'included', label: 'Included' },
-      { id: 'questions', label: 'Questions' },
-    ]} />
-  </div>
+  <SectionTabs class="mt-4" items={[
+    { id: 'overview', label: 'Overview' },
+    { id: 'route', label: 'Route' },
+    { id: 'days', label: 'Day by day' },
+    { id: 'stays', label: 'Stays' },
+    { id: 'included', label: 'Included' },
+    { id: 'questions', label: 'Questions' },
+  ]} />
 
   <section id="overview" class="container-x pt-8 md:pt-12">
     <FactsBar facts={facts} />
@@ -112,7 +110,7 @@ const facts = [
         </div>
       </div>
 
-      <aside class="space-y-3 lg:sticky lg:top-[calc(var(--header-h)+5rem)] lg:self-start">
+      <aside class="space-y-3 follow-header lg:sticky lg:top-[calc(var(--sticky-top)+5rem)] lg:self-start">
         <SpecialistCard specialist={specialist} whatsapp={wa} context="Plans this journey with you" />
         <div class="reveal rounded-[24px] bg-night p-6 text-white">
           <p class="font-display text-[1.6rem] leading-tight text-white">Your quote, within 48 hours</p>

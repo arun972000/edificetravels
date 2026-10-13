@@ -9,7 +9,7 @@ import RouteMap from '../../islands/RouteMap';
 import { photo } from '../../lib/photos';
 import { photoAlt } from '../../data/photo-alt';
 import { allDestinations, allRegions } from '../../lib/content';
-import { breadcrumbLd } from '../../lib/seo';
+import { breadcrumbLd, itemListLd } from '../../lib/seo';
 import { waMessages } from '../../lib/whatsapp';
 
 const destinations = await allDestinations();
@@ -22,8 +22,10 @@ const stops = destinations.map(d => ({ name: d.data.title, lat: d.data.lat, lng:
   title="Destinations in India, place by place"
   description="Where to go in India and how long to stay: our specialists' notes on every destination we design journeys through, from Ladakh to Kerala."
   transparentHeader
-  jsonLd={[breadcrumbLd(crumbs)]}
+  pageType="CollectionPage"
+  jsonLd={[breadcrumbLd(crumbs), itemListLd('Destinations in India', destinations.map(d => ({ name: d.data.title, href: `/destinations/${d.id}` })))]}
   image={(await getImage({ src: photo('varanasi-ghats'), width: 1200, format: 'jpeg' })).src}
+  imageAlt={photoAlt('varanasi-ghats')}
 >
   <Hero image={photo('varanasi-ghats')} alt={photoAlt('varanasi-ghats')} title="India, place by place" lead="How long to stay, when to go, what to do early and what to skip. Written by the people who send you there." height="medium" breadcrumbs={crumbs} whatsapp={waMessages.general()} />
 

@@ -19,7 +19,7 @@ import MobileDock from '../components/MobileDock.astro';
 import FlagWave from '../components/FlagWave.astro';
 import { site } from '../data/site';
 import { COUNTRIES, TZ_TO_COUNTRY } from '../data/countries';
-import { organizationLd, websiteLd } from '../lib/seo';
+import { organizationLd, websiteLd, webPageLd, type PageType } from '../lib/seo';
 import { getDict } from '../i18n';
 import {
   LOCALES, LOCALE_NAMES, LOCALE_NAMES_INLINE, LOCALE_TAGS, DEFAULT_LOCALE,
@@ -43,6 +43,13 @@ interface Props {
   locale?: Locale;
   /** Thin reading-progress bar at the top (long pages). */
   progress?: boolean;
+  /** Schema.org page type for the WebPage node. */
+  pageType?: PageType;
+  /** Article dates (guides): printed as meta tags and in the page node. */
+  published?: Date;
+  modified?: Date;
+  /** Describes the share image for screen readers on social sites. */
+  imageAlt?: string;
 }
 
 const {
@@ -56,6 +63,10 @@ const {
   dock = {},
   locale = DEFAULT_LOCALE,
   progress = false,
+  pageType = 'WebPage',
+  published,
+  modified,
+  imageAlt,
 } = Astro.props;
 
 const t = getDict(locale);
@@ -65,7 +76,10 @@ const translated = isTranslated(base);
 const canonical = new URL(pagePath(Astro.url.pathname), siteUrl).toString();
 const fullTitle = title.includes(site.name) || title.length > 42 ? title : `${title} | ${site.name}`;
 const ogImage = new URL(image, siteUrl).toString();
-const ld = [organizationLd(), websiteLd(), ...jsonLd];
+const page = webPageLd({ url: canonical, name: fullTitle, description, type: pageType, locale: LOCALE_TAGS[locale], image: ogImage, published, modified });
+const ld = [organizationLd(), websiteLd(), ...(noindex ? [] : [page]), ...jsonLd];
+const ogLocale = (l: Locale) => (l === 'en' ? 'en_GB' : `${l}_${l.toUpperCase()}`);
+const isDefaultImage = image === site.defaultOgImage;
 
 const alternates = translated
   ? LOCALES.map(l => ({ hreflang: LOCALE_TAGS[l], href: new URL(localizedPath(base, l), siteUrl).toString() }))
@@ -109,23 +123,34 @@ const boot = {
     <link rel="canonical" href={canonical} />
     {alternates.map(a => <link rel="alternate" hreflang={a.hreflang} href={a.href} />)}
     {translated && <link rel="alternate" hreflang="x-default" href={new URL(base, siteUrl).toString()} />}
-    {noindex && <meta name="robots" content="noindex, nofollow" />}
+    <meta name="robots" content={noindex ? 'noindex, nofollow' : 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1'} />
+    {site.verification.google && <meta name="google-site-verification" content={site.verification.google} />}
+    {site.verification.bing && <meta name="msvalidate.01" content={site.verification.bing} />}
     <meta property="og:type" content={type} />
     <meta property="og:site_name" content={site.name} />
     <meta property="og:title" content={fullTitle} />
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonical} />
     <meta property="og:image" content={ogImage} />
-    <meta property="og:locale" content={locale === 'en' ? 'en_GB' : `${locale}_${locale.toUpperCase()}`} />
+    {isDefaultImage && <meta property="og:image:width" content="1200" />}
+    {isDefaultImage && <meta property="og:image:height" content="630" />}
+    <meta property="og:image:alt" content={imageAlt ?? fullTitle} />
+    <meta property="og:locale" content={ogLocale(locale)} />
+    {translated && LOCALES.filter(l => l !== locale).map(l => <meta property="og:locale:alternate" content={ogLocale(l)} />)}
+    {type === 'article' && published && <meta property="article:published_time" content={published.toISOString()} />}
+    {type === 'article' && modified && <meta property="article:modified_time" content={modified.toISOString()} />}
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={fullTitle} />
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={ogImage} />
+    <meta name="twitter:image:alt" content={imageAlt ?? fullTitle} />
+    <meta name="twitter:site" content={site.twitterHandle} />
     <link rel="preload" href={frauncesLatin} as="font" type="font/woff2" crossorigin />
     <link rel="preload" href={manropeLatin} as="font" type="font/woff2" crossorigin />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <link rel="sitemap" href="/sitemap-index.xml" />
+    <link rel="alternate" type="text/plain" title="Site summary for AI assistants" href="/llms.txt" />
     <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
     <meta name="theme-color" content="#0f1012" media="(prefers-color-scheme: dark)" />
     <script is:inline>
@@ -153,7 +178,7 @@ const boot = {
     <LocaleDialog locale={locale} />
     {dock !== false && <MobileDock locale={locale} {...dock} />}
 
-    <div id="locale-suggest" class="locale-suggest fixed left-1/2 top-[calc(var(--header-h)+10px)] z-[58] flex w-max max-w-[calc(100vw-1.5rem)] items-center gap-2 rounded-pill border border-line bg-bg-elevated py-1.5 pl-2 pr-1.5 shadow-2" role="status" hidden>
+    <div id="locale-suggest" class="locale-suggest fixed left-1/2 top-[calc(var(--sticky-top)+10px)] z-[58] flex w-max max-w-[calc(100vw-1.5rem)] items-center gap-2 rounded-pill border border-line bg-bg-elevated py-1.5 pl-2 pr-1.5 shadow-2" role="status" hidden>
       <FlagWave size="md" fly data-suggest-flag class="ml-1" />
       <p class="min-w-0 flex-1 text-[0.85rem] font-semibold leading-tight text-ink" data-suggest-title></p>
       <div class="flex shrink-0 items-center gap-1">
@@ -205,6 +230,6 @@ const boot = {
 </html>
 
 <style is:global>
-  .locale-suggest { opacity: 0; transform: translate(-50%, -10px) scale(0.98); transition: opacity 0.45s var(--ease-out), transform 0.6s var(--ease-out); }
+  .locale-suggest { opacity: 0; transform: translate(-50%, -10px) scale(0.98); transition: opacity 0.45s var(--ease-out), transform 0.6s var(--ease-out), top 0.5s var(--ease-out); }
   .locale-suggest.is-in { opacity: 1; transform: translate(-50%, 0); }
 </style>

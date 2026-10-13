@@ -12,7 +12,7 @@ import RouteMap from '../../islands/RouteMap';
 import { photo } from '../../lib/photos';
 import { photoAlt } from '../../data/photo-alt';
 import { waMessages } from '../../lib/whatsapp';
-import { breadcrumbLd } from '../../lib/seo';
+import { breadcrumbLd, itemListLd } from '../../lib/seo';
 import { journeysByRegion, destinationsByRegion, specialistById } from '../../lib/content';
 
 export async function getStaticPaths() {
@@ -32,12 +32,12 @@ const crumbs = [{ name: 'Home', href: '/' }, { name: 'Destinations', href: '/des
 const stops = destinations.map(x => ({ name: x.data.title, lat: x.data.lat, lng: x.data.lng, href: `/destinations/${x.id}` }));
 ---
 
-<BaseLayout title={d.seo.title ?? `${d.title}: private journeys and where to go`} description={d.seo.description} transparentHeader jsonLd={[breadcrumbLd(crumbs)]} image={og.src}>
+<BaseLayout title={d.seo.title ?? `${d.title}: private journeys and where to go`} description={d.seo.description} transparentHeader pageType="CollectionPage" jsonLd={[breadcrumbLd(crumbs), itemListLd(`Private journeys in ${d.title}`, journeys.map(j => ({ name: j.data.title, href: `/journeys/${j.id}` })))]} image={og.src} imageAlt={photoAlt(d.heroImage) || undefined}>
   <Hero image={photo(d.heroImage)} alt={photoAlt(d.heroImage, d.title)} title={d.title} lead={d.tagline} breadcrumbs={crumbs} height="tall" primary={{ href: '/plan', label: `Plan ${d.title}`, track: 'plan_click' }} whatsapp={wa} />
 
   <section class="container-x grid grid-cols-1 gap-12 py-12 lg:grid-cols-[minmax(0,1fr)_minmax(0,23rem)] lg:gap-16 md:py-16">
     <div class="prose-editorial"><Content /></div>
-    <aside class="space-y-3 lg:sticky lg:top-[calc(var(--header-h)+1.5rem)] lg:self-start">
+    <aside class="space-y-3 follow-header lg:sticky lg:top-[calc(var(--sticky-top)+1.5rem)] lg:self-start">
       <SpecialistCard specialist={specialist} whatsapp={wa} context={`Ask us about ${d.title}`} />
       <div class="reveal rounded-[24px] bg-bg-muted p-5 sm:p-6">
         <h2 class="font-sans text-[1rem] font-extrabold tracking-normal text-ink">Best for</h2>

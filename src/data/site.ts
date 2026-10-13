@@ -41,6 +41,10 @@ export const site = {
     twitter: 'https://twitter.com/edificetravels',
     youtube: 'https://www.youtube.com/channel/UCwlvmLJMHAisLgCFCaaSIig',
   },
+  /** X (Twitter) handle from the old site, for share cards. */
+  twitterHandle: '@edificetravels',
+  /** Search Console and Bing Webmaster verification codes. Empty strings are not printed. */
+  verification: { google: '', bing: '' },
   /** Opens the Google listing where guests leave reviews. */
   googleReviews: 'https://www.google.com/maps/search/?api=1&query=Edifice+Travels+Rajouri+Garden+New+Delhi',
   /** Form endpoint for the plan-your-trip wizard. Web3Forms access key goes in PUBLIC_FORM_ACCESS_KEY. */

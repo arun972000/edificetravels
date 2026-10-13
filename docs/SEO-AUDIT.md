@@ -7,6 +7,23 @@
 
 How it was run: a script reads every built page and checks the title, meta description, h1 count, heading order, canonical, Open Graph and Twitter tags, image alt and dimensions, JSON-LD parsing, broken internal links and orphan pages. The same checks now run in `npm run test:build`, so a regression fails the build tests.
 
+## Search and AI search pass, 13 October 2026
+
+Score after this pass: 99 out of 100, with no critical issues or warnings. What was added:
+
+- **Every page describes itself.** A WebPage node (AboutPage, ContactPage or CollectionPage where it fits) ties each URL to the site and the company, with its language, share image and, for guides, published and updated dates.
+- **The company record is complete.** The schema now carries the real logo (with size), the street address, opening hours (9:00 to 20:00, seven days), a Google Maps link, the description and slogan, the areas of knowledge and the social profiles.
+- **Hubs list what they link to.** The journeys, destinations, travel guide and region pages publish an ItemList of their journeys, places or guides.
+- **Guides read as articles.** They carry the article section, a link to their page node, and `article:published_time` and `article:modified_time` tags.
+- **Search previews.** Every indexable page allows large image previews and full snippets (`max-image-preview:large`, `max-snippet:-1`), and has share-image alt text, the X handle and Open Graph language alternates on translated pages.
+- **A real share card.** `public/og-default.jpg` is now a 1200 by 630 card with the badge, the line "Some places you see. India, you feel." and the address. The home page uses it.
+- **Sitemap.** Translated pages list their language alternates, and guides carry their updated date as `lastmod`.
+- **AI crawlers.** robots.txt names the main search and AI crawlers (Google, Bing, Apple, OpenAI, Anthropic, Perplexity, DuckDuckGo, Meta, Amazon) in one group that repeats the site rules, because a crawler that finds its own name ignores the general group.
+- **`/llms.txt` and `/llms-full.txt`.** The short file now opens with the key facts: company, office, hours, reply time, how quotes work, languages and the Google reviews quoted exactly. The full file holds every journey day by day, every region, destination and guide, for assistants that want the whole picture in one fetch.
+- **Tests.** The build tests check the page node, the share alt text, the company record, robots.txt groups, the sitemap alternates and the full text file.
+
+Still to do by you: add the Search Console and Bing verification codes to `verification` in `src/data/site.ts`, submit the sitemap, add your Google Business Profile link to `sameAs`, and turn on Crawler Hints in Cloudflare (it sends IndexNow pings to Bing and others whenever a page changes).
+
 ## Critical issues
 
 None. Every page has a title, a description, one h1, a canonical URL and structured data that parses. No internal link is broken and no page is orphaned.

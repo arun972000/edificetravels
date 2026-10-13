@@ -24,7 +24,7 @@ const crumbs = [{ name: t.nav.home, href: localizedPath('/', locale) }, { name: 
 const og = await getImage({ src: photo('rural-village'), width: 1200, format: 'jpeg' });
 ---
 
-<BaseLayout title={t.meta.aboutTitle} description={t.meta.aboutDescription} transparentHeader jsonLd={[breadcrumbLd(crumbs)]} image={og.src} locale={locale}>
+<BaseLayout title={t.meta.aboutTitle} description={t.meta.aboutDescription} transparentHeader jsonLd={[breadcrumbLd(crumbs)]} image={og.src} imageAlt={alt('rural-village') || undefined} pageType="AboutPage" locale={locale}>
   <Hero image={photo('jodhpur-blue-city')} alt={alt('jodhpur-blue-city')} eyebrow={a.eyebrow} title={a.title} emphasis={a.emphasis} lead={a.lead} height="medium" breadcrumbs={crumbs} />
 
   <section class="container-x grid grid-cols-1 gap-10 py-14 lg:grid-cols-[1.1fr_1fr] lg:gap-16 md:py-24">

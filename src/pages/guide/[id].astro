@@ -29,13 +29,13 @@ const wa = waMessages.guide(g.title);
 const og = await getImage({ src: photo(g.heroImage), width: 1200, format: 'jpeg' });
 const crumbs = [{ name: 'Home', href: '/' }, { name: 'Travel guide', href: '/guide' }, { name: g.title, href: `/guide/${guide.id}` }];
 const ld = [
-  articleLd({ id: guide.id, title: g.title, description: g.description, image: og.src, authorName: author.data.name, authorIsTeam: author.id === 'team', publishedAt: g.publishedAt, updatedAt: g.updatedAt }),
+  articleLd({ id: guide.id, title: g.title, description: g.description, image: og.src, section: g.category[0].toUpperCase() + g.category.slice(1), authorName: author.data.name, authorIsTeam: author.id === 'team', publishedAt: g.publishedAt, updatedAt: g.updatedAt }),
   breadcrumbLd(crumbs),
   ...(g.faqs.length ? [faqLd(g.faqs)] : []),
 ];
 ---
 
-<BaseLayout title={g.seoTitle ?? g.title} description={g.description} jsonLd={ld} image={og.src} type="article" progress>
+<BaseLayout title={g.seoTitle ?? g.title} description={g.description} jsonLd={ld} image={og.src} imageAlt={photoAlt(g.heroImage) || undefined} type="article" published={g.publishedAt} modified={g.updatedAt} progress>
   <article class="container-x py-8 md:py-14">
     <Breadcrumbs items={crumbs} class="mb-8" />
     <div class="grid grid-cols-1 gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,20rem)]">
@@ -61,7 +61,7 @@ const ld = [
           </div>
         )}
       </div>
-      <aside class="space-y-3 lg:sticky lg:top-[calc(var(--header-h)+1.5rem)] lg:self-start">
+      <aside class="space-y-3 follow-header lg:sticky lg:top-[calc(var(--sticky-top)+1.5rem)] lg:self-start">
         <SpecialistCard specialist={author} whatsapp={wa} context="Written by" compact />
         <div class="reveal rounded-[24px] bg-night p-6 text-white">
           <p class="font-display text-[1.6rem] leading-tight text-white">Planning a trip?</p>

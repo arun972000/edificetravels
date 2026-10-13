@@ -24,7 +24,7 @@ const steps = t.home.daySteps.map((s, i) => ({ ...s, slug: slugs[i] }));
   </div>
   <ol class="container-x mt-8 md:mt-12">
     {steps.map((s, i) => (
-      <li class="stack-item sticky" style={`--i:${i}; top: calc(var(--header-h) + 0.75rem + ${i} * 0.5rem)`} data-stack-item data-time={s.time}>
+      <li class="stack-item follow-header sticky" style={`--i:${i}; top: calc(var(--sticky-top) + 0.75rem + ${i} * 0.5rem)`} data-stack-item data-time={s.time}>
         <article class="stack-card relative isolate mb-4 flex h-[min(72svh,40rem)] flex-col justify-end overflow-hidden rounded-[28px] bg-[#16181b] text-white md:mb-6 md:h-[min(78svh,44rem)] md:rounded-[36px]" data-stack-card>
           <Image src={photo(s.slug)} alt="" widths={[640, 960, 1280, 1800]} sizes="(min-width: 1312px) 77rem, 100vw" class="absolute inset-0 -z-10 h-full w-full object-cover" loading="lazy" decoding="async" />
           <div class="absolute inset-0 -z-10 bg-[linear-gradient(to_top,rgba(10,11,13,0.85)_0%,rgba(10,11,13,0.3)_45%,transparent_72%)]" aria-hidden="true"></div>

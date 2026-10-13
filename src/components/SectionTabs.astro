@@ -3,13 +3,15 @@
  * A sticky row of chips that jumps to each part of a long page and follows
  * the reader: the chip for the section on screen fills in and scrolls into
  * view. Sits under the header, and moves up when the header slides away.
+ * Place it directly in the page, not in a wrapper of its own height, or it
+ * has nothing to stick within.
  */
-interface Props { items: { id: string; label: string }[]; label?: string }
-const { items, label = 'On this page' } = Astro.props;
+interface Props { items: { id: string; label: string }[]; label?: string; class?: string }
+const { items, label = 'On this page', class: className = '' } = Astro.props;
 ---
 
-<nav class="section-tabs sticky top-[calc(var(--header-h)+var(--notice-h,0px))] z-30 border-b border-line bg-bg/90 backdrop-blur-xl" aria-label={label} data-tabs>
-  <ul class="no-scrollbar container-x flex gap-1.5 overflow-x-auto py-2.5">
+<nav class:list={['section-tabs follow-header sticky top-[var(--sticky-top)] z-30 border-b border-line bg-bg/90 backdrop-blur-xl', className]} aria-label={label} data-tabs>
+  <ul class="no-scrollbar fade-end container-x flex gap-1.5 overflow-x-auto py-2.5">
     {items.map(it => (
       <li class="shrink-0"><a href={`#${it.id}`} class="chip !h-10" data-tab={it.id}>{it.label}</a></li>
     ))}
@@ -17,8 +19,6 @@ const { items, label = 'On this page' } = Astro.props;
 </nav>
 
 <style is:global>
-  .section-tabs { transition: top 0.5s var(--ease-out); }
-  .site-header.is-hidden ~ main .section-tabs { top: 0; }
   [data-tab-target] { scroll-margin-top: calc(var(--header-h) + 4.5rem); }
 </style>
 

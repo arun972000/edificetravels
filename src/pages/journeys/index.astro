@@ -9,7 +9,7 @@ import { photo } from '../../lib/photos';
 import { photoAlt } from '../../data/photo-alt';
 import { allJourneys, allRegions } from '../../lib/content';
 import { THEME_LABEL } from '../../lib/format';
-import { breadcrumbLd } from '../../lib/seo';
+import { breadcrumbLd, itemListLd } from '../../lib/seo';
 import { waMessages } from '../../lib/whatsapp';
 
 const journeys = await allJourneys();
@@ -22,8 +22,10 @@ const crumbs = [{ name: 'Home', href: '/' }, { name: 'Journeys', href: '/journey
   title="Private India journeys"
   description="Every private India journey we design, from ten days in Rajasthan to three weeks north and south. Each is a starting point, quoted personally within 48 hours."
   transparentHeader
-  jsonLd={[breadcrumbLd(crumbs)]}
+  pageType="CollectionPage"
+  jsonLd={[breadcrumbLd(crumbs), itemListLd('Private India journeys', journeys.map(j => ({ name: j.data.title, href: `/journeys/${j.id}` })))]}
   image={(await getImage({ src: photo('hero-ladakh'), width: 1200, format: 'jpeg' })).src}
+  imageAlt={photoAlt('hero-ladakh')}
 >
   <Hero
     image={photo('hero-ladakh')}
@@ -38,8 +40,8 @@ const crumbs = [{ name: 'Home', href: '/' }, { name: 'Journeys', href: '/journey
 
   <section class="pb-14 pt-4 md:pb-20" aria-labelledby="all-journeys">
     <h2 id="all-journeys" class="sr-only">All journeys</h2>
-    <div class="sticky top-[calc(var(--header-h)+var(--notice-h,0px))] z-30 border-b border-line bg-bg/90 backdrop-blur-xl">
-      <div class="no-scrollbar container-x flex gap-1.5 overflow-x-auto py-2.5" id="filters" role="group" aria-label="Filter journeys">
+    <div class="follow-header sticky top-[var(--sticky-top)] z-30 border-b border-line bg-bg/90 backdrop-blur-xl">
+      <div class="no-scrollbar fade-end container-x flex gap-1.5 overflow-x-auto py-2.5" id="filters" role="group" aria-label="Filter journeys">
         <button type="button" data-filter="all" aria-pressed="true" class="filter-btn chip shrink-0">All ({journeys.length})</button>
         {regions.map(r => (
           <button type="button" data-filter={`region:${r.id}`} aria-pressed="false" class="filter-btn chip shrink-0">{r.data.title}</button>

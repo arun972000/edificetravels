@@ -1,15 +1,32 @@
+# Edifice Travels. Everything is open to search engines and AI assistants,
+# except the thank-you page, which only makes sense after an enquiry.
+
 User-agent: *
 Allow: /
 Disallow: /thank-you
 
-# Answer engines are welcome to read and cite the travel guides.
-User-agent: GPTBot
-Allow: /
-User-agent: PerplexityBot
-Allow: /
-User-agent: ClaudeBot
-Allow: /
+# Search engines and AI search and answer engines, named so the welcome is
+# explicit. A crawler that finds its own name reads only this group, so the
+# same rules are repeated here.
+User-agent: Googlebot
 User-agent: Google-Extended
+User-agent: Bingbot
+User-agent: DuckDuckBot
+User-agent: DuckAssistBot
+User-agent: Applebot
+User-agent: Applebot-Extended
+User-agent: GPTBot
+User-agent: OAI-SearchBot
+User-agent: ChatGPT-User
+User-agent: ClaudeBot
+User-agent: Claude-SearchBot
+User-agent: Claude-User
+User-agent: PerplexityBot
+User-agent: Perplexity-User
+User-agent: Meta-ExternalAgent
+User-agent: Amazonbot
+User-agent: YandexBot
 Allow: /
+Disallow: /thank-you
 
 Sitemap: https://edificetravels.com/sitemap-index.xml

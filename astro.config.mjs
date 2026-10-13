@@ -4,6 +4,17 @@ import { defineConfig } from 'astro/config';
 import preact from '@astrojs/preact';
 import tailwindcss from '@tailwindcss/vite';
 import sitemap from '@astrojs/sitemap';
+import { readFileSync, readdirSync } from 'node:fs';
+
+// Guides carry an "updated" date; the sitemap passes it on as lastmod so
+// search engines know when a visa or cost page was last checked.
+const GUIDES = './src/content/guides';
+const guideUpdated = Object.fromEntries(
+  readdirSync(GUIDES).filter(f => f.endsWith('.md')).map(f => [
+    f.replace(/\.md$/, ''),
+    readFileSync(`${GUIDES}/${f}`, 'utf8').match(/^updatedAt:\s*(\S+)/m)?.[1],
+  ]),
+);
 
 // https://astro.build/config
 export default defineConfig({
@@ -18,6 +29,14 @@ export default defineConfig({
     preact({ compat: true }),
     sitemap({
       filter: page => !page.includes('/thank-you') && !page.includes('/404'),
+      // Home, planner, about and contact exist in five languages: list each
+      // version with its alternates, as the hreflang tags on the pages do.
+      i18n: { defaultLocale: 'en', locales: { en: 'en', de: 'de', fr: 'fr', es: 'es', it: 'it' } },
+      serialize(item) {
+        const guide = item.url.match(/\/guide\/([^/]+)$/)?.[1];
+        if (guide && guideUpdated[guide]) item.lastmod = new Date(guideUpdated[guide]).toISOString();
+        return item;
+      },
     }),
   ],
   image: {

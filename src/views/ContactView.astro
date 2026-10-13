@@ -28,7 +28,7 @@ const cards = [
 ];
 ---
 
-<BaseLayout title={t.meta.contactTitle} description={t.meta.contactDescription} jsonLd={[breadcrumbLd(crumbs)]} locale={locale}>
+<BaseLayout title={t.meta.contactTitle} description={t.meta.contactDescription} jsonLd={[breadcrumbLd(crumbs)]} pageType="ContactPage" locale={locale}>
   <div class="container-x py-8 md:py-14">
     <Breadcrumbs items={crumbs} class="mb-6" />
     <div class="grid grid-cols-1 gap-8 lg:grid-cols-[1.2fr_1fr] lg:items-end lg:gap-12">

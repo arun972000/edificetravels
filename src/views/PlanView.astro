@@ -49,7 +49,7 @@ const accessKey = import.meta.env.PUBLIC_FORM_ACCESS_KEY ?? '';
           privacyHref="/privacy"
         />
 
-        <aside class="space-y-3 lg:sticky lg:top-[calc(var(--header-h)+1.5rem)]">
+        <aside class="space-y-3 follow-header lg:sticky lg:top-[calc(var(--sticky-top)+1.5rem)]">
           {specialists[0] && <SpecialistCard specialist={specialists[0]} whatsapp={waMessages.general()} context={t.plan.whoReplies} compact locale={locale} />}
           <div class="reveal rounded-[24px] bg-bg-muted p-6">
             <h2 class="font-sans text-[1.05rem] font-extrabold tracking-normal text-ink">{t.plan.nextTitle}</h2>

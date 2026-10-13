@@ -95,9 +95,48 @@ describe.skipIf(!has)('built site', () => {
     for (const c of [...codes, 'in']) expect(existsSync(join(DIST, 'flags', `${c}.svg`)), c).toBe(true);
   });
 
-  it('lists localised pages in the sitemap', () => {
+  it('lists localised pages in the sitemap, with their language alternates', () => {
     const map = read('sitemap-0.xml');
     expect(map).toContain('/de</loc>');
     expect(map).toContain('/fr/plan</loc>');
+    expect(map).toContain('hreflang="de"');
+    expect(map).toMatch(/guide\/india-e-visa-guide<\/loc><lastmod>/);
+  });
+
+  it('gives every indexable page a page node, a share image with alt text and full search previews', () => {
+    for (const page of pages) {
+      const html = read(page);
+      if (html.includes('content="noindex')) continue;
+      const canonical = html.match(/<link rel="canonical" href="([^"]+)"/)?.[1];
+      expect(html, page).toContain(`"@id":"${canonical}#webpage"`);
+      expect(html, page).toContain('max-image-preview:large');
+      expect(html, page).toMatch(/<meta property="og:image:alt" content="[^"]+"/);
+    }
+  });
+
+  it('describes the company fully: logo, address, opening hours and map', () => {
+    const org = read('index.html').match(/<script type="application\/ld\+json">(\{"@context":"https:\/\/schema.org","@type":\["Organization"[^<]*)<\/script>/)?.[1];
+    expect(org).toBeTruthy();
+    const o = JSON.parse(org!);
+    expect(o.logo.url).toMatch(/logo\.png$/);
+    expect(o.address.streetAddress).toBeTruthy();
+    expect(o.openingHoursSpecification[0].opens).toBe('09:00');
+    expect(o.hasMap).toMatch(/^https:\/\/www\.google\.com\/maps/);
+  });
+
+  it('keeps the thank-you page out of every crawler group in robots.txt', () => {
+    const groups = read('robots.txt').split(/\r?\n\s*\r?\n/).filter(g => /^User-agent:/m.test(g));
+    expect(groups.length).toBeGreaterThan(1);
+    for (const g of groups) expect(g).toContain('Disallow: /thank-you');
+    expect(read('robots.txt')).toMatch(/User-agent: OAI-SearchBot/);
+  });
+
+  it('publishes llms-full.txt with every journey and guide in full, and no prices', () => {
+    const txt = read('llms-full.txt');
+    const short = read('llms.txt');
+    for (const m of short.matchAll(/^- \[([^\]]+)\]\(https:\/\/edificetravels\.com\/(?:journeys|guide)\//gm)) expect(txt, m[1]).toContain(`## ${m[1]}`);
+    expect(txt).toContain('Edifice Travel Solutions LLP');
+    expect(txt).toContain('Day 1:');
+    expect(txt).not.toMatch(/₹ ?\d|US\$ ?\d/);
   });
 });

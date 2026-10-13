@@ -6,7 +6,7 @@
  * guests, the people, the guides, and a last postcard to begin. Rendered for
  * every locale; content names use translations where they exist.
  */
-import { Image, getImage } from 'astro:assets';
+import { Image } from 'astro:assets';
 import badge from '../assets/brand/edifice-travels-logo.png';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import PostcardHero from '../components/home/PostcardHero.astro';
@@ -42,13 +42,13 @@ const regions = await allRegions();
 const reviews = await allReviews();
 const specialists = await allSpecialists();
 const guides = await featuredGuides(4);
-const og = await getImage({ src: photo('hero-taj-dawn'), width: 1200, format: 'jpeg' });
+// Share card: the branded default image (public/og-default.jpg), not a bare photo.
 
 const manifestoWords = t.home.manifesto.split(/\s+/);
 const finalWords = t.home.finalTitle.split(/\s+/);
 ---
 
-<BaseLayout title={t.meta.homeTitle} description={t.meta.homeDescription} image={og.src} locale={locale}>
+<BaseLayout title={t.meta.homeTitle} description={t.meta.homeDescription} imageAlt="Edifice Travels: some places you see, India you feel" locale={locale}>
   <PostcardHero locale={locale} regions={regions} />
 
   <TripStarter locale={locale} regions={regions} />

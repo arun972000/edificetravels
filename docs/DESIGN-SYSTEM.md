@@ -20,7 +20,7 @@ The owner asked for white pages instead of cream, an entirely new layout, a phon
 - **Type:** Fraunces at weight 380 for headings, Manrope for everything else, with 16 px body text on phones.
 
 **Phone patterns**
-- **Header:** white with a blur. The original round Edifice Travels badge with the wordmark beside it (on a white disc in dark mode). The locale chip shows the visitor's flag flying from a slim pole with a saffron tip, and the language code. The menu is a light dropdown card.
+- **Header:** white with a blur. The original round Edifice Travels badge with the wordmark beside it (on a white disc in dark mode). The locale chip shows the visitor's flag flying from a slim pole with a saffron tip, and the language code. The menu is a light dropdown card. The header slides away on the way down and back on the way up; anything sticky (filter and topic bars, section chips, stacked cards, sidebars) uses `top: var(--sticky-top)` with the `follow-header` class, so it moves up with the header instead of leaving a gap. Put a sticky element directly in the page, never in a wrapper of its own height, or it has nothing to stick within.
 - **Dock:** "Plan your trip" and WhatsApp fixed at the bottom. It appears after the first screen, hides while typing, and shows a green dot during India office hours. Journey pages pass their own label.
 - **Swipe rows:** used for journeys, promises, reviews and guides. Any row without links inside is focusable for keyboard users.
 - **Section chips:** a sticky row on journey pages and the guide index that follows the reader.

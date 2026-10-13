@@ -7,7 +7,7 @@ import GuideCard from '../../components/GuideCard.astro';
 import { photo } from '../../lib/photos';
 import { photoAlt } from '../../data/photo-alt';
 import { allGuides } from '../../lib/content';
-import { breadcrumbLd } from '../../lib/seo';
+import { breadcrumbLd, itemListLd } from '../../lib/seo';
 import { waMessages } from '../../lib/whatsapp';
 
 const guides = await allGuides();
@@ -20,13 +20,15 @@ const groups = [...new Set(guides.map(g => g.data.category))].map(c => ({ c, ite
   title="India travel guide: visas, costs, safety and timing"
   description="Straight answers for planning a private India trip: the e-Visa step by step, trip costs, the best time to visit, solo women travel, food, money and transport."
   transparentHeader
-  jsonLd={[breadcrumbLd(crumbs)]}
+  pageType="CollectionPage"
+  jsonLd={[breadcrumbLd(crumbs), itemListLd('India travel guide', guides.map(g => ({ name: g.data.title, href: `/guide/${g.id}` })))]}
   image={(await getImage({ src: photo('indian-market'), width: 1200, format: 'jpeg' })).src}
+  imageAlt={photoAlt('indian-market')}
 >
   <Hero image={photo('indian-market')} alt={photoAlt('indian-market')} title="What to know before you go to India" lead="Written by the specialists who plan the journeys, with the date each guide was last checked. If your question is not here, send it to us on WhatsApp." height="medium" breadcrumbs={crumbs} whatsapp={waMessages.general()} />
 
-  <div class="sticky top-[calc(var(--header-h)+var(--notice-h,0px))] z-30 mt-4 border-b border-line bg-bg/90 backdrop-blur-xl">
-    <nav class="no-scrollbar container-x flex gap-1.5 overflow-x-auto py-2.5" aria-label="Topics">
+  <div class="follow-header sticky top-[var(--sticky-top)] z-30 mt-4 border-b border-line bg-bg/90 backdrop-blur-xl">
+    <nav class="no-scrollbar fade-end container-x flex gap-1.5 overflow-x-auto py-2.5" aria-label="Topics">
       {groups.map(g => <a href={`#topic-${g.c}`} class="chip shrink-0 !h-10">{CATEGORY[g.c] ?? g.c}</a>)}
     </nav>
   </div>

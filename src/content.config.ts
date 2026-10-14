@@ -156,6 +156,8 @@ const reviews = defineCollection({
     journey: z.string().optional(),
     /** Where the review was first published, e.g. Google. Quote it exactly as written there. */
     source: z.string().optional(),
+    /** The place the guest travelled to, as named in the review. Shown beside their name. */
+    trip: z.string().optional(),
     rating: z.number().int().min(1).max(5),
     /** True while this is a demonstration review that must be replaced before launch. */
     sample: z.boolean().default(false),

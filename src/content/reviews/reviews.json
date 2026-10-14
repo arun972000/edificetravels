@@ -4,13 +4,15 @@
     "quote": "My trip to Kashmir with EDIFICE travels was best, memorable, caring, will always continue my future trips with them.",
     "name": "Dr. Kalanithi Ramanusan",
     "source": "Google",
-    "rating": 5
+    "rating": 5,
+    "trip": "Kashmir"
   },
   {
     "id": "google-mohan",
     "quote": "Edifice Travels arranged kashmir tour Hotel, food, transportation guide Everything best",
     "name": "Mohan",
     "source": "Google",
-    "rating": 5
+    "rating": 5,
+    "trip": "Kashmir"
   }
 ]

@@ -1,0 +1,277 @@
+---
+/**
+ * Guest stories: one story in the spotlight at a time. Tap a guest, swipe
+ * the card or use the arrow keys to move between them; the quote rises in
+ * word by word and the stars pop in. Nothing moves on its own (the planner
+ * rules out auto-rotating carousels); instead the next guest's ring breathes
+ * gently until the reader tries it. Quotes are shown exactly as written.
+ * Without JavaScript every story is listed in turn.
+ */
+import type { CollectionEntry } from 'astro:content';
+import SectionHeading from './SectionHeading.astro';
+import GuestAvatar from './GuestAvatar.astro';
+import { site } from '../data/site';
+import { getDict, fmt } from '../i18n';
+import type { Locale } from '../i18n/config';
+
+interface Props {
+  reviews: CollectionEntry<'reviews'>[];
+  locale?: Locale;
+  title?: string;
+  lead?: string;
+  as?: 'h1' | 'h2';
+  /** Link to the stories page beside the heading. */
+  showAll?: boolean;
+}
+const { reviews, locale = 'en', title, lead, as = 'h2', showAll = true } = Astro.props;
+const t = getDict(locale);
+const n = reviews.length;
+const star = '<path d="M10 1.8l2.5 5.2 5.7.8-4.1 4 1 5.7L10 14.8l-5.1 2.7 1-5.7-4.1-4 5.7-.8z"/>';
+const pin = '<path d="M12 21s-6.5-5.6-6.5-11a6.5 6.5 0 0 1 13 0c0 5.4-6.5 11-6.5 11Z" fill="none" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="10" r="2.3" fill="currentColor"/>';
+---
+
+{n > 0 && (
+  <section class="py-14 md:py-24" data-stories>
+    <div class="container-x">
+      <SectionHeading title={title ?? t.home.voicesTitle} lead={lead} as={as} size={as === 'h1' ? 'h1' : 'h2'}>
+        {showAll && <a slot="action" href="/reviews" class="chip">{t.home.voicesLabel}</a>}
+      </SectionHeading>
+
+      <div class="stories mt-8 grid grid-cols-1 gap-4 md:mt-12 lg:grid-cols-[minmax(0,1.65fr)_minmax(0,1fr)] lg:gap-5" data-story-wrap>
+        <!-- The story in the spotlight -->
+        <div class="story-card relative overflow-hidden rounded-[30px] bg-brand-soft p-6 sm:p-9 md:p-11" data-story-stage>
+          <span class="story-mark" aria-hidden="true">“</span>
+          <div class="story-slides relative" aria-live="polite">
+            {reviews.map((r, i) => {
+              const d = r.data;
+              return (
+                <div class:list={['story-slide', i === 0 && 'is-active']} id={`story-${i}`} role={n > 1 ? 'tabpanel' : undefined} aria-labelledby={n > 1 ? `story-tab-${i}` : undefined} data-story-slide={i}>
+                  <figure class="flex h-full flex-col">
+                    <div class="story-stars flex gap-1 text-brand" role="img" aria-label={fmt(t.common.outOfFive, { n: d.rating })}>
+                      {Array.from({ length: 5 }, (_, k) => (
+                        <svg width="22" height="22" viewBox="0 0 20 20" aria-hidden="true" style={`--k:${k}`} class:list={[k < d.rating && 'on']} set:html={star}></svg>
+                      ))}
+                    </div>
+                    <blockquote class="mt-5 flex-1">
+                      <p class="story-quote font-display text-ink">
+                        {d.quote.split(/\s+/).map((w, k) => (<Fragment><span class="sw" style={`--k:${Math.min(k, 40)}`}>{w}</span>{' '}</Fragment>))}
+                      </p>
+                    </blockquote>
+                    <figcaption class="mt-7 flex items-center gap-3.5">
+                      <GuestAvatar name={d.name} size={52} tone={i} />
+                      <span class="min-w-0">
+                        <span class="block text-[1.02rem] font-extrabold text-ink">{d.name}</span>
+                        {d.trip && (
+                          <span class="mt-0.5 flex items-center gap-1.5 text-[0.9rem] text-ink-soft">
+                            <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true" class="text-brand-deep" set:html={pin}></svg>
+                            {d.trip}
+                          </span>
+                        )}
+                      </span>
+                    </figcaption>
+                  </figure>
+                </div>
+              );
+            })}
+          </div>
+          {n > 1 && (
+            <div class="mt-7 flex items-center gap-2" data-story-nav hidden>
+              <span class="mr-auto text-[0.88rem] font-bold tabular-nums text-ink-soft" data-story-count data-template={t.home.voiceCount}>{fmt(t.home.voiceCount, { n: 1, total: n })}</span>
+              <button type="button" class="story-btn press" data-story-prev aria-label={t.home.prev}>
+                <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M10 3.5 5.5 8l4.5 4.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /></svg>
+              </button>
+              <button type="button" class="story-btn press" data-story-next aria-label={t.home.next}>
+                <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M6 3.5 10.5 8 6 12.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /></svg>
+              </button>
+            </div>
+          )}
+        </div>
+
+        <!-- The guests, and room for the next one -->
+        <div class="flex min-w-0 flex-col gap-3">
+          {n > 1 && (
+            <div class="story-people no-scrollbar" role="tablist" aria-label={t.home.voicesLabel} data-story-tabs>
+              {reviews.map((r, i) => (
+                <button type="button" role="tab" id={`story-tab-${i}`} aria-controls={`story-${i}`} aria-selected={i === 0 ? 'true' : 'false'} tabindex={i === 0 ? 0 : -1} class="story-person" data-story-tab={i}>
+                  <span class="story-ring"><GuestAvatar name={r.data.name} size={46} tone={i} /></span>
+                  <span class="min-w-0 text-left">
+                    <span class="block truncate text-[0.95rem] font-extrabold text-ink">{r.data.name}</span>
+                    {r.data.trip && <span class="block truncate text-[0.82rem] text-ink-muted">{r.data.trip}</span>}
+                  </span>
+                </button>
+              ))}
+            </div>
+          )}
+          <a href={site.googleReviews} target="_blank" rel="noopener" class="story-share press">
+            <span class="story-plus" aria-hidden="true">
+              <svg width="18" height="18" viewBox="0 0 20 20"><path d="M10 4v12M4 10h12" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" /></svg>
+            </span>
+            <span class="min-w-0">
+              <span class="block text-[0.98rem] font-extrabold text-ink">{t.home.storyTitle}</span>
+              <span class="block text-[0.86rem] leading-snug text-ink-soft">{t.home.storyText}</span>
+              <span class="mt-2 inline-flex text-[0.88rem] font-bold text-brand-deep underline decoration-brand/40 underline-offset-4">{t.home.storyLink}</span>
+            </span>
+          </a>
+          {locale !== 'en' && <p class="text-[0.85rem] text-ink-muted">{t.home.reviewOriginal}</p>}
+        </div>
+      </div>
+    </div>
+  </section>
+)}
+
+<style>
+  .story-mark {
+    position: absolute; top: 0.08em; right: 0.14em;
+    font-family: var(--font-display); font-size: clamp(7rem, 15vw, 11rem); line-height: 0.75;
+    color: var(--c-brand); opacity: 0.2; pointer-events: none; user-select: none;
+  }
+  .story-card { touch-action: pan-y; }
+  .story-slides { display: grid; }
+  :global(html.js) .story-slide {
+    grid-area: 1 / 1;
+    opacity: 0; visibility: hidden; transform: translateX(var(--from, 28px));
+    transition: opacity 0.35s var(--ease-out), transform 0.5s var(--ease-out), visibility 0s linear 0.5s;
+  }
+  :global(html.js) .story-slide.is-active {
+    opacity: 1; visibility: visible; transform: none;
+    transition: opacity 0.5s var(--ease-out), transform 0.6s var(--ease-out), visibility 0s;
+  }
+  :global(html:not(.js)) .story-slide + .story-slide { margin-top: 2.5rem; }
+
+  .story-quote { font-size: clamp(1.45rem, 1.1rem + 1.5vw, 2.3rem); line-height: 1.3; letter-spacing: -0.01em; }
+  .sw { display: inline-block; }
+  .story-stars svg { fill: none; stroke: currentColor; stroke-width: 1.2; }
+  .story-stars svg.on { fill: currentColor; }
+
+  /* The entrance: words rise out of a soft blur, stars pop in turn. */
+  :global(html.js) .story-slide:not(.is-in) .sw,
+  :global(html.js) .story-slide:not(.is-in) .story-stars svg.on { opacity: 0; }
+  .story-slide.is-in .sw { animation: story-word 0.7s var(--ease-out) both; animation-delay: calc(var(--k) * 26ms + 120ms); }
+  .story-slide.is-in .story-stars svg.on { animation: story-star 0.55s cubic-bezier(0.3, 1.6, 0.5, 1) both; animation-delay: calc(var(--k) * 80ms); }
+  @keyframes story-word { from { opacity: 0; transform: translateY(0.45em); filter: blur(5px); } to { opacity: 1; transform: none; filter: none; } }
+  @keyframes story-star { from { opacity: 0; transform: scale(0.3) rotate(-25deg); } to { opacity: 1; transform: none; } }
+
+  .story-btn {
+    display: grid; place-items: center; width: 2.75rem; height: 2.75rem; border-radius: 9999px;
+    background: var(--c-bg-elevated); color: var(--c-ink);
+    box-shadow: 0 6px 18px -10px rgb(20 22 26 / 0.45), inset 0 0 0 1px var(--c-line);
+    transition: transform 0.2s, background-color 0.2s;
+  }
+  .story-btn:hover { background: var(--c-bg); }
+
+  /* Guests: a sideways row on phones, a list beside the card on wide screens. */
+  .story-people { display: flex; gap: 0.6rem; overflow-x: auto; padding: 4px; margin: -4px; }
+  @media (min-width: 64rem) { .story-people { flex-direction: column; overflow: visible; } }
+  .story-person {
+    display: flex; align-items: center; gap: 0.75rem; flex-shrink: 0; min-width: 0; max-width: 15rem;
+    padding: 0.5rem 1.1rem 0.5rem 0.5rem; border-radius: 20px;
+    background: var(--c-bg-muted); border: 1.5px solid transparent;
+    transition: background-color 0.25s, border-color 0.25s, box-shadow 0.25s, transform 0.2s;
+  }
+  @media (min-width: 64rem) { .story-person { max-width: none; width: 100%; padding: 0.65rem; } }
+  .story-person:hover { background: var(--c-bg-elevated); border-color: var(--c-line); }
+  .story-person:active { transform: scale(0.97); }
+  .story-person[aria-selected="true"] { background: var(--c-bg-elevated); border-color: var(--c-brand); box-shadow: 0 12px 30px -20px rgb(237 119 23 / 0.7); }
+  .story-ring { position: relative; display: inline-grid; flex-shrink: 0; border-radius: 9999px; }
+  .story-person[aria-selected="true"] .story-ring::after,
+  .stories.hint .story-person.is-next .story-ring::after {
+    content: ''; position: absolute; inset: -4px; border-radius: 9999px; border: 2px solid var(--c-brand);
+  }
+  .story-person[aria-selected="true"] .story-ring::after { animation: story-ring 0.45s var(--ease-out); }
+  /* An invitation, not a timer: the next guest's ring breathes until tried. */
+  .stories.hint .story-person.is-next .story-ring::after { animation: story-hint 1.9s ease-in-out infinite; }
+  @keyframes story-ring { from { transform: scale(0.8); opacity: 0; } to { transform: none; opacity: 1; } }
+  @keyframes story-hint { 0%, 100% { transform: scale(0.9); opacity: 0; } 50% { transform: scale(1.06); opacity: 0.85; } }
+
+  .story-share {
+    display: flex; align-items: flex-start; gap: 0.85rem;
+    padding: 0.85rem; border-radius: 20px; border: 1.5px dashed var(--c-line);
+    transition: border-color 0.25s, background-color 0.25s;
+  }
+  .story-share:hover, .story-share:focus-visible { border-color: var(--c-brand); background: var(--c-brand-soft); }
+  .story-plus {
+    display: grid; place-items: center; flex-shrink: 0; width: 46px; height: 46px; border-radius: 9999px;
+    border: 2px dashed var(--c-brand); color: var(--c-brand-deep); transition: transform 0.4s var(--ease-out);
+  }
+  .story-share:hover .story-plus { transform: rotate(90deg); }
+
+  @media (prefers-reduced-motion: reduce) {
+    :global(html.js) .story-slide, :global(html.js) .story-slide.is-active { transition: none; transform: none; }
+    :global(html.js) .story-slide:not(.is-in) .sw, :global(html.js) .story-slide:not(.is-in) .story-stars svg.on { opacity: 1; }
+    .story-slide.is-in .sw, .story-slide.is-in .story-stars svg.on { animation: none; }
+    .story-person[aria-selected="true"] .story-ring::after, .stories.hint .story-person.is-next .story-ring::after { animation: none; }
+    .story-share:hover .story-plus { transform: none; }
+  }
+</style>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-stories]').forEach(root => {
+    const slides = Array.from(root.querySelectorAll<HTMLElement>('[data-story-slide]'));
+    const tabs = Array.from(root.querySelectorAll<HTMLButtonElement>('[data-story-tab]'));
+    const stage = root.querySelector<HTMLElement>('[data-story-stage]');
+    const wrap = root.querySelector<HTMLElement>('[data-story-wrap]');
+    const nav = root.querySelector<HTMLElement>('[data-story-nav]');
+    const count = root.querySelector<HTMLElement>('[data-story-count]');
+    const row = root.querySelector<HTMLElement>('[data-story-tabs]');
+    if (!slides.length || !stage) return;
+    if (nav) nav.hidden = false;
+
+    let cur = 0;
+    let touched = false;
+    const play = (el: HTMLElement) => { el.classList.remove('is-in'); void el.offsetWidth; el.classList.add('is-in'); };
+    const markNext = () => tabs.forEach((tab, i) => tab.classList.toggle('is-next', i === (cur + 1) % tabs.length));
+    const interact = () => { touched = true; wrap?.classList.remove('hint'); };
+
+    const go = (to: number, dir: number, focus = false) => {
+      const n = slides.length;
+      const i = ((to % n) + n) % n;
+      if (i === cur) return;
+      const out = slides[cur];
+      out.style.setProperty('--from', `${-dir * 28}px`);
+      out.classList.remove('is-active', 'is-in');
+      const next = slides[i];
+      next.style.setProperty('--from', `${dir * 28}px`);
+      next.classList.add('is-active');
+      play(next);
+      tabs.forEach((tab, k) => { tab.setAttribute('aria-selected', String(k === i)); tab.tabIndex = k === i ? 0 : -1; });
+      if (focus) tabs[i]?.focus({ preventScroll: true });
+      // Keep the chosen guest in view in the phone row, without moving the page.
+      if (row && tabs[i] && row.scrollWidth > row.clientWidth) row.scrollTo({ left: tabs[i].offsetLeft - 8, behavior: 'smooth' });
+      cur = i;
+      if (count) count.textContent = (count.dataset.template ?? '').replace('{n}', String(i + 1)).replace('{total}', String(n));
+      markNext();
+    };
+
+    tabs.forEach((tab, i) => tab.addEventListener('click', () => { interact(); go(i, i > cur ? 1 : -1); }));
+    root.querySelector('[data-story-prev]')?.addEventListener('click', () => { interact(); go(cur - 1, -1); });
+    root.querySelector('[data-story-next]')?.addEventListener('click', () => { interact(); go(cur + 1, 1); });
+    row?.addEventListener('keydown', e => {
+      const k = e.key;
+      if (k === 'ArrowRight' || k === 'ArrowDown') { e.preventDefault(); interact(); go(cur + 1, 1, true); }
+      else if (k === 'ArrowLeft' || k === 'ArrowUp') { e.preventDefault(); interact(); go(cur - 1, -1, true); }
+      else if (k === 'Home') { e.preventDefault(); interact(); go(0, -1, true); }
+      else if (k === 'End') { e.preventDefault(); interact(); go(slides.length - 1, 1, true); }
+    });
+
+    // Swipe the card sideways on touch screens.
+    let x0: number | null = null;
+    stage.addEventListener('pointerdown', e => { x0 = e.clientX; });
+    stage.addEventListener('pointerup', e => {
+      if (x0 === null) return;
+      const dx = e.clientX - x0;
+      x0 = null;
+      if (Math.abs(dx) > 50 && slides.length > 1) { interact(); go(cur + (dx < 0 ? 1 : -1), dx < 0 ? 1 : -1); }
+    });
+    stage.addEventListener('pointercancel', () => { x0 = null; });
+
+    // First sight: play the entrance, then invite a tap on the next guest.
+    const io = new IntersectionObserver(entries => {
+      if (!entries.some(e => e.isIntersecting)) return;
+      io.disconnect();
+      play(slides[cur]);
+      markNext();
+      if (slides.length > 1) setTimeout(() => { if (!touched) wrap?.classList.add('hint'); }, 3200);
+    }, { threshold: 0.3 });
+    io.observe(stage);
+  });
+</script>

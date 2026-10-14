@@ -38,6 +38,7 @@ The owner asked for white pages instead of cream, an entirely new layout, a phon
 
 **Country and language popover** (13 October 2026, replacing the full sheet, which the owner found too big). A 320px card opens under the flag chip.
 - **Flags fly** (`components/FlagWave.astro`, 13 October 2026). Each flag is cut into 3 px strips that rise and fall in turn, so a wave runs away from the pole, with light and shade following it. The chosen flag waves; the rest rest with a soft curl and lift on hover or focus. When a country is picked, its flag flies in an arc from the list to the header pole, the old flag is lowered, and the new one is raised. Reduced motion shows still flags and skips the flight.
+- **Guest stories** (`components/Testimonials.astro`, 14 October 2026). One quote in the spotlight on a saffron-tint card; its words rise in and its stars pop when it comes into view or is chosen. Guests are coloured initials avatars (`GuestAvatar.astro`, never stock faces) in a row on phones and a list beside the card on wide screens; tap, swipe, or use the arrow keys to switch. Nothing rotates on its own; the next guest's ring breathes until the reader tries it. A dashed "Share your story" tile invites the next review.
 - **Language:** five flag buttons; one tap switches language.
 - **Country:** a search box over a short list of countries with real flags; one tap sets the country.
 - **Clocks:** two small lines show the visitor's time and India's.

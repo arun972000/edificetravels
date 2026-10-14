@@ -65,7 +65,6 @@ export const en = {
     englishOnlyNotice: 'This page is written in English.',
     englishOnlyBack: '{language} home page',
     outOfFive: '{n} out of 5 stars',
-    googleReview: 'Review on Google',
   },
 
   locale: {
@@ -216,15 +215,15 @@ export const en = {
     regionsLead: 'Each region has its own season, food and pace.',
     regionsExplore: 'Explore {region}',
 
-    voicesLabel: 'Guests',
-    voicesTitle: 'What guests wrote about us on Google',
+    voicesLabel: 'Guest stories',
+    voicesTitle: 'In their own words',
     voiceCount: '{n} of {total}',
     prev: 'Previous',
     next: 'Next',
     reviewOriginal: 'Original review in English',
-    googleTitle: 'Read every review on Google',
-    googleText: 'We quote guests exactly as they wrote. The full list, and room to leave your own, is on our Google listing.',
-    googleLink: 'Open Google reviews',
+    storyTitle: 'Travelled with us?',
+    storyText: 'Tell us how it went. Your words help the next traveller decide.',
+    storyLink: 'Share your story',
 
     peopleLabel: 'The people',
     peopleTitle: 'Talk to the team that plans your trip',
@@ -436,7 +435,7 @@ export const en = {
       specialists: 'Your specialists',
       booking: 'How booking works',
       responsible: 'Responsible travel',
-      reviews: 'Guest reviews',
+      reviews: 'Guest stories',
       contact: 'Contact',
       plan: 'Plan your trip',
       visa: 'India e-Visa guide',

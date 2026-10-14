@@ -63,7 +63,6 @@ export const de: Dict = {
     englishOnlyNotice: 'Diese Seite ist auf Englisch verfasst.',
     englishOnlyBack: 'Startseite auf {language}',
     outOfFive: '{n} von 5 Sternen',
-    googleReview: 'Bewertung bei Google',
   },
 
   locale: {
@@ -214,15 +213,15 @@ export const de: Dict = {
     regionsLead: 'Jede Region hat ihre eigene Reisezeit, ihre Küche und ihr Tempo.',
     regionsExplore: '{region} entdecken',
 
-    voicesLabel: 'Gäste',
-    voicesTitle: 'Was Gäste bei Google über uns geschrieben haben',
+    voicesLabel: 'Gästestimmen',
+    voicesTitle: 'In ihren eigenen Worten',
     voiceCount: '{n} von {total}',
     prev: 'Vorherige',
     next: 'Nächste',
     reviewOriginal: 'Originalbewertung auf Englisch',
-    googleTitle: 'Alle Bewertungen bei Google lesen',
-    googleText: 'Wir zitieren Gäste genau so, wie sie geschrieben haben. Alle Bewertungen und Platz für Ihre eigene finden Sie bei Google.',
-    googleLink: 'Google-Bewertungen öffnen',
+    storyTitle: 'Schon mit uns gereist?',
+    storyText: 'Erzählen Sie uns, wie es war. Ihre Worte helfen dem nächsten Reisenden bei der Entscheidung.',
+    storyLink: 'Ihre Geschichte teilen',
 
     peopleLabel: 'Die Menschen',
     peopleTitle: 'Sprechen Sie mit dem Team, das Ihre Reise plant',
@@ -434,7 +433,7 @@ export const de: Dict = {
       specialists: 'Ihre Spezialisten',
       booking: 'So funktioniert die Buchung',
       responsible: 'Verantwortungsvoll reisen',
-      reviews: 'Gästebewertungen',
+      reviews: 'Gästestimmen',
       contact: 'Kontakt',
       plan: 'Reise planen',
       visa: 'Ratgeber E-Visum Indien',

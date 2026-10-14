@@ -1,0 +1,48 @@
+---
+/**
+ * A guest's avatar: their initials on a warm gradient picked from their
+ * name, so the same guest always gets the same colour. A list of guests can
+ * pass `tone` (their position) so neighbours never share a colour. Never a
+ * stock face.
+ * Titles such as "Dr" and the word "and" are skipped for the initials.
+ */
+interface Props { name: string; size?: number; tone?: number; class?: string }
+const { name, size = 56, tone, class: className = '' } = Astro.props;
+
+const GRADIENTS = [
+  ['#d9690f', '#8a3f06'], // saffron
+  ['#3d5bd9', '#1d2c78'], // indigo
+  ['#0e8a78', '#07463d'], // peacock
+  ['#b0285c', '#5a1030'], // rani pink
+  ['#7351e8', '#33208a'], // violet
+  ['#a87a05', '#5c4100'], // turmeric
+];
+const parts = name.replace(/[^\p{L}\s]/gu, '').split(/\s+/).filter(w => w && !['and', 'Dr', 'Mr', 'Mrs', 'Ms'].includes(w));
+const initials = ((parts[0]?.[0] ?? '') + (parts.length > 1 ? parts[parts.length - 1][0] : '')).toUpperCase();
+const hash = [...name].reduce((h, c) => (h * 31 + c.charCodeAt(0)) >>> 0, 7);
+const [from, to] = GRADIENTS[(tone ?? hash) % GRADIENTS.length];
+---
+
+<span
+  class:list={['guest-avatar', className]}
+  style={`--s:${size}px;--from:${from};--to:${to}`}
+  aria-hidden="true"
+>{initials}</span>
+
+<style>
+  .guest-avatar {
+    display: inline-grid;
+    place-items: center;
+    flex-shrink: 0;
+    width: var(--s);
+    height: var(--s);
+    border-radius: 9999px;
+    background: radial-gradient(circle at 30% 25%, rgb(255 255 255 / 0.26), transparent 55%), linear-gradient(140deg, var(--from), var(--to));
+    color: #fff;
+    font-family: var(--font-sans);
+    font-weight: 800;
+    font-size: calc(var(--s) * 0.36);
+    letter-spacing: 0.02em;
+    box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.18);
+  }
+</style>

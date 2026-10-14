@@ -1,37 +1,24 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import SectionHeading from '../components/SectionHeading.astro';
-import ReviewCard from '../components/ReviewCard.astro';
+import Testimonials from '../components/Testimonials.astro';
 import Breadcrumbs from '../components/Breadcrumbs.astro';
 import Button from '../components/Button.astro';
-import { allReviews, allJourneys } from '../lib/content';
+import { allReviews } from '../lib/content';
 import { breadcrumbLd } from '../lib/seo';
-import { site } from '../data/site';
 
 const reviews = await allReviews();
-const journeys = await allJourneys();
-const title = (id?: string) => journeys.find(j => j.id === id)?.data.title;
-const crumbs = [{ name: 'Home', href: '/' }, { name: 'Guest reviews', href: '/reviews' }];
-const anySample = reviews.some(r => r.data.sample);
+const crumbs = [{ name: 'Home', href: '/' }, { name: 'Guest stories', href: '/reviews' }];
 ---
 
-<BaseLayout title="Guest reviews" description="Reviews our guests left on Google after travelling with Edifice Travels, quoted exactly as they wrote them, with a link to read or add your own." jsonLd={[breadcrumbLd(crumbs)]}>
-  <div class="container-x py-8 md:py-14">
-    <Breadcrumbs items={crumbs} class="mb-6" />
-    <SectionHeading as="h1" size="h1" title="What guests say once they are home" lead="These are reviews our guests left on Google, quoted exactly as they wrote them. You can read every review on our Google listing, where we do not control what is written." />
-    {anySample && (
-      <p class="mt-6 rounded-[16px] bg-warning/10 px-4 py-3 text-small font-semibold text-ink-soft">
-        Reviews marked "Sample" are demonstration content and must be replaced with verified guest reviews before launch.
-      </p>
-    )}
-    <div class="mt-8 grid gap-3 md:grid-cols-2 lg:grid-cols-3">
-      {reviews.map(r => <div class="reveal"><ReviewCard review={r} journeyTitle={title(r.data.journey)} class="h-full" /></div>)}
-    </div>
-    <div class="reveal mt-6 flex flex-wrap gap-3">
-      <Button href={site.googleReviews} variant="secondary" external>Read all reviews on Google</Button>
-    </div>
-    <div class="reveal mt-12 rounded-[30px] bg-night p-6 text-white sm:p-10 md:p-14">
-      <SectionHeading title="Planning a journey of your own?" lead="Tell us how you want India to feel, and a specialist will plan the route around it." dark />
+<BaseLayout title="Guest stories and testimonials" description="What travellers told us after their journeys with Edifice Travels, quoted exactly as they wrote them, with room to share your own story." jsonLd={[breadcrumbLd(crumbs)]}>
+  <div class="container-x pt-8 md:pt-14">
+    <Breadcrumbs items={crumbs} />
+  </div>
+  <Testimonials reviews={reviews} as="h1" title="Guest stories" lead="What travellers told us once they were home, quoted exactly as they wrote it." showAll={false} />
+  <div class="container-x pb-14 md:pb-20">
+    <div class="reveal rounded-[30px] bg-night p-6 text-white sm:p-10 md:p-14">
+      <SectionHeading title="Planning a journey of your own?" lead="Tell us how you want India to feel, and we will plan the route around it." dark />
       <div class="mt-7"><Button href="/plan" size="lg" track="plan_click">Plan your trip</Button></div>
     </div>
   </div>

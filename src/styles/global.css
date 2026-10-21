@@ -1,36 +1,49 @@
 /*
   Edifice Travels: design tokens, base styles and the motion system.
-  Direction "Postcards" (docs/DESIGN-SYSTEM.md v3): white pages, photographs in
-  soft rounded frames, everything tappable, actions within thumb reach on
-  phones, and a few deliberate, slow, emotional movements.
+  Direction "Postcards" (docs/DESIGN-SYSTEM.md) in the logo's own colours
+  (version 4): the orange and the black of the pyramid badge carry whole
+  surfaces, not just buttons. White pages, photographs in soft rounded
+  frames, everything tappable, and a few deliberate, slow movements.
 */
 @import "tailwindcss";
 
 /* ---------------------------------------------------------------------------
    Colour. Light by default, dark by system preference or data-theme.
+   Brand pair sampled from the logo: orange #ea651f and black #1c1b1a.
+   - Orange fills always carry black text (5.3:1). White on orange only at
+     24 px and above.
+   - Orange text on white uses --c-brand-deep (5.5:1), never the fill orange.
+   - Orange text on black panels uses the fill orange (5.3:1).
 --------------------------------------------------------------------------- */
 :root {
   --c-bg: #ffffff;
   --c-bg-elevated: #ffffff;
-  --c-bg-muted: #f4f5f7;
-  --c-ink: #1b1d21;
-  --c-ink-soft: #464b54;
-  --c-ink-muted: #656b76;
-  --c-line: #e6e8ec;
-  --c-brand: #ed7717;
-  /* Brand #c25f0f darkened for text: 5.9:1 on white, 5.3:1 on the mist panels. */
-  --c-brand-deep: #9c4b0a;
-  --c-brand-soft: #fff1e4;
+  --c-bg-muted: #f6f3f0;
+  --c-ink: #1c1b1a;
+  --c-ink-soft: #46423e;
+  --c-ink-muted: #67615b;
+  --c-line: #ebe5df;
+  --c-brand: #ea651f;
+  --c-brand-hover: #f27a3a;
+  /* Logo orange darkened for text: 5.5:1 on white, 5.0:1 on the muted panels. */
+  --c-brand-deep: #b5440b;
+  --c-brand-soft: #fdeee4;
+  --c-brand-tint: #fbd9c4;
+  /* Text that sits on an orange fill. */
+  --c-on-brand: #1c1b1a;
   --c-indigo: #2f3a63;
   --c-success: #15803d;
   --c-warning: #a16207;
   --c-danger: #b42318;
   --c-whatsapp: #25d366;
-  --c-night: #16181b;
-  --c-overlay: rgb(12 13 15 / 0.55);
-  --shadow-1: 0 1px 2px rgb(20 22 26 / 0.06), 0 0 0 1px rgb(20 22 26 / 0.04);
-  --shadow-2: 0 14px 34px -14px rgb(20 22 26 / 0.22);
-  --shadow-3: 0 30px 70px -24px rgb(20 22 26 / 0.38);
+  /* The logo black, for panels that stay dark in both themes. */
+  --c-night: #1c1b1a;
+  --c-night-2: #2a2826;
+  --c-overlay: rgb(20 18 16 / 0.55);
+  --shadow-1: 0 1px 2px rgb(28 27 26 / 0.06), 0 0 0 1px rgb(28 27 26 / 0.04);
+  --shadow-2: 0 14px 34px -14px rgb(28 27 26 / 0.22);
+  --shadow-3: 0 30px 70px -24px rgb(28 27 26 / 0.38);
+  --shadow-brand: 0 14px 30px -14px rgb(234 101 31 / 0.75);
   --header-h: 64px;
   color-scheme: light;
 }
@@ -42,48 +55,58 @@ html.header-hidden { --sticky-top: 0px; }
 
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --c-bg: #0f1012;
-    --c-bg-elevated: #17191c;
-    --c-bg-muted: #1c1f23;
-    --c-ink: #f3f4f6;
-    --c-ink-soft: #c9cdd4;
-    --c-ink-muted: #9aa1ac;
-    --c-line: #2a2e34;
-    --c-brand: #f08a35;
-    --c-brand-deep: #f5a25a;
-    --c-brand-soft: #33220f;
+    --c-bg: #121110;
+    --c-bg-elevated: #1b1a18;
+    --c-bg-muted: #221f1d;
+    --c-ink: #f5f2ef;
+    --c-ink-soft: #d0c9c2;
+    --c-ink-muted: #a39b93;
+    --c-line: #34302c;
+    --c-brand: #ee6c27;
+    --c-brand-hover: #f5843f;
+    --c-brand-deep: #ff8a4c;
+    --c-brand-soft: #2f1c11;
+    --c-brand-tint: #4a2814;
+    --c-on-brand: #1c1b1a;
     --c-indigo: #9fb0e0;
     --c-success: #4ade80;
     --c-warning: #e0a83f;
     --c-danger: #f2726b;
-    --c-night: #1f2226;
+    --c-night: #1f1c1a;
+    --c-night-2: #24211f;
     --c-overlay: rgb(0 0 0 / 0.6);
     --shadow-1: 0 0 0 1px rgb(255 255 255 / 0.06);
     --shadow-2: 0 14px 34px -14px rgb(0 0 0 / 0.6);
     --shadow-3: 0 30px 70px -24px rgb(0 0 0 / 0.75);
+    --shadow-brand: 0 14px 30px -14px rgb(238 108 39 / 0.55);
     color-scheme: dark;
   }
 }
 :root[data-theme="dark"] {
-  --c-bg: #0f1012;
-  --c-bg-elevated: #17191c;
-  --c-bg-muted: #1c1f23;
-  --c-ink: #f3f4f6;
-  --c-ink-soft: #c9cdd4;
-  --c-ink-muted: #9aa1ac;
-  --c-line: #2a2e34;
-  --c-brand: #f08a35;
-  --c-brand-deep: #f5a25a;
-  --c-brand-soft: #33220f;
+  --c-bg: #121110;
+  --c-bg-elevated: #1b1a18;
+  --c-bg-muted: #221f1d;
+  --c-ink: #f5f2ef;
+  --c-ink-soft: #d0c9c2;
+  --c-ink-muted: #a39b93;
+  --c-line: #34302c;
+  --c-brand: #ee6c27;
+  --c-brand-hover: #f5843f;
+  --c-brand-deep: #ff8a4c;
+  --c-brand-soft: #2f1c11;
+  --c-brand-tint: #4a2814;
+  --c-on-brand: #1c1b1a;
   --c-indigo: #9fb0e0;
   --c-success: #4ade80;
   --c-warning: #e0a83f;
   --c-danger: #f2726b;
-  --c-night: #1f2226;
+  --c-night: #1f1c1a;
+  --c-night-2: #24211f;
   --c-overlay: rgb(0 0 0 / 0.6);
   --shadow-1: 0 0 0 1px rgb(255 255 255 / 0.06);
   --shadow-2: 0 14px 34px -14px rgb(0 0 0 / 0.6);
   --shadow-3: 0 30px 70px -24px rgb(0 0 0 / 0.75);
+  --shadow-brand: 0 14px 30px -14px rgb(238 108 39 / 0.55);
   color-scheme: dark;
 }
 
@@ -97,8 +120,12 @@ html.header-hidden { --sticky-top: 0px; }
   --color-ink-muted: var(--c-ink-muted);
   --color-line: var(--c-line);
   --color-brand: var(--c-brand);
+  --color-brand-hover: var(--c-brand-hover);
   --color-brand-deep: var(--c-brand-deep);
   --color-brand-soft: var(--c-brand-soft);
+  --color-brand-tint: var(--c-brand-tint);
+  --color-on-brand: var(--c-on-brand);
+  --color-night-2: var(--c-night-2);
   --color-indigo: var(--c-indigo);
   --color-success: var(--c-success);
   --color-warning: var(--c-warning);
@@ -109,8 +136,8 @@ html.header-hidden { --sticky-top: 0px; }
   --color-black: #000000;
   --color-transparent: transparent;
 
-  --font-display: "Fraunces Variable", Georgia, "Times New Roman", serif;
-  --font-sans: "Manrope Variable", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-display: "Fraunces Variable", "Noto Serif Devanagari Variable", Georgia, "Times New Roman", serif;
+  --font-sans: "Manrope Variable", "Noto Sans Devanagari Variable", system-ui, -apple-system, "Segoe UI", sans-serif;
 
   --text-small: 0.9375rem;
   --text-small--line-height: 1.5;
@@ -173,7 +200,7 @@ html.header-hidden { --sticky-top: 0px; }
   }
   p { text-wrap: pretty; }
   a { color: inherit; }
-  ::selection { background: var(--c-brand-soft); color: var(--c-ink); }
+  ::selection { background: var(--c-brand); color: var(--c-on-brand); }
   :focus-visible { outline: 2px solid var(--c-brand-deep); outline-offset: 3px; border-radius: 6px; }
   img, video { max-width: 100%; height: auto; display: block; }
   button { font: inherit; cursor: pointer; }
@@ -259,9 +286,57 @@ html.header-hidden { --sticky-top: 0px; }
   font-weight: 600;
   white-space: nowrap;
   transition: background-color 0.3s var(--ease-out), border-color 0.3s var(--ease-out), color 0.3s var(--ease-out), transform 0.2s var(--ease-out);
-  &:hover { border-color: color-mix(in oklab, var(--c-ink) 35%, transparent); }
+  &:hover { border-color: var(--c-brand); color: var(--c-ink); }
   &:active { transform: scale(0.96); }
-  &[aria-pressed="true"], &[aria-selected="true"], &[aria-current="true"] { background: var(--c-ink); border-color: var(--c-ink); color: var(--c-bg); }
+  &[aria-pressed="true"], &[aria-selected="true"], &[aria-current="true"] { background: var(--c-brand); border-color: var(--c-brand); color: var(--c-on-brand); }
+}
+
+/* The logo's two faces as a short rule above headings: orange, then black. */
+@utility brand-tick {
+  display: block;
+  width: 3.25rem;
+  height: 5px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--c-brand) 0 64%, var(--c-ink) 64% 100%);
+}
+@utility brand-tick-light {
+  display: block;
+  width: 3.25rem;
+  height: 5px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--c-brand) 0 64%, #ffffff 64% 100%);
+}
+
+@utility brand-tick-ink {
+  display: block;
+  width: 3.25rem;
+  height: 5px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #1c1b1a 0 64%, #ffffff 64% 100%);
+}
+
+/* Small orange label, used only where it adds information (a count, a step). */
+@utility kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: var(--font-sans);
+  font-size: 0.875rem;
+  font-weight: 750;
+  line-height: 1.2;
+  color: var(--c-brand-deep);
+}
+
+/* Whole surfaces in the brand pair. Text on orange is always the logo black. */
+@utility surface-brand {
+  background: var(--c-brand);
+  color: var(--c-on-brand);
+  & h1, & h2, & h3, & h4 { color: var(--c-on-brand); }
+}
+@utility surface-night {
+  background: var(--c-night);
+  color: rgb(255 255 255 / 0.82);
+  & h1, & h2, & h3, & h4 { color: #ffffff; }
 }
 
 /* Rows that scroll sideways on touch, with the next card peeking in. */
@@ -300,8 +375,23 @@ html.header-hidden { --sticky-top: 0px; }
 
   /* Image frames: rounded postcards. Hover drifts the photo very slightly. */
   .frame { position: relative; overflow: hidden; border-radius: var(--radius-lg); background: var(--c-bg-muted); isolation: isolate; }
-  .frame > img, .frame > picture > img { transition: transform 1.4s var(--ease-out); }
+  .frame > img, .frame > picture > img { transition: transform 0.7s var(--ease-out); }
   @media (hover: hover) { .group:hover .frame > img, .frame:hover > img { transform: scale(1.045); } }
+  /* While a photograph is on its way, its frame shimmers softly in the brand
+     tint; the photo then fades in. Only active once BaseLayout's loader has
+     run (html.img-fade), so a page without script shows photos as normal. */
+  html.img-fade .frame > img, html.img-fade .hero-img, html.img-fade .fade-img { transition: opacity 0.4s var(--ease-out), transform 0.7s var(--ease-out); }
+  html.img-fade .frame > img:not(.is-loaded), html.img-fade .fade-img:not(.is-loaded) { opacity: 0; }
+  html.img-fade .frame:has(> img:not(.is-loaded)) {
+    background: linear-gradient(105deg, var(--c-bg-muted) 35%, var(--c-brand-soft) 50%, var(--c-bg-muted) 65%) 0 0 / 250% 100%;
+    animation: frame-shimmer 1.6s linear infinite;
+  }
+  @keyframes frame-shimmer { from { background-position: 100% 0; } to { background-position: -150% 0; } }
+  @media (prefers-reduced-motion: reduce) { html.img-fade .frame:has(> img:not(.is-loaded)) { animation: none; } }
+
+  /* An orange edge grows along the foot of a card's photo on hover or focus. */
+  .frame-accent::after { content: ''; position: absolute; inset: auto 0 0 0; height: 5px; background: var(--c-brand); transform: scaleX(0); transform-origin: 0 50%; transition: transform 0.6s var(--ease-out); z-index: 2; }
+  .group:hover .frame-accent::after, .group:focus-visible .frame-accent::after { transform: scaleX(1); }
 }
 
 /* ===========================================================================
@@ -310,32 +400,50 @@ html.header-hidden { --sticky-top: 0px; }
 =========================================================================== */
 
 @view-transition { navigation: auto; }
-::view-transition-old(root), ::view-transition-new(root) { animation-duration: 0.45s; animation-timing-function: var(--ease-out); }
-::view-transition-group(*) { animation-duration: 0.6s; animation-timing-function: var(--ease-out); }
+::view-transition-old(root), ::view-transition-new(root) { animation-duration: 0.28s; animation-timing-function: var(--ease-out); }
+::view-transition-group(*) { animation-duration: 0.4s; animation-timing-function: var(--ease-out); }
 @media (prefers-reduced-motion: reduce) { @view-transition { navigation: none; } }
 
-/* Rise: content settles up into place, slightly out of focus at first. */
+/* Motion is quick and light: it should feel like the page settling, never
+   like waiting. Transform and opacity only (no blur, which is costly to
+   paint while scrolling), and everything is done in well under a second. */
+
+/* Rise: content settles up into place. */
 .reveal { opacity: 1; transform: none; }
 html.js .reveal {
   opacity: 0;
-  transform: translateY(26px);
-  filter: blur(6px);
-  transition: opacity 1s var(--ease-out), transform 1.1s var(--ease-out), filter 1s var(--ease-out);
+  transform: translateY(14px);
+  transition: opacity 0.5s var(--ease-out), transform 0.6s var(--ease-out);
   transition-delay: var(--delay, 0ms);
 }
-html.js .reveal.is-visible { opacity: 1; transform: none; filter: none; }
+html.js .reveal.is-visible { opacity: 1; transform: none; }
 
 /* Develop: a photograph opens from a slightly inset frame and settles. The
    frame never fully hides the image, so lazy loading still starts on time. */
-html.js .reveal-img { clip-path: inset(7% 7% 7% 7% round var(--radius-lg)); transition: clip-path 1.4s var(--ease-out); transition-delay: var(--delay, 0ms); }
-html.js .reveal-img > img, html.js .reveal-img > picture > img { scale: 1.12; transition: scale 1.8s var(--ease-out), transform 1.4s var(--ease-out); transition-delay: var(--delay, 0ms); }
+html.js .reveal-img { clip-path: inset(3% 3% 3% 3% round var(--radius-lg)); transition: clip-path 0.7s var(--ease-out); transition-delay: var(--delay, 0ms); }
+html.js .reveal-img > img, html.js .reveal-img > picture > img { scale: 1.05; transition: scale 0.9s var(--ease-out), transform 0.8s var(--ease-out), opacity 0.5s var(--ease-out); transition-delay: var(--delay, 0ms); }
 html.js .reveal-img.is-visible { clip-path: inset(0 0 0 0 round var(--radius-lg)); }
 html.js .reveal-img.is-visible > img, html.js .reveal-img.is-visible > picture > img { scale: 1; }
 
-/* Headlines rise word by word from behind a mask. */
-.w { display: inline-block; overflow: hidden; vertical-align: top; padding-bottom: 0.1em; margin-bottom: -0.1em; }
+/* Headlines rise word by word from behind a mask. The mask reaches above the
+   cap height and below the baseline, so accents (È, Ü) and descenders are
+   never clipped, whatever the language. */
+.w { display: inline-block; overflow: hidden; vertical-align: top; padding: 0.16em 0.04em 0.18em; margin: -0.16em -0.04em -0.18em; }
 .w > span { display: inline-block; }
-html.js .split .w > span { transform: translateY(105%); transition: transform 1.1s var(--ease-out); transition-delay: calc(var(--i, 0) * 60ms); }
+
+/* Hindi. Devanagari hangs its letters from a joined top line (the shirorekha)
+   and carries vowel signs above and below it. So on Hindi pages: no letter
+   spacing, which would break the top line; more line height on headings, so
+   signs on one line never touch the next; and taller word masks, so the
+   headline reveal never clips a sign. Latin words inside keep their fonts. */
+:lang(hi), :lang(hi) * { letter-spacing: 0 !important; }
+:lang(hi) :is(h1, h2) { line-height: 1.3 !important; }
+:lang(hi) :is(h3, h4) { line-height: 1.45 !important; }
+/* Header: where long translated labels would overflow at laptop widths, the
+   badge stands alone (set by a small check in Header.astro). */
+@media (min-width: 64rem) and (max-width: 79.99rem) { .is-tight .logo-word { display: none; } }
+:lang(hi) .w { padding: 0.34em 0.04em 0.36em; margin: -0.34em -0.04em -0.36em; }
+html.js .split .w > span { transform: translateY(110%); transition: transform 0.6s var(--ease-out); transition-delay: calc(min(var(--i, 0), 10) * 28ms); }
 html.js .split.is-visible .w > span { transform: none; }
 
 /* Words light up as they pass through the screen (manifesto). */
@@ -362,10 +470,16 @@ html.js .split.is-visible .w > span { transform: none; }
 @keyframes step-in { from { opacity: 0; transform: translateX(18px); } to { opacity: 1; transform: none; } }
 
 .numeral-outline { font-family: var(--font-display); color: transparent; -webkit-text-stroke: 1px var(--c-brand); font-variation-settings: "SOFT" 0, "WONK" 0, "opsz" 144; }
+
+/* The pyramid from the badge, drawn large behind a panel (components/Pyramid.astro). */
+.pyramid-deco { position: absolute; pointer-events: none; user-select: none; }
+
+/* A thin band of the two brand colours, used to close a dark or orange panel. */
+.brand-stripe { height: 6px; background: linear-gradient(90deg, var(--c-brand) 0 62%, var(--c-ink) 62% 100%); }
 .chapter { font-family: var(--font-sans); font-size: 0.95rem; font-weight: 650; color: var(--c-brand-deep); }
 
 @media (prefers-reduced-motion: reduce) {
-  html.js .reveal, html.js .split .w > span { opacity: 1; transform: none; filter: none; transition: none; }
+  html.js .reveal, html.js .split .w > span { opacity: 1; transform: none; transition: none; }
   html.js .reveal-img { clip-path: none; }
   html.js .reveal-img > img { scale: 1; }
   .lit .word { animation: none; opacity: 1; }
@@ -380,6 +494,27 @@ html.js .split.is-visible .w > span { transform: none; }
 
 /* Space for the phone dock so it never covers the end of the page. */
 @media (width < 64rem) { body.has-dock { padding-bottom: calc(5.25rem + env(safe-area-inset-bottom)); } }
+
+/* Printing a journey (or saving it as a PDF): the itinerary only, every day
+   expanded and every photo shown, without the site's navigation and buttons. */
+@media print {
+  @page { margin: 14mm 12mm; }
+  html, body { background: #fff !important; color: #1c1b1a !important; }
+  #site-header, footer, [data-dock], [data-tabs], #consent, .skip-link, .read-progress, .locale-suggest,
+  .btn, .day-toggle, [data-print], .route-map, aside, [data-hero] .ph-in:last-child { display: none !important; }
+  body > div[aria-hidden="true"]:first-of-type { height: 0 !important; }
+  html.js .reveal, html.js .split .w > span, html.js .reveal-img, html.js .reveal-img > img { opacity: 1 !important; transform: none !important; filter: none !important; clip-path: none !important; scale: 1 !important; }
+  html.js .day-by-day .day-extra { display: list-item !important; }
+  .day-by-day article, .faq, .stay-panel { break-inside: avoid; }
+  html.js .stay-panel { opacity: 1 !important; visibility: visible !important; transform: none !important; grid-row: auto !important; margin-bottom: 1rem; }
+  [role="tablist"] { display: none !important; }
+  .faq { display: block; }
+  .faq > p { display: block !important; }
+  .faq::details-content { block-size: auto !important; content-visibility: visible !important; }
+  a { text-decoration: none; }
+  [data-hero] .hero-card { min-height: 0 !important; height: 9cm; border-radius: 12px !important; }
+  html.img-fade img { opacity: 1 !important; }
+}
 
 .skip-link { position: absolute; left: 1rem; top: -4rem; z-index: 100; background: var(--c-ink); color: var(--c-bg); padding: 0.6rem 1rem; border-radius: var(--radius-pill); transition: top 0.2s; }
 .skip-link:focus { top: 1rem; }

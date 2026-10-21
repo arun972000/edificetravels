@@ -7,6 +7,21 @@ export type Destination = CollectionEntry<'destinations'>;
 export type Guide = CollectionEntry<'guides'>;
 export type Specialist = CollectionEntry<'specialists'>;
 export type Review = CollectionEntry<'reviews'>;
+export type Theme = CollectionEntry<'themes'>;
+
+export async function allThemes(): Promise<Theme[]> {
+  const list = await getCollection('themes');
+  return list.sort((a, b) => a.data.order - b.data.order || a.data.title.localeCompare(b.data.title));
+}
+
+export async function journeysByTheme(theme: string): Promise<Journey[]> {
+  return (await allJourneys()).filter(j => (j.data.themes as string[]).includes(theme));
+}
+
+export async function guidesByIds(ids: string[]): Promise<Guide[]> {
+  const all = await allGuides();
+  return ids.map(id => all.find(g => g.id === id)).filter((g): g is Guide => Boolean(g));
+}
 
 export async function allJourneys(): Promise<Journey[]> {
   const list = await getCollection('journeys');
@@ -25,6 +40,43 @@ export async function journeysByRegion(region: string): Promise<Journey[]> {
 
 export async function journeysForDestination(id: string): Promise<Journey[]> {
   return (await allJourneys()).filter(j => j.data.destinations.includes(id));
+}
+
+/**
+ * Itinerary locations that belong to a destination page, where the journeys
+ * name a nearby base (Nubra for Ladakh, Kumarakom for the backwaters).
+ * Anything else matches on the first word of the destination's title.
+ */
+const STAY_PLACES: Record<string, string[]> = {
+  'leh-ladakh': ['Leh', 'Nubra Valley', 'Pangong Lake'],
+  srinagar: ['Srinagar', 'Gulmarg', 'Pahalgam'],
+  alleppey: ['Alleppey', 'Kumarakom', 'Marari Beach'],
+};
+
+export type StayRow = { location: string; comfort: string[]; premium: string[]; luxury: string[] };
+
+/**
+ * The hotels our journeys use in and around a destination, by style, read
+ * from the day-by-day itineraries. Keeps the destination page and the
+ * journeys naming the same hotels, with no list to maintain twice.
+ */
+export async function staysForDestination(d: Destination): Promise<StayRow[]> {
+  const places = STAY_PLACES[d.id] ?? [d.data.title.split(' ')[0]];
+  const rows = new Map<string, { comfort: Set<string>; premium: Set<string>; luxury: Set<string> }>();
+  for (const j of await allJourneys()) {
+    for (const day of j.data.itinerary) {
+      if (!day.stay || !places.includes(day.location)) continue;
+      const row = rows.get(day.location) ?? { comfort: new Set(), premium: new Set(), luxury: new Set() };
+      row.comfort.add(day.stay.comfort);
+      row.premium.add(day.stay.premium);
+      row.luxury.add(day.stay.luxury);
+      rows.set(day.location, row);
+    }
+  }
+  return places.filter(p => rows.has(p)).map(p => {
+    const r = rows.get(p)!;
+    return { location: p, comfort: [...r.comfort], premium: [...r.premium], luxury: [...r.luxury] };
+  });
 }
 
 export async function relatedJourneys(j: Journey, limit = 3): Promise<Journey[]> {

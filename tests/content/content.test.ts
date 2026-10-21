@@ -80,3 +80,22 @@ describe('real data only', () => {
     }
   });
 });
+
+/** Every destination page is a full guide, not a note: these sections must all be there. */
+describe('destination guides', () => {
+  const DIR = join(ROOT, 'destinations');
+  const pages = readdirSync(DIR).filter(f => f.endsWith('.md'));
+  it.each(pages)('%s has sights, food, seasons, getting there, stays, a plan and questions', async file => {
+    const { parse } = await import('yaml');
+    const front = readFileSync(join(DIR, file), 'utf8').match(/^---\r?\n([\s\S]*?)\r?\n---/)?.[1] ?? '';
+    const d = parse(front);
+    expect(d.sights?.length, 'sights').toBeGreaterThanOrEqual(5);
+    expect(d.food?.length, 'food').toBeGreaterThanOrEqual(3);
+    expect(d.seasons?.length, 'seasons').toBeGreaterThanOrEqual(2);
+    expect(d.gettingThere?.road?.length, 'road times').toBeGreaterThanOrEqual(2);
+    expect(d.stay?.areas?.length, 'stay areas').toBeGreaterThanOrEqual(2);
+    expect(d.plan?.length, 'day plan').toBeGreaterThanOrEqual(1);
+    expect(d.faqs?.length, 'questions').toBeGreaterThanOrEqual(4);
+    for (const s of d.sights) expect(s.time, `${s.name} needs a time`).toBeTruthy();
+  });
+});

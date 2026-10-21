@@ -140,6 +140,25 @@ export default function Wizard(p: Props) {
   };
   const back = () => { setError(null); setStep(s => Math.max(0, s - 1)); };
 
+  /**
+   * Where the visitor came from and their time zone, sent with the enquiry so
+   * replies can be timed and campaigns measured. UTM tags are kept for the
+   * session by BaseLayout from the first page that carried them.
+   */
+  const campaign = (): Record<string, string> => {
+    const out: Record<string, string> = {};
+    try {
+      const saved = JSON.parse(sessionStorage.getItem('utm') ?? '{}') as Record<string, string>;
+      const here = new URLSearchParams(location.search);
+      for (const k of ['utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content']) {
+        const v = here.get(k) ?? saved[k];
+        if (v) out[k] = v.slice(0, 120);
+      }
+    } catch { /* storage blocked */ }
+    try { out.time_zone = Intl.DateTimeFormat().resolvedOptions().timeZone ?? ''; } catch { /* old browser */ }
+    return out;
+  };
+
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     const problem = validateContact();
@@ -181,6 +200,7 @@ export default function Wizard(p: Props) {
           journey: enJourneyTitle ?? '',
           message: f.message,
           page: typeof location !== 'undefined' ? location.href : '',
+          ...campaign(),
           summary,
           botcheck: f.botcheck,
         }),
@@ -195,7 +215,7 @@ export default function Wizard(p: Props) {
   };
 
   const input = 'mt-2 h-13 w-full rounded-[14px] border border-line bg-bg-elevated px-4 text-[1rem] text-ink outline-none transition-colors focus:border-ink';
-  const chip = (on: boolean) => `h-11 rounded-pill border px-4 text-[0.95rem] font-semibold transition-all active:scale-95 ${on ? 'border-ink bg-ink text-bg' : 'border-line text-ink hover:border-ink/40'}`;
+  const chip = (on: boolean) => `h-11 rounded-pill border px-4 text-[0.95rem] font-semibold transition-all active:scale-95 ${on ? 'border-brand bg-brand text-on-brand' : 'border-line text-ink hover:border-brand'}`;
   const card = (on: boolean) => `flex cursor-pointer items-start gap-3 rounded-[18px] border p-4 transition-all active:scale-[0.98] ${on ? 'border-brand bg-brand-soft shadow-[0_0_0_1px_var(--c-brand)]' : 'border-line hover:border-ink/40'}`;
 
   if (status === 'done') {
@@ -216,7 +236,7 @@ export default function Wizard(p: Props) {
   }
 
   return (
-    <form onSubmit={submit} noValidate className="rounded-[28px] border border-line bg-bg-elevated p-5 md:p-9" ref={top}>
+    <form onSubmit={submit} noValidate className="rounded-[28px] border border-line border-t-[6px] border-t-brand bg-bg-elevated p-5 md:p-9" ref={top}>
       <p ref={live} className="sr-only" aria-live="polite" />
       <div className="mb-7">
         <p className="text-[0.9rem] font-bold text-ink">{fill(t.stepOf, { n: step + 1, total: t.steps.length, name: t.steps[step] })}</p>
@@ -243,7 +263,7 @@ export default function Wizard(p: Props) {
                 const on = f.regions.includes(r.id);
                 return (
                   <label key={r.id} className={card(on)}>
-                    <input type="checkbox" className="mt-1 h-4 w-4 accent-[#c25f0f]" checked={on} onChange={() => toggleRegion(r.id)} />
+                    <input type="checkbox" className="mt-1 h-4 w-4 accent-[#ea651f]" checked={on} onChange={() => toggleRegion(r.id)} />
                     <span><span className="block font-semibold text-ink">{r.label}</span><span className="text-small text-ink-muted">{r.sub}</span></span>
                   </label>
                 );
@@ -314,7 +334,7 @@ export default function Wizard(p: Props) {
                 const on = f.tier === tier.id;
                 return (
                   <label key={tier.id} className={card(on)}>
-                    <input type="radio" name="tier" className="mt-1 h-4 w-4 accent-[#c25f0f]" checked={on} onChange={() => set('tier', tier.id)} />
+                    <input type="radio" name="tier" className="mt-1 h-4 w-4 accent-[#ea651f]" checked={on} onChange={() => set('tier', tier.id)} />
                     <span><span className="block font-semibold text-ink">{tier.id === 'Not sure' ? t.notSure : tier.id}</span><span className="text-small text-ink-muted">{tier.sub}</span></span>
                   </label>
                 );
@@ -370,7 +390,7 @@ export default function Wizard(p: Props) {
               ))}
             </div>
             <label className="mt-6 flex items-start gap-3 text-small text-ink-soft">
-              <input type="checkbox" checked={f.consent} onChange={e => set('consent', e.target.checked)} className="mt-1 h-4 w-4 accent-[#c25f0f]" required />
+              <input type="checkbox" checked={f.consent} onChange={e => set('consent', e.target.checked)} className="mt-1 h-4 w-4 accent-[#ea651f]" required />
               <span>{t.consent} <a href={p.privacyHref} target="_blank" rel="noopener" className="underline underline-offset-2">Privacy policy</a></span>
             </label>
             <input type="text" name="botcheck" value={f.botcheck} onChange={e => set('botcheck', e.target.value)} className="hidden" tabIndex={-1} autoComplete="off" aria-hidden="true" />

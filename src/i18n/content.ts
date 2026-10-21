@@ -30,6 +30,10 @@ export const journeyText: Partial<Record<Locale, Record<string, Pair>>> = {
       title: 'Königreiche des Dekkan',
       tagline: 'Dreizehn Tage quer durch Karnataka bis Goa: ein Maharadscha-Palast, Kaffeeberge, die Ruinenstadt Hampi, die Höhlentempel von Badami und zum Abschluss eine portugiesisch geprägte Küste.',
     },
+    'lakes-and-meadows-of-kashmir': {
+      title: 'Seen und Wiesen Kaschmirs',
+      tagline: 'Zehn Tage: der Taj im Morgengrauen, dann nach Norden nach Srinagar, mit einem Hausboot auf dem Dal-See, den Mogulgärten, den Wiesen von Gulmarg und dem Lidder-Tal bei Pahalgam.',
+    },
     'ladakh-the-high-desert': {
       title: 'Ladakh, die Hochwüste',
       tagline: 'Neun Tage auf 3.500 Metern und höher: Klöster, zwei der höchsten befahrbaren Pässe der Welt, Sanddünen und ein See, der stündlich seine Farbe wechselt.',
@@ -75,6 +79,10 @@ export const journeyText: Partial<Record<Locale, Record<string, Pair>>> = {
     'kingdoms-of-the-deccan': {
       title: 'Royaumes du Deccan',
       tagline: 'Treize jours à travers le Karnataka jusqu’à Goa : le palais d’un maharaja, des collines de café, la cité en ruine de Hampi, les temples rupestres de Badami et, pour finir, une côte aux accents portugais.',
+    },
+    'lakes-and-meadows-of-kashmir': {
+      title: 'Lacs et prairies du Cachemire',
+      tagline: 'Dix jours : le Taj à l’aube, puis cap au nord vers Srinagar pour un houseboat sur le lac Dal, les jardins moghols, les prairies de Gulmarg et la vallée de la Lidder à Pahalgam.',
     },
     'ladakh-the-high-desert': {
       title: 'Ladakh, le désert d’altitude',
@@ -122,6 +130,10 @@ export const journeyText: Partial<Record<Locale, Record<string, Pair>>> = {
       title: 'Reinos del Decán',
       tagline: 'Trece días por Karnataka hasta Goa: el palacio de un maharajá, colinas de café, la ciudad en ruinas de Hampi, los templos excavados en la roca de Badami y, para terminar, una costa de herencia portuguesa.',
     },
+    'lakes-and-meadows-of-kashmir': {
+      title: 'Lagos y praderas de Cachemira',
+      tagline: 'Diez días: el Taj al amanecer y luego al norte, a Srinagar, para una casa flotante en el lago Dal, los jardines mogoles, las praderas de Gulmarg y el valle del Lidder en Pahalgam.',
+    },
     'ladakh-the-high-desert': {
       title: 'Ladakh, el desierto de altura',
       tagline: 'Nueve días a 3.500 metros o más: monasterios, dos de los puertos de carretera más altos del mundo, dunas de arena y un lago que cambia de color a cada hora.',
@@ -168,6 +180,10 @@ export const journeyText: Partial<Record<Locale, Record<string, Pair>>> = {
       title: 'Regni del Deccan',
       tagline: 'Tredici giorni attraverso il Karnataka fino a Goa: il palazzo di un maharaja, le colline del caffè, la città in rovina di Hampi, i templi rupestri di Badami e, per finire, una costa dal sapore portoghese.',
     },
+    'lakes-and-meadows-of-kashmir': {
+      title: 'Laghi e prati del Kashmir',
+      tagline: 'Dieci giorni: il Taj all’alba, poi a nord verso Srinagar per una houseboat sul lago Dal, i giardini moghul, i prati di Gulmarg e la valle del Lidder a Pahalgam.',
+    },
     'ladakh-the-high-desert': {
       title: 'Ladakh, il deserto d’alta quota',
       tagline: 'Nove giorni a 3.500 metri e oltre: monasteri, due dei passi carrozzabili più alti del mondo, dune di sabbia e un lago che cambia colore di ora in ora.',
@@ -191,6 +207,56 @@ export const journeyText: Partial<Record<Locale, Record<string, Pair>>> = {
     'tigers-forts-and-palaces': {
       title: 'Tigri, forti e palazzi',
       tagline: 'Dieci giorni: cinque safari a Ranthambore, l’Amber Fort in jeep e i laghi di Udaipur, pensati per famiglie che vogliono natura selvaggia e fasto regale.',
+    },
+  },
+  hi: {
+    'ayurveda-rest-and-renewal': {
+      title: 'आयुर्वेद, आराम और नई ताज़गी',
+      tagline: 'चौदह दिन: केरल की पहाड़ियों के एक रिट्रीट में डॉक्टर की देखरेख में आयुर्वेद, दस रातें उपचार और सात्त्विक भोजन, फिर धीरे-धीरे लौटने के लिए समंदर किनारे दो दिन।',
+    },
+    'forts-deserts-and-the-taj': {
+      title: 'क़िले, रेगिस्तान और ताज',
+      tagline: 'दिल्ली से पश्चिम में उदयपुर तक बारह दिन: भोर में ताज, जोधपुर की नीली गलियाँ और थार में एक रात।',
+    },
+    'golden-temple-and-the-foothills': {
+      title: 'स्वर्ण मंदिर और पहाड़ों की तलहटी',
+      tagline: 'अमृतसर से गंगा तक दस दिन: सिखों का पवित्र शहर, दलाई लामा का पहाड़ी शहर, पुरानी ग्रीष्मकालीन राजधानी और ऋषिकेश में सुबह का योग।',
+    },
+    'golden-triangle-and-the-ganges': {
+      title: 'गोल्डन ट्रायंगल और गंगा',
+      tagline: 'नौ दिन: दिल्ली, ताज और गुलाबी शहर, फिर वाराणसी में गंगा किनारे दो रातें, जहाँ भोर में पूरा शहर नदी पर उतर आता है।',
+    },
+    'kingdoms-of-the-deccan': {
+      title: 'दक्कन के राज्य',
+      tagline: 'कर्नाटक से गोवा तक तेरह दिन: एक महाराजा का महल, कॉफ़ी की पहाड़ियाँ, हम्पी का खंडहर शहर, बादामी के गुफा मंदिर और आख़िर में पुर्तगाली रंग वाला तट।',
+    },
+    'ladakh-the-high-desert': {
+      title: 'लद्दाख, ऊँचाई का रेगिस्तान',
+      tagline: '3,500 मीटर और उससे ऊपर नौ दिन: मठ, दुनिया के दो सबसे ऊँचे सड़क दर्रे, रेत के टीले और एक झील जो हर घंटे रंग बदलती है।',
+    },
+    'lakes-and-meadows-of-kashmir': {
+      title: 'कश्मीर की झीलें और घास के मैदान',
+      tagline: 'दस दिन: भोर में ताज, फिर उत्तर में श्रीनगर, डल झील पर हाउसबोट, मुग़ल बाग़, गुलमर्ग के घास के मैदान और पहलगाम में लिद्दर घाटी।',
+    },
+    'spice-coast-and-backwaters': {
+      title: 'मसालों का तट और बैकवॉटर',
+      tagline: 'कोच्चि से कोवलम तक केरल में दस दिन: चाय की पहाड़ियाँ, हाउसबोट पर एक रात, साइकिल से गाँव की गलियाँ और आख़िर में समुद्र तट।',
+    },
+    'tea-hills-and-the-brahmaputra': {
+      title: 'चाय की पहाड़ियाँ और ब्रह्मपुत्र',
+      tagline: 'भारत के पूर्व में दस दिन: कोलकाता की गलियाँ और मिठाई की दुकानें, दार्जिलिंग से भोर में कंचनजंघा, और काज़ीरंगा के एक सींग वाले गैंडे।',
+    },
+    'temples-of-the-tamil-south': {
+      title: 'तमिल दक्षिण के मंदिर',
+      tagline: 'तमिलनाडु में ग्यारह दिन: शोर मंदिर, एक फ़्रांसीसी शहर, चोलों की राजधानी, चेट्टिनाड की रसोई और रात में मदुरै, फिर पहाड़ों के पार केरल।',
+    },
+    'the-grand-tour': {
+      title: 'भारत का ग्रैंड टूर',
+      tagline: 'तीन हफ़्ते, उत्तर और दक्षिण: ताज और राजस्थान के क़िले, फिर केरल की उड़ान, जहाँ चाय की पहाड़ियाँ, हाउसबोट और समंदर किनारे तीन रातें हैं।',
+    },
+    'tigers-forts-and-palaces': {
+      title: 'बाघ, क़िले और महल',
+      tagline: 'परिवारों के लिए दस दिन: रणथंभौर में पाँच सफ़ारी, जीप से आमेर क़िला, जयपुर में कठपुतली का खेल और उदयपुर की झीलों पर तीन इत्मीनान भरी रातें।',
     },
   },
 };
@@ -284,6 +350,28 @@ export const regionText: Partial<Record<Locale, Record<string, Pair>>> = {
       tagline: 'Verde dalle colline al mare, templi ancora vivi ogni giorno, spezie in ogni piatto e il Mar Arabico in fondo alla strada.',
     },
   },
+  hi: {
+    'east-northeast': {
+      title: 'पूर्व और पूर्वोत्तर',
+      tagline: 'कोलकाता की ढलती शान, दार्जिलिंग की पहाड़ी पर चाय और ब्रह्मपुत्र किनारे गैंडे, भारत के उस हिस्से में जहाँ ज़्यादातर सैलानी कभी नहीं पहुँचते।',
+    },
+    himalaya: {
+      title: 'हिमालय',
+      tagline: 'मैदानों में स्वर्ण मंदिर से 3,500 मीटर पर लद्दाख के मठों तक, बीच में पहाड़ी शहर, आश्रम और सेब की घाटियाँ।',
+    },
+    north: {
+      title: 'उत्तर भारत',
+      tagline: 'मुग़लों का गढ़ और गंगा: दिल्ली के सात शहर, भोर में ताज, और घाटों पर बसा वाराणसी।',
+    },
+    rajasthan: {
+      title: 'राजस्थान',
+      tagline: 'हर पहाड़ी पर एक क़िला, और पश्चिम में एक रेगिस्तान जो शाम छह बजे सुनहरा हो जाता है।',
+    },
+    south: {
+      title: 'दक्षिण भारत',
+      tagline: 'चाय की पहाड़ियाँ और बैकवॉटर, मंदिरों के शहर जहाँ पूजा कभी थमी नहीं, और लगभग हर पकवान में काली मिर्च।',
+    },
+  },
 };
 
 export const specialistRole: Partial<Record<Locale, Record<string, string>>> = {
@@ -291,4 +379,81 @@ export const specialistRole: Partial<Record<Locale, Record<string, string>>> = {
   fr: { team: 'Spécialistes du voyage' },
   es: { team: 'Especialistas en viajes' },
   it: { team: 'Specialisti di viaggio' },
+  hi: { team: 'यात्रा विशेषज्ञ' },
+};
+
+/** Theme hub names (src/content/themes), for links on translated pages. */
+export const themeText: Partial<Record<Locale, Record<string, string>>> = {
+  de: {
+    heritage: 'Kulturerbe und Paläste',
+    wildlife: 'Tiere und Safaris',
+    wellness: 'Wellness und Ayurveda',
+    spiritual: 'Spirituelles Indien',
+    'slow-travel': 'Langsam reisen',
+    culinary: 'Küche und Märkte',
+    family: 'Reisen mit Familie',
+    adventure: 'Berge und Hochpässe',
+  },
+  fr: {
+    heritage: 'Patrimoine et palais',
+    wildlife: 'Faune et safaris',
+    wellness: 'Bien-être et ayurveda',
+    spiritual: 'L’Inde spirituelle',
+    'slow-travel': 'Voyager lentement',
+    culinary: 'Cuisine et marchés',
+    family: 'Voyages en famille',
+    adventure: 'Montagnes et hauts cols',
+  },
+  es: {
+    heritage: 'Patrimonio y palacios',
+    wildlife: 'Fauna y safaris',
+    wellness: 'Bienestar y ayurveda',
+    spiritual: 'La India espiritual',
+    'slow-travel': 'Viajar despacio',
+    culinary: 'Cocina y mercados',
+    family: 'Viajes en familia',
+    adventure: 'Montañas y altos pasos',
+  },
+  it: {
+    heritage: 'Patrimonio e palazzi',
+    wildlife: 'Fauna e safari',
+    wellness: 'Benessere e ayurveda',
+    spiritual: 'L’India spirituale',
+    'slow-travel': 'Viaggiare lentamente',
+    culinary: 'Cucina e mercati',
+    family: 'Viaggi in famiglia',
+    adventure: 'Montagne e alti passi',
+  },
+  hi: {
+    heritage: 'विरासत और महल',
+    wildlife: 'वन्यजीव और सफ़ारी',
+    wellness: 'सेहत और आयुर्वेद',
+    spiritual: 'आध्यात्मिक भारत',
+    'slow-travel': 'इत्मीनान से यात्रा',
+    culinary: 'खाना और बाज़ार',
+    family: 'परिवार के साथ यात्रा',
+    adventure: 'पहाड़ और ऊँचे दर्रे',
+  },
+};
+
+/**
+ * Route start and end towns on journey cards. Only Hindi needs them: the
+ * other languages share the Latin spelling, which reads naturally there.
+ */
+export const placeText: Partial<Record<Locale, Record<string, string>>> = {
+  hi: {
+    Amritsar: 'अमृतसर',
+    Bengaluru: 'बेंगलुरु',
+    Chennai: 'चेन्नई',
+    Delhi: 'दिल्ली',
+    Goa: 'गोवा',
+    Guwahati: 'गुवाहाटी',
+    Kochi: 'कोच्चि',
+    Kolkata: 'कोलकाता',
+    Kovalam: 'कोवलम',
+    Leh: 'लेह',
+    'Marari Beach': 'मरारी बीच',
+    Srinagar: 'श्रीनगर',
+    Udaipur: 'उदयपुर',
+  },
 };

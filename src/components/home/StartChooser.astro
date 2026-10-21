@@ -1,0 +1,82 @@
+---
+/**
+ * "How would you like to begin?": the three ways into the site, side by side,
+ * so a first-time visitor understands the structure before choosing.
+ * 1. By region: the five regions as chips, leading to the destinations.
+ * 2. By interest: the theme hubs as chips.
+ * 3. Ready-made routes: the first three journeys, leading to all of them.
+ * Each door has its own colour (white, black, orange). Under them, the
+ * fallback for anyone undecided: one message to a person.
+ */
+import type { CollectionEntry } from 'astro:content';
+import SectionHeading from '../SectionHeading.astro';
+import Button from '../Button.astro';
+import WhatsAppButton from '../WhatsAppButton.astro';
+import { waMessages } from '../../lib/whatsapp';
+import { allThemes, allJourneys } from '../../lib/content';
+import { getDict, fmt, regionCopy, themeCopy, journeyCopy } from '../../i18n';
+import { localizedPath, type Locale } from '../../i18n/config';
+
+interface Props { locale: Locale; regions: CollectionEntry<'regions'>[] }
+const { locale, regions } = Astro.props;
+const t = getDict(locale);
+const [d1, d2, d3] = t.home.doors;
+const themes = (await allThemes()).map(th => ({ id: th.id, title: themeCopy(th.id, locale, th.data.title) }));
+const journeys = await allJourneys();
+const routes = journeys.filter(j => j.data.featured).concat(journeys.filter(j => !j.data.featured)).slice(0, 3)
+  .map(j => ({ id: j.id, title: journeyCopy(j.id, locale, { title: j.data.title, tagline: '' }).title, days: j.data.days }));
+const arrow = '<svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M6 3.5 10.5 8 6 12.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+---
+
+<section class="py-10 md:py-14">
+  <div class="container-x">
+    <SectionHeading title={t.home.startHereTitle} lead={t.home.startHereLead} />
+    <ol class="mt-8 grid grid-cols-1 gap-3 md:mt-9 lg:grid-cols-3">
+      <!-- 1. By region -->
+      <li class="reveal flex flex-col rounded-[28px] border border-line border-t-[6px] border-t-brand bg-bg-elevated p-6 sm:p-7">
+        <span class="font-display text-[3rem] leading-none text-brand-deep" aria-hidden="true">1</span>
+        <h3 class="mt-3 font-display text-[1.7rem] font-normal leading-tight tracking-[-0.015em] text-ink">{d1.title}</h3>
+        <p class="mt-2 text-[0.98rem] leading-relaxed text-ink-soft">{d1.text}</p>
+        <ul class="mt-5 flex flex-wrap gap-1.5">
+          {regions.map(r => <li><a href={`/regions/${r.id}`} class="chip !h-9 !px-3.5 !text-[0.85rem]">{regionCopy(r.id, locale, { title: r.data.title, tagline: r.data.tagline }).title}</a></li>)}
+        </ul>
+        <a href="/destinations" class="door-cta mt-auto pt-6 text-brand-deep">{d1.cta}<Fragment set:html={arrow} /></a>
+      </li>
+      <!-- 2. By interest -->
+      <li class="reveal flex flex-col rounded-[28px] bg-[#1c1b1a] p-6 text-white sm:p-7">
+        <span class="font-display text-[3rem] leading-none text-brand" aria-hidden="true">2</span>
+        <h3 class="mt-3 font-display text-[1.7rem] font-normal leading-tight tracking-[-0.015em] !text-white">{d2.title}</h3>
+        <p class="mt-2 text-[0.98rem] leading-relaxed text-white/80">{d2.text}</p>
+        <ul class="mt-5 flex flex-wrap gap-1.5">
+          {themes.map(th => <li><a href={`/themes/${th.id}`} class="press inline-flex h-9 items-center rounded-pill border border-white/25 px-3.5 text-[0.85rem] font-semibold text-white transition-colors hover:border-brand hover:bg-brand hover:text-[#1c1b1a]">{th.title}</a></li>)}
+        </ul>
+        <a href="/themes" class="door-cta mt-auto pt-6 text-brand">{d2.cta}<Fragment set:html={arrow} /></a>
+      </li>
+      <!-- 3. Ready-made routes -->
+      <li class="reveal flex flex-col rounded-[28px] bg-brand p-6 text-[#1c1b1a] sm:p-7">
+        <span class="font-display text-[3rem] leading-none" aria-hidden="true">3</span>
+        <h3 class="mt-3 font-display text-[1.7rem] font-normal leading-tight tracking-[-0.015em] !text-[#1c1b1a]">{d3.title}</h3>
+        <p class="mt-2 text-[0.98rem] font-medium leading-relaxed">{d3.text}</p>
+        <ul class="mt-5 space-y-1.5">
+          {routes.map(r => (
+            <li><a href={`/journeys/${r.id}`} class="press flex items-center justify-between gap-3 rounded-[14px] bg-[#1c1b1a] px-4 py-2.5 text-[0.92rem] font-bold text-white transition-colors hover:bg-white hover:text-[#1c1b1a]"><span class="min-w-0 truncate">{r.title}</span><span class="shrink-0 text-[0.78rem] text-brand">{fmt(t.common.days, { n: r.days })}</span></a></li>
+          ))}
+        </ul>
+        <a href="/journeys" class="door-cta mt-auto pt-6">{d3.cta}<Fragment set:html={arrow} /></a>
+      </li>
+    </ol>
+    <div class="reveal mt-4 flex flex-col items-start gap-3 rounded-[22px] bg-bg-muted p-4 sm:flex-row sm:items-center sm:justify-between sm:p-5">
+      <p class="text-[1.02rem] font-extrabold text-ink">{t.home.doorsTalk}</p>
+      <div class="flex flex-wrap gap-2">
+        <Button href={localizedPath('/plan', locale)} size="sm" track="plan_click" class="!h-11">{t.common.planTrip}</Button>
+        <WhatsAppButton href={waMessages.general()} size="sm" trackLabel="home-doors" locale={locale} class="[&>a]:!h-11" />
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .door-cta { display: inline-flex; align-items: center; gap: 0.35rem; font-size: 1rem; font-weight: 800; text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 6px; }
+  .door-cta:hover { gap: 0.6rem; }
+  .door-cta { transition: gap 0.3s var(--ease-out); }
+</style>

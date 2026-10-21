@@ -1,18 +1,65 @@
 ---
+/**
+ * After the planner: what happens next, the WhatsApp hand-off, and something
+ * to read while you wait (planner section 7.3). Not indexed.
+ */
 import BaseLayout from '../layouts/BaseLayout.astro';
 import SectionHeading from '../components/SectionHeading.astro';
 import Button from '../components/Button.astro';
 import WhatsAppButton from '../components/WhatsAppButton.astro';
+import GuideCard from '../components/GuideCard.astro';
+import Pyramid from '../components/Pyramid.astro';
+import LocalInfo from '../components/LocalInfo.astro';
 import { waMessages } from '../lib/whatsapp';
 import { site } from '../data/site';
+import { getDict } from '../i18n';
+import { guidesByIds } from '../lib/content';
+
+const t = getDict('en');
+const reading = await guidesByIds(['india-e-visa-guide', 'best-time-to-visit-india', 'what-to-pack-for-india']);
 ---
 
 <BaseLayout title="Thank you" description="Your enquiry has reached the Edifice Travels team in New Delhi. We reply within 12 hours, and WhatsApp is open if you would rather talk now." noindex>
-  <div class="container-x py-20 md:py-32">
-    <SectionHeading as="h1" size="h1" title="Your plan is with a specialist" lead={`We reply within ${site.replyHours} hours, usually sooner. If you would rather talk now, WhatsApp is open.`} align="center" />
-    <div class="mt-10 flex flex-wrap justify-center gap-3">
-      <WhatsAppButton href={waMessages.general()} size="lg" trackLabel="thank-you" />
-      <Button href="/journeys" variant="secondary" size="lg">Browse journeys meanwhile</Button>
+  <section class="px-3 pt-2 md:px-4">
+    <div class="relative isolate overflow-hidden rounded-[32px] bg-brand px-5 py-14 text-[#1c1b1a] sm:px-8 md:rounded-[40px] md:py-24">
+      <Pyramid size="clamp(14rem, 34vw, 28rem)" tone="ink" opacity={0.12} class="pyramid-deco -bottom-12 -right-8 -z-10" />
+      <div class="container-x">
+        <SectionHeading as="h1" size="h1" title="Your plan is with a specialist" lead={`We reply within ${site.replyHours} hours, usually sooner. If you would rather talk now, WhatsApp is open.`} tone="brand" />
+        <div class="reveal mt-8 flex flex-wrap gap-2.5">
+          <WhatsAppButton href={waMessages.general()} size="lg" variant="dark" trackLabel="thank-you" />
+          <Button href="/journeys" variant="secondary" size="lg">Browse journeys meanwhile</Button>
+        </div>
+      </div>
     </div>
-  </div>
+  </section>
+
+  <section class="container-x pt-10 md:pt-14">
+    <div class="grid gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,22rem)] lg:gap-14">
+      <div>
+        <SectionHeading title={t.plan.nextTitle} />
+        <ol class="mt-8 space-y-3">
+          {t.plan.next.map((n, i) => (
+            <li class="reveal flex items-start gap-4 rounded-[22px] bg-bg-muted p-5">
+              <span class="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-[#1c1b1a] font-display text-[1.3rem] text-brand" aria-hidden="true">{i + 1}</span>
+              <span class="pt-2 text-[1.02rem] leading-relaxed text-ink">{n}</span>
+            </li>
+          ))}
+        </ol>
+      </div>
+      <aside class="reveal self-start rounded-[24px] bg-[#1c1b1a] p-6 text-white">
+        <p class="font-display text-[1.5rem] leading-tight text-white">While you wait</p>
+        <p class="mt-2 text-[0.95rem] text-white/80">Check that your passport has six months left from the day you arrive, and two blank pages. Most visitors apply for the e-Visa once dates are firm.</p>
+        <div class="mt-5"><LocalInfo show={['reply-window', 'visa']} light /></div>
+      </aside>
+    </div>
+  </section>
+
+  {reading.length > 0 && (
+    <section class="pb-4 pt-10 md:pt-14">
+      <div class="container-x"><SectionHeading title="Something to read while you wait" /></div>
+      <ul class="swipe mt-8 lg:!grid-flow-row lg:!grid-cols-3 lg:!overflow-visible" role="list">
+        {reading.map(g => <li class="reveal"><GuideCard guide={g} /></li>)}
+      </ul>
+    </section>
+  )}
 </BaseLayout>

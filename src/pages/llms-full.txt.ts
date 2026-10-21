@@ -124,6 +124,18 @@ export const GET: APIRoute = async () => {
       '',
       ...d.experiences.flatMap(e => [`**${e.title}**`, '', e.text, '']),
       ...(d.tips.length ? ['### Good to know', '', ...list(d.tips), ''] : []),
+      ...(d.sights.length ? ['### Sights', '', ...d.sights.flatMap(s => [`**${s.name}** (${s.time ?? ''})`, '', s.text, ''])] : []),
+      ...(d.food.length ? ['### What to eat', '', ...list(d.food.map(f => `${f.name}: ${f.text}`)), ''] : []),
+      ...(d.seasons.length ? ['### When to go', '', ...list(d.seasons.map(s => `${s.months}: ${s.text}`)), ''] : []),
+      ...(d.gettingThere ? ['### Getting there', '', ...list([
+        ...(d.gettingThere.air ? [`By air: ${d.gettingThere.air}`] : []),
+        ...(d.gettingThere.rail ? [`By train: ${d.gettingThere.rail}`] : []),
+        ...d.gettingThere.road.map(r => `From ${r.from}: ${r.time}`),
+        ...(d.gettingThere.around ? [`Getting around: ${d.gettingThere.around}`] : []),
+      ]), ''] : []),
+      ...(d.stay ? ['### Where to stay', '', d.stay.intro, '', ...list(d.stay.areas.map(a => `${a.name}: ${a.text}`)), ''] : []),
+      ...(d.plan.length ? ['### Day by day', '', ...d.plan.flatMap((s, i) => [`Day ${i + 1}: ${s.title}. ${s.text}`, '']) ] : []),
+      ...(d.faqs.length ? ['### Questions', '', ...d.faqs.flatMap(f => [`**${f.q}**`, '', f.a, ''])] : []),
     );
     if (body(p.body)) out.push(body(p.body), '');
   }

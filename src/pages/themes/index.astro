@@ -1,0 +1,54 @@
+---
+/** Travel by interest: the index of theme hubs. */
+import { getImage } from 'astro:assets';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Hero from '../../components/Hero.astro';
+import SectionHeading from '../../components/SectionHeading.astro';
+import Button from '../../components/Button.astro';
+import Pyramid from '../../components/Pyramid.astro';
+import ThemeTiles from '../../components/home/ThemeTiles.astro';
+import BrowseBar from '../../components/BrowseBar.astro';
+import { photo } from '../../lib/photos';
+import { photoAlt } from '../../data/photo-alt';
+import { allThemes, allJourneys, allDestinations } from '../../lib/content';
+import { breadcrumbLd, itemListLd } from '../../lib/seo';
+import { waMessages } from '../../lib/whatsapp';
+
+const themes = await allThemes();
+const crumbs = [{ name: 'Home', href: '/' }, { name: 'Travel by interest', href: '/themes' }];
+const browseCounts = { journeys: (await allJourneys()).length, interests: (await allThemes()).length, places: (await allDestinations()).length };
+const og = await getImage({ src: photo('indian-festival'), width: 1200, format: 'jpeg' });
+---
+
+<BaseLayout
+  title="India by interest: heritage, wildlife, food and more"
+  description="Private India journeys by interest: palaces, tigers, Ayurveda, temples, food, families, slow travel and the high Himalaya. Each with routes, places and seasons."
+  pageType="CollectionPage"
+  jsonLd={[breadcrumbLd(crumbs), itemListLd('Travel by interest', themes.map(t => ({ name: t.data.title, href: `/themes/${t.id}` })))]}
+  image={og.src}
+  imageAlt={photoAlt('indian-festival')}
+>
+  <Hero
+    image={photo('indian-festival')}
+    alt={photoAlt('indian-festival')}
+    eyebrow={`${themes.length} ways into India`}
+    title="Start from what you love"
+    lead="Most people can't name the places yet. They can name what they want to see, eat, feel or learn. Choose one and we show you the journeys, the places and the season that suit it."
+    height="medium"
+    breadcrumbs={crumbs}
+    primary={{ href: '/plan', label: 'Plan your trip', track: 'plan_click' }}
+    whatsapp={waMessages.general()}
+  />
+
+  <BrowseBar current="interests" counts={browseCounts} class="mt-4" />
+
+  <ThemeTiles title="Eight ways into India" lead="Every journey we design mixes two or three of these. Open one to see where it takes you." action={false} />
+
+  <section class="container-x pb-4">
+    <div class="reveal relative isolate grid gap-6 overflow-hidden rounded-[30px] bg-brand p-6 text-on-brand sm:p-10 md:grid-cols-[1fr_auto] md:items-center md:p-14">
+      <Pyramid size="clamp(12rem, 24vw, 20rem)" tone="ink" opacity={0.12} class="pyramid-deco -bottom-10 right-8 -z-10" />
+      <SectionHeading title="Two interests, one route" lead="Tigers and palaces. Temples and the beach. Tea hills and Ayurveda. Tell us the mix, and we work out the order, the drives and the nights." tone="brand" />
+      <div><Button href="/plan" size="lg" variant="dark" track="plan_click">Plan your trip</Button></div>
+    </div>
+  </section>
+</BaseLayout>

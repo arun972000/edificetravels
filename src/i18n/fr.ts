@@ -33,6 +33,11 @@ export const fr: Dict = {
     skip: 'Aller au contenu',
     primary: 'Navigation principale',
     breadcrumb: 'Fil d’Ariane',
+    brandLine: 'Voyages privés en Inde',
+    menuRoutes: 'Itinéraires tout prêts',
+    menuByRegion: 'Par région',
+    menuByInterest: 'Par envie',
+    menuSeeAll: 'Voir les {n} voyages',
   },
 
   common: {
@@ -82,6 +87,12 @@ export const fr: Dict = {
     otherCountry: 'Autre pays',
     searchCountry: 'Rechercher votre pays',
     noMatch: 'Aucun pays trouvé.',
+    countryHint: 'Choisissez votre pays. Le site passe dans votre langue et affiche votre heure locale et votre vol.',
+    siteLanguage: 'Langue du site',
+    suggested: 'Suggestion',
+    applied: 'Réglé pour {country}, en {language}.',
+    appliedLanguage: 'Le site est maintenant en {language}.',
+    switching: 'Mise à jour de la page',
   },
 
   local: {
@@ -229,6 +240,30 @@ export const fr: Dict = {
       
       'Notre équipe travaille à Rajouri Garden, à New Delhi. Ceux qui préparent votre voyage sont aussi ceux qui vous répondent sur WhatsApp, de la première question au vol retour.',
     meetTeam: 'En savoir plus sur nous',
+    statsTitle: 'Notre promesse, en chiffres',
+    statJourneys: 'voyages pour commencer',
+    statPlaces: 'lieux où nous envoyons nos voyageurs',
+    statRegions: 'régions, chacune avec sa saison',
+    statReply: 'heures au plus pour la réponse d’une vraie personne',
+    statQuote: 'heures pour votre devis écrit et détaillé',
+    statLanguages: 'langues sur ce site',
+    mapTitle: 'Tous les lieux où nous envoyons nos voyageurs, sur une carte',
+    mapLead: 'Touchez un point pour ouvrir ce lieu. La plupart des voyages en relient trois à six, toujours dans une seule direction.',
+    mapLink: 'Toutes les destinations',
+    interestsTitle: 'Ou partez de ce que vous aimez',
+    interestsLead: 'Huit façons d’aborder l’Inde, chacune avec les voyages, les lieux et les saisons qui lui conviennent.',
+    interestsCount: '{n} voyages',
+    interestsCountOne: '1 voyage',
+    startHereTitle: 'Par où voulez-vous commencer ?',
+    startHereLead: 'Trois portes d’entrée. Chacune mène à une personne, jamais à un bouton de réservation.',
+    doors: [
+      { title: 'Je sais où', text: 'Choisissez une région de l’Inde et voyez ses lieux, sa saison et les itinéraires qui la traversent.', cta: 'Par région' },
+      { title: 'Je sais ce que j’aime', text: 'Palais, tigres, ayurveda, cuisine, montagnes : partez d’une envie.', cta: 'Par envie' },
+      { title: 'Montrez-moi un itinéraire', text: 'Des voyages tout prêts de neuf à vingt et un jours, chacun un point de départ.', cta: 'Voir les voyages' },
+    ],
+    doorsTalk: 'Pas encore sûr ? Un message suffit.',
+    brandTitle: 'Pourquoi nous nous appelons Edifice',
+    brandText: 'Un édifice est un bâtiment construit avec soin, fait pour durer. C’est ainsi que nous essayons de bâtir chaque voyage : sur un sol ferme, jour après jour, sans rien de caché dans les murs.',
 
     letterLabel: 'Un mot de Delhi',
     letter: [
@@ -365,6 +400,14 @@ export const fr: Dict = {
     officeLine: '(bureau)',
     startPlanner: 'Commencer plutôt par le planificateur',
     whoAnswers: 'Qui vous répond',
+    prepareTitle: 'Ce qui nous aide à bien répondre',
+    prepare: [
+      'Des dates approximatives, ou simplement le mois envisagé',
+      'Combien vous êtes, et l’âge des enfants éventuels',
+      'Les lieux, ou le sentiment, qui comptent le plus pour vous',
+      'Votre façon de séjourner : Comfort, Premium ou Luxury',
+    ],
+    prepareNote: 'Rien de tout cela n’est obligatoire. Une ligne suffit pour commencer.',
   },
 
   about: {
@@ -419,6 +462,7 @@ export const fr: Dict = {
     colCompany: 'Entreprise',
     colHelp: 'Aide à la préparation',
     colLegal: 'Informations légales',
+    colInterests: 'Voyager selon vos envies',
     quoted: 'Chaque voyage fait l’objet d’un devis personnalisé sur demande.',
     theme: 'Mode sombre',
     themeLabel: 'Thème',

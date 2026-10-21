@@ -1,10 +1,10 @@
 /**
  * Locales and routing. English lives at the root; other languages live under
- * /de, /fr, /es, /it. Only the routes in TRANSLATED_ROUTES exist in every
+ * /de, /fr, /es, /it, /hi. Only the routes in TRANSLATED_ROUTES exist in every
  * language; everything else (journeys, destinations, guides, legal) is English
  * and links there from every locale.
  */
-export const LOCALES = ['en', 'de', 'fr', 'es', 'it'] as const;
+export const LOCALES = ['en', 'hi', 'de', 'fr', 'es', 'it'] as const;
 export type Locale = (typeof LOCALES)[number];
 export const DEFAULT_LOCALE: Locale = 'en';
 
@@ -15,6 +15,7 @@ export const LOCALE_NAMES: Record<Locale, string> = {
   fr: 'Français',
   es: 'Español',
   it: 'Italiano',
+  hi: 'हिंदी',
 };
 
 /** Language names as written inside a sentence in that language (lower case in fr, es, it). */
@@ -24,10 +25,11 @@ export const LOCALE_NAMES_INLINE: Record<Locale, string> = {
   fr: 'français',
   es: 'español',
   it: 'italiano',
+  hi: 'हिंदी',
 };
 
 /** The word that joins a range in each language ("October to March"); never a dash. */
-export const RANGE_JOINER: Record<Locale, string> = { en: ' to ', de: ' bis ', fr: ' à ', es: ' a ', it: ' a ' };
+export const RANGE_JOINER: Record<Locale, string> = { en: ' to ', de: ' bis ', fr: ' à ', es: ' a ', it: ' a ', hi: ' से ' };
 
 /** BCP 47 tags for <html lang>, hreflang and Intl formatting. */
 export const LOCALE_TAGS: Record<Locale, string> = {
@@ -36,6 +38,7 @@ export const LOCALE_TAGS: Record<Locale, string> = {
   fr: 'fr',
   es: 'es',
   it: 'it',
+  hi: 'hi',
 };
 
 /** Routes that exist in every locale (English path, no trailing slash except root). */

@@ -1,0 +1,181 @@
+---
+/**
+ * Theme hub: India by one interest. Gathers the journeys tagged with the
+ * theme, the places that suit it, the season, the guides worth reading and
+ * the questions people ask, with a specialist beside it all.
+ */
+import { getImage } from 'astro:assets';
+import { getCollection, render } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Hero from '../../components/Hero.astro';
+import SectionHeading from '../../components/SectionHeading.astro';
+import SectionTabs from '../../components/SectionTabs.astro';
+import JourneyCard from '../../components/JourneyCard.astro';
+import DestinationCard from '../../components/DestinationCard.astro';
+import GuideCard from '../../components/GuideCard.astro';
+import SpecialistCard from '../../components/SpecialistCard.astro';
+import MonthStrip from '../../components/MonthStrip.astro';
+import Faq from '../../components/Faq.astro';
+import Button from '../../components/Button.astro';
+import WhatsAppButton from '../../components/WhatsAppButton.astro';
+import Pyramid from '../../components/Pyramid.astro';
+import ThemeTiles from '../../components/home/ThemeTiles.astro';
+import RouteMap from '../../islands/RouteMap';
+import { photo } from '../../lib/photos';
+import { photoAlt } from '../../data/photo-alt';
+import { waLink } from '../../lib/whatsapp';
+import { breadcrumbLd, faqLd, itemListLd } from '../../lib/seo';
+import { journeysByTheme, destinationsByIds, guidesByIds, specialistById } from '../../lib/content';
+
+export async function getStaticPaths() {
+  const themes = await getCollection('themes');
+  return themes.map(t => ({ params: { id: t.id }, props: { theme: t } }));
+}
+
+const { theme } = Astro.props;
+const d = theme.data;
+const { Content } = await render(theme);
+const journeys = await journeysByTheme(d.theme);
+const places = await destinationsByIds(d.destinations);
+const guides = await guidesByIds(d.guides);
+const specialist = await specialistById('team');
+const wa = waLink(`Hi, I'm interested in a private India journey for ${d.title.toLowerCase()}. Could you suggest a route?`);
+const planHref = '/plan';
+const og = await getImage({ src: photo(d.heroImage), width: 1200, format: 'jpeg' });
+const crumbs = [
+  { name: 'Home', href: '/' },
+  { name: 'Travel by interest', href: '/themes' },
+  { name: d.title, href: `/themes/${theme.id}` },
+];
+const stops = places.map(p => ({ name: p.data.title, lat: p.data.lat, lng: p.data.lng, href: `/destinations/${p.id}` }));
+const ld = [
+  breadcrumbLd(crumbs),
+  itemListLd(`${d.title}: private India journeys`, journeys.map(j => ({ name: j.data.title, href: `/journeys/${j.id}` }))),
+  faqLd(d.faqs),
+];
+const countLabel = journeys.length === 1 ? '1 journey' : `${journeys.length} journeys`;
+const tabs = [
+  { id: 'overview', label: 'Overview' },
+  ...(journeys.length ? [{ id: 'journeys', label: 'Journeys' }] : []),
+  { id: 'places', label: 'Places' },
+  { id: 'when', label: 'When to go' },
+  ...(guides.length ? [{ id: 'reading', label: 'Reading' }] : []),
+  { id: 'questions', label: 'Questions' },
+];
+---
+
+<BaseLayout
+  title={d.seo.title ?? `${d.title}: private India journeys`}
+  description={d.seo.description}
+  pageType="CollectionPage"
+  jsonLd={ld}
+  image={og.src}
+  imageAlt={photoAlt(d.heroImage, d.title)}
+  progress
+>
+  <Hero
+    image={photo(d.heroImage)}
+    alt={photoAlt(d.heroImage, d.title)}
+    eyebrow={`${d.title}, ${countLabel}`}
+    title={d.headline}
+    lead={d.tagline}
+    breadcrumbs={crumbs}
+    height="tall"
+    primary={{ href: planHref, label: 'Plan this kind of journey', track: 'plan_click' }}
+    whatsapp={wa}
+  />
+
+  <SectionTabs class="mt-4" items={tabs} />
+
+  <section id="overview" class="container-x grid grid-cols-1 gap-12 pt-10 md:pt-14 lg:grid-cols-[minmax(0,1fr)_minmax(0,23rem)] lg:gap-16">
+    <div class="min-w-0">
+      <div class="prose-editorial"><Content /></div>
+    </div>
+    <aside class="space-y-3 follow-header lg:sticky lg:top-[calc(var(--sticky-top)+5rem)] lg:self-start">
+      <SpecialistCard specialist={specialist} whatsapp={wa} context={`Plans ${d.title.toLowerCase()} journeys`} compact />
+      <div class="reveal relative isolate overflow-hidden rounded-[24px] bg-[#1c1b1a] p-6 text-white">
+        <Pyramid size="9rem" tone="night" opacity={0.09} class="pyramid-deco -bottom-4 -right-4 -z-10" />
+        <p class="font-display text-[1.6rem] leading-tight text-white">Your quote, within 48 hours</p>
+        <p class="mt-2 text-[0.95rem] leading-relaxed text-white/80">Tell us what you would like this journey to hold. A specialist replies within 12 hours, and your itemised quote follows.</p>
+        <div class="mt-5"><Button href={planHref} size="lg" track="plan_click" class="w-full">Plan your trip</Button></div>
+      </div>
+    </aside>
+  </section>
+
+  <section class="container-x pt-12 md:pt-16">
+    <div class="relative isolate overflow-hidden rounded-[32px] bg-brand px-5 py-10 text-on-brand sm:px-8 md:px-12 md:py-14">
+      <Pyramid size="clamp(12rem, 26vw, 22rem)" tone="ink" opacity={0.12} class="pyramid-deco -bottom-8 -right-6 -z-10" />
+      <SectionHeading title={`What we arrange for ${d.title.toLowerCase()}`} tone="brand" />
+      <ol class="mt-8 grid gap-3 md:grid-cols-2 lg:grid-cols-3">
+        {d.reasons.map((r, i) => (
+          <li class="reveal rounded-[22px] bg-[#1c1b1a] p-5 text-white sm:p-6">
+            <span class="font-display text-[2.4rem] leading-none text-brand" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
+            <h3 class="mt-3 text-[1.15rem] font-extrabold leading-snug !text-white">{r.title}</h3>
+            <p class="mt-2 text-[0.95rem] leading-relaxed text-white/78">{r.text}</p>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </section>
+
+  {journeys.length > 0 && (
+    <section id="journeys" class="container-x pt-12 md:pt-16">
+      <SectionHeading eyebrow={countLabel} title="Journeys to start from" lead="Each one is a starting point. Your specialist will redraw any of them around your dates, pace and the way you like to stay." />
+      <div class="mt-8 grid gap-x-4 gap-y-10 sm:grid-cols-2 lg:grid-cols-3">
+        {journeys.map(j => <JourneyCard journey={j} vt />)}
+      </div>
+    </section>
+  )}
+
+  <section id="places" class="container-x pt-12 md:pt-16">
+    <SectionHeading title="The places that do it best" lead="Tap a place on the map, or read our notes on each one. Most journeys join three to six of them." />
+    <div class="mt-8 grid gap-6 lg:grid-cols-[minmax(0,1.15fr)_minmax(0,1fr)] lg:items-start">
+      <div class="grid grid-cols-2 gap-x-3 gap-y-8 sm:grid-cols-3 lg:grid-cols-2 xl:grid-cols-3">
+        {places.map(p => <DestinationCard destination={p} />)}
+      </div>
+      {stops.length >= 2 && (
+        <div class="reveal follow-header lg:sticky lg:top-[calc(var(--sticky-top)+5rem)]">
+          <RouteMap client:visible stops={stops} mode="constellation" title={`${d.title} on the map`} />
+        </div>
+      )}
+    </div>
+  </section>
+
+  <section id="when" class="container-x pt-12 md:pt-16">
+    <div class="grid gap-8 rounded-[32px] bg-bg-muted px-5 py-10 sm:px-8 md:px-12 md:py-14 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] lg:gap-14">
+      <SectionHeading title="When to go" class="self-start" />
+      <div>
+        <MonthStrip months={d.bestMonths} />
+        <p class="reveal mt-6 text-[1.02rem] leading-relaxed text-ink-soft">{d.seasonNote}</p>
+        <p class="reveal mt-4"><a href="/guide/best-time-to-visit-india" class="font-bold text-brand-deep underline decoration-brand decoration-2 underline-offset-4">The best time to visit India, region by region</a></p>
+      </div>
+    </div>
+  </section>
+
+  {guides.length > 0 && (
+    <section id="reading" class="pt-12 md:pt-16">
+      <div class="container-x"><SectionHeading title="Worth reading first" /></div>
+      <ul class="swipe mt-8 lg:!grid-flow-row lg:!grid-cols-3 lg:!overflow-visible" role="list">
+        {guides.map(g => <li class="reveal"><GuideCard guide={g} /></li>)}
+      </ul>
+    </section>
+  )}
+
+  <section id="questions" class="container-x pt-12 md:pt-16">
+    <SectionHeading title="What people ask us" />
+    <div class="mt-8"><Faq faqs={d.faqs} /></div>
+  </section>
+
+  <section class="container-x pt-12 md:pt-16">
+    <div class="reveal relative isolate grid gap-6 overflow-hidden rounded-[30px] bg-[#1c1b1a] p-6 text-white sm:p-10 md:grid-cols-[1fr_auto] md:items-center md:p-14">
+      <Pyramid size="clamp(12rem, 24vw, 20rem)" tone="night" opacity={0.08} class="pyramid-deco -bottom-10 right-10 -z-10" />
+      <SectionHeading title="Tell us the version you have in mind" lead="Six short questions, or one WhatsApp message. A day-by-day proposal and an itemised quote come back within 48 hours." tone="dark" />
+      <div class="flex flex-col gap-2.5 sm:flex-row md:flex-col">
+        <Button href={planHref} size="lg" track="plan_click">Plan your trip</Button>
+        <WhatsAppButton href={wa} size="lg" variant="inverse" label="WhatsApp a specialist" trackLabel="theme-bottom" />
+      </div>
+    </div>
+  </section>
+
+  <ThemeTiles title="Other ways into India" lead="Most journeys mix two or three of these. Tell us which ones matter and we draw one line through them." action={false} exclude={theme.id} />
+</BaseLayout>

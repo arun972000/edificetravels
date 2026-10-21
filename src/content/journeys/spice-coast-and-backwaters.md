@@ -110,7 +110,7 @@ faqs:
   - q: "When is the best time for Kerala?"
     a: "October to March. The monsoon has washed everything green, the backwaters are full, the sea is calm and the hills are cool. December and January are the busiest weeks and need booking well ahead. June to August is the monsoon: dramatic and good value, but the beaches close for swimming and you will get wet."
   - q: "Is a houseboat really worth it, or is it a tourist trap?"
-    a: "Both exist. Alleppey has around 1,500 houseboats, and at 1 pm the main channels can look like a traffic jam. We use operators with small fleets who moor in quiet side channels, and we ask for a crew who buys fish from passing canoes rather than from the depot. One night is right; by the second morning you've seen the best of it."
+    a: "Both exist. Alleppey has well over a thousand houseboats, and at 1 pm the main channels can look like a traffic jam. We use operators with small fleets who moor in quiet side channels, and we ask for a crew who buys fish from passing canoes rather than from the depot. One night is right; by the second morning you've seen the best of it."
   - q: "How spicy is the food?"
     a: "Less than you fear. Kerala food leans on coconut, curry leaf, tamarind and black pepper rather than chilli heat, and a Kerala fish curry is more sour than hot. Tell your guide if you want things milder and the kitchens will oblige. The vegetarian cooking here is some of the best in India."
   - q: "What are the roads like?"

@@ -1,47 +1,244 @@
 ---
-import ProseLayout from '../layouts/ProseLayout.astro';
+/**
+ * How booking and payment work, in plain terms: the steps from first message
+ * to flight home, the numbers that matter, how to pay, what protects you and
+ * the cancellation ladder. Every figure here matches /booking-terms.
+ */
+import { getImage } from 'astro:assets';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Hero from '../components/Hero.astro';
+import SectionHeading from '../components/SectionHeading.astro';
+import Faq from '../components/Faq.astro';
 import Button from '../components/Button.astro';
+import WhatsAppButton from '../components/WhatsAppButton.astro';
+import Pyramid from '../components/Pyramid.astro';
 import { site } from '../data/site';
+import { photo } from '../lib/photos';
+import { photoAlt } from '../data/photo-alt';
+import { waMessages } from '../lib/whatsapp';
+import { breadcrumbLd, faqLd } from '../lib/seo';
+
+const crumbs = [{ name: 'Home', href: '/' }, { name: 'How booking works', href: '/how-booking-works' }];
+const og = await getImage({ src: photo('udaipur-lake'), width: 1200, format: 'jpeg' });
+
+const steps = [
+  {
+    title: 'You tell us what matters',
+    when: 'Day one',
+    text: 'Six questions on the planner, or a WhatsApp message. Rough dates, a rough budget style and a feeling are enough.',
+    get: `A specialist, not a bot, replies within ${site.replyHours} hours with first thoughts and the questions we need answered.`,
+  },
+  {
+    title: 'A proposal within 48 hours',
+    when: 'Within two days',
+    text: 'A day-by-day proposal with named hotels in your chosen style, drive times, what is included and a firm price per person.',
+    get: 'Change two things or change everything. There is no charge for revisions and no obligation at this stage.',
+  },
+  {
+    title: 'Confirm with a 25% deposit',
+    when: 'When every day is right',
+    text: 'We send a booking summary and our terms. You confirm by paying a deposit of 25% of the journey price.',
+    get: 'We book hotels, drivers and guides, and forward each hotel confirmation to you in writing as it arrives.',
+  },
+  {
+    title: 'The balance, 45 days before',
+    when: '45 days before you travel',
+    text: 'The balance is due 45 days before the first day of your journey. Bookings made inside 45 days are paid in full at confirmation.',
+    get: 'Luxury trains, some palace hotels and peak dates (20 December to 5 January) may need earlier payment; we tell you before you commit.',
+  },
+  {
+    title: 'One line while you travel',
+    when: 'From landing to flight home',
+    text: 'The team that planned your journey is on WhatsApp 24 hours a day while you are in India.',
+    get: 'A late flight, a change of plan, a question at dinner: one message, one team, no call centre.',
+  },
+];
+
+const figures = [
+  { n: `${site.replyHours} h`, label: 'to a reply from a person' },
+  { n: '48 h', label: 'to your day-by-day proposal' },
+  { n: '25%', label: 'deposit to confirm' },
+  { n: '45 days', label: 'before travel, the balance' },
+];
+
+const ways = [
+  { title: 'Card', text: 'International credit or debit card through our Indian payment partner. Any card processing charge is shown before you pay.', icon: 'M3 7a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7Zm0 3h18M7 15h3' },
+  { title: 'Bank transfer', text: 'In INR, USD, EUR, GBP or AUD to our Indian bank account. Your bank’s transfer fees are yours; ours are ours.', icon: 'M3 10 12 4l9 6M5 10v8m4-8v8m6-8v8m4-8v8M3 20h18' },
+  { title: 'PayPal', text: 'On request, with its fee shown before you pay. Useful for the deposit if a card is awkward.', icon: 'M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18Zm-3 9h6m-3-3v6' },
+];
+
+const protections = [
+  { title: 'Everything in writing first', text: 'A written contract and itinerary before any money changes hands.', icon: 'M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8l-5-5Zm0 0v5h5M9 13h6M9 17h4' },
+  { title: 'Hotel confirmations', text: 'Each hotel’s confirmation is forwarded to you as it is made, so you can see the journey is real.', icon: 'M3 21V8l9-5 9 5v13M9 21v-6h6v6M3 21h18' },
+  { title: 'A registered Indian company', text: `You deal directly with ${site.legalName} in New Delhi, with no overseas agent in between.`, icon: 'M12 3 4 7v5c0 5 3.5 8 8 9 4.5-1 8-4 8-9V7l-8-4Zm-3 9 2 2 4-4' },
+  { title: 'Travel insurance', text: 'We require it for every guest, from the day you pay the deposit, covering cancellation, medical care and delays.', icon: 'M12 21s-7-4.5-7-11a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 6.5-7 11-7 11Z' },
+  { title: 'The same team, 24 hours', text: 'The people who planned your journey answer WhatsApp day and night while you travel.', icon: 'M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12Z' },
+];
+
+const ladder = [
+  { when: 'More than 60 days', charge: 'Deposit', note: 'Less anything we recover from hotels and suppliers, which we return to you', width: 25 },
+  { when: '31 to 60 days', charge: '50%', note: 'of the total journey price', width: 50 },
+  { when: '15 to 30 days', charge: '75%', note: 'of the total journey price', width: 75 },
+  { when: '14 days or fewer, or no-show', charge: '100%', note: 'of the total journey price', width: 100 },
+];
+
+const faqs = [
+  { q: 'Do I pay anything to receive a proposal?', a: 'No. The proposal, and every revision to it, is free and carries no obligation. You pay nothing until you confirm with the deposit.' },
+  { q: 'In which currency are prices set?', a: 'Prices are set in Indian rupees and include 5% GST on tour-operator services. Where we mention other currencies they are approximate. The amount charged is the rupee amount at the rate on the day of payment, and we never insist on payment in a foreign currency.' },
+  { q: 'When are the hotels actually booked?', a: 'As soon as your deposit arrives. We forward each confirmation to you as it comes in, usually within a few days for most hotels and longer for a few palace hotels and luxury trains.' },
+  { q: 'Can I change the journey after I have paid the deposit?', a: 'Yes. Changes before the balance is paid are free of our charges; if a hotel or supplier charges for a change, we pass that on at cost. After the balance, we still make changes where we can and charge only what suppliers charge us.' },
+  { q: 'Why do you insist on travel insurance?', a: 'Because cancellation charges, medical care and flight delays are exactly what it is for. It must be in force from the day you pay the deposit. We can point you to insurers that cover India well.' },
+  { q: 'What happens if something goes wrong on the road?', a: 'Message your specialist on WhatsApp. A cancelled flight, a closed road or a hotel problem is handled by the same team that planned the journey, at any hour, and we re-route around it at no extra cost where we can.' },
+];
 ---
 
-<ProseLayout title="How booking and payment work" description="From first message to flight home: how a private India journey with Edifice Travels is planned, priced, confirmed and paid for, and what protects you." eyebrow="Plain terms" lead="No deposit until every day is right. Hotels confirmed in writing before the balance. One person throughout." updated="10 October 2026">
-  <h2>1. You tell us what matters</h2>
-  <p>Six questions on the <a href="/plan">planner</a>, or a WhatsApp message. Rough dates, a rough budget tier and a feeling are enough. A specialist, not a bot, replies within {site.replyHours} hours with first thoughts and the questions we need answered.</p>
+<BaseLayout
+  title="How booking and payment work"
+  description="From first message to flight home: how a private India journey with Edifice Travels is planned, priced, confirmed and paid for, and what protects you."
+  jsonLd={[breadcrumbLd(crumbs), faqLd(faqs)]}
+  image={og.src}
+  imageAlt={photoAlt('udaipur-lake')}
+>
+  <Hero
+    image={photo('udaipur-lake')}
+    alt={photoAlt('udaipur-lake')}
+    eyebrow="Plain terms"
+    title="How booking and payment work"
+    lead="No deposit until every day is right. Hotels confirmed in writing before the balance. One team throughout."
+    height="medium"
+    breadcrumbs={crumbs}
+    primary={{ href: '/plan', label: 'Start a plan', track: 'plan_click' }}
+    whatsapp={waMessages.general()}
+  />
 
-  <h2>2. A proposal within 48 hours</h2>
-  <p>You receive a day-by-day proposal with named hotels in your chosen tier, drive times, what is included and a firm price per person. It is a conversation, not a quote: most guests change two or three things, and some change everything. There is no charge for revisions and no obligation at this stage.</p>
+  <!-- The numbers that matter -->
+  <section class="container-x pt-8 md:pt-12">
+    <dl class="grid grid-cols-2 gap-2.5 md:grid-cols-4 md:gap-3">
+      {figures.map((f, i) => (
+        <div class:list={['reveal rounded-[22px] p-5 sm:p-6', i % 2 === 0 ? 'bg-brand text-[#1c1b1a]' : 'bg-[#1c1b1a] text-white']}>
+          <dt class:list={['order-2 mt-1 text-[0.95rem] font-semibold', i % 2 === 0 ? 'text-[#1c1b1a]' : 'text-white/80']}>{f.label}</dt>
+          <dd class:list={['order-1 font-display text-[clamp(2.2rem,1.7rem+2vw,3.4rem)] leading-none tracking-[-0.03em]', i % 2 === 0 ? 'text-[#1c1b1a]' : 'text-brand']}>{f.n}</dd>
+        </div>
+      ))}
+    </dl>
+    <p class="reveal mt-4 text-small text-ink-muted">Last updated 21 October 2026. The full contract is on the <a href="/booking-terms" class="font-bold text-brand-deep underline underline-offset-4">booking and cancellation terms</a> page.</p>
+  </section>
 
-  <h2>3. Confirmation and deposit</h2>
-  <p>When every day is right, we send a booking summary and our terms. You confirm by paying a deposit of 25% of the journey price. We then book hotels, drivers and guides and send you the hotel confirmations as they arrive, in writing, so you can see your journey is real before the balance is due.</p>
+  <!-- The steps -->
+  <section class="container-x pt-12 md:pt-16">
+    <SectionHeading eyebrow="Five steps" title="From first message to flight home" lead="Nothing is booked, and nothing is paid, until the proposal is exactly what you want." />
+    <ol class="steps relative mt-10 md:mt-14">
+      <span class="absolute bottom-8 left-[1.6rem] top-4 w-1 rounded-full bg-brand-tint md:left-[2.1rem]" aria-hidden="true"></span>
+      {steps.map((s, i) => (
+        <li class="relative pb-5 pl-16 md:pb-6 md:pl-24">
+          <span class="absolute left-0 top-0 grid h-[3.25rem] w-[3.25rem] place-items-center rounded-full bg-brand font-display text-[1.5rem] text-[#1c1b1a] ring-[6px] ring-bg md:h-[4.25rem] md:w-[4.25rem] md:text-[2rem]" aria-hidden="true">{i + 1}</span>
+          <article class="reveal grid gap-4 rounded-[26px] border border-line bg-bg-elevated p-5 sm:p-7 lg:grid-cols-[1fr_1fr] lg:gap-10">
+            <div>
+              <p class="kicker">{s.when}</p>
+              <h3 class="mt-1.5 font-display text-[clamp(1.5rem,1.25rem+1vw,2.1rem)] font-normal leading-[1.1] tracking-[-0.02em] text-ink">{s.title}</h3>
+              <p class="mt-3 text-[1rem] leading-relaxed text-ink-soft">{s.text}</p>
+            </div>
+            <div class="flex items-start gap-3 self-start rounded-[18px] bg-brand-soft p-4 sm:p-5">
+              <Pyramid size={22} class="mt-0.5" />
+              <p class="text-[0.98rem] font-semibold leading-relaxed text-ink">{s.get}</p>
+            </div>
+          </article>
+        </li>
+      ))}
+    </ol>
+  </section>
 
-  <h2>4. Balance</h2>
-  <p>The balance is due 45 days before you travel. For bookings made inside 45 days, the full amount is due at confirmation. Luxury trains, some palace hotels and peak-season dates (20 December to 5 January) may require earlier or larger payments; we tell you before you commit.</p>
+  <!-- How to pay -->
+  <section class="container-x pt-10 md:pt-14">
+    <div class="relative isolate overflow-hidden rounded-[32px] bg-[#1c1b1a] px-5 py-10 text-white sm:px-8 md:px-12 md:py-14">
+      <Pyramid size="clamp(12rem, 26vw, 22rem)" tone="night" opacity={0.07} class="pyramid-deco -bottom-10 -right-8 -z-10" />
+      <SectionHeading title="How you can pay" lead="Prices are set in Indian rupees and include 5% GST. Any other currency we mention is approximate, and we never insist on payment in one." tone="dark" />
+      <ul class="mt-8 grid gap-3 md:grid-cols-3">
+        {ways.map(w => (
+          <li class="reveal rounded-[22px] bg-white/[0.06] p-5 ring-1 ring-white/10 sm:p-6">
+            <span class="grid h-12 w-12 place-items-center rounded-full bg-brand text-[#1c1b1a]" aria-hidden="true">
+              <svg width="22" height="22" viewBox="0 0 24 24"><path d={w.icon} fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" /></svg>
+            </span>
+            <h3 class="mt-4 text-[1.15rem] font-extrabold !text-white">{w.title}</h3>
+            <p class="mt-2 text-[0.95rem] leading-relaxed text-white/78">{w.text}</p>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
 
-  <h2>How you can pay</h2>
-  <ul>
-    <li>International credit or debit card through our Indian payment partner. A card processing charge may apply and is shown before you pay.</li>
-    <li>Bank transfer in INR, USD, EUR, GBP or AUD to our Indian bank account. Your bank's transfer fees are yours; ours are ours.</li>
-    <li>PayPal on request, with its fee shown.</li>
-  </ul>
-  <p>Prices are set in Indian rupees. Where we show other currencies they are approximate and marked as such; the amount charged is the rupee amount at the rate on the day of payment. We never insist on payment in a foreign currency.</p>
+  <!-- What protects you -->
+  <section class="container-x pt-12 md:pt-16">
+    <SectionHeading title="What protects you" />
+    <ul class="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+      {protections.map(p => (
+        <li class="reveal flex gap-4 rounded-[22px] bg-bg-muted p-5 sm:p-6">
+          <span class="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-[#1c1b1a] text-brand" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24"><path d={p.icon} fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" /></svg>
+          </span>
+          <span>
+            <span class="block text-[1.05rem] font-extrabold text-ink">{p.title}</span>
+            <span class="mt-1 block text-[0.95rem] leading-relaxed text-ink-soft">{p.text}</span>
+          </span>
+        </li>
+      ))}
+      <li class="reveal flex flex-col justify-between gap-4 rounded-[22px] bg-brand p-5 text-[#1c1b1a] sm:p-6">
+        <span class="text-[1.05rem] font-extrabold">Questions about a contract clause?</span>
+        <span><Button href="/booking-terms" variant="dark" size="sm">Read the full terms</Button></span>
+      </li>
+    </ul>
+  </section>
 
-  <h2>What protects you</h2>
-  <ul>
-    <li>A written contract and itinerary before any money changes hands.</li>
-    <li>Hotel confirmations forwarded to you as they are made.</li>
-    <li>A registered Indian company you deal with directly. Our registration details are in the footer of every page.</li>
-    <li>Travel insurance, which we require for every guest and which covers you for cancellation, medical care and delays. We can point you to insurers that cover India well.</li>
-    <li>The team that planned your journey on WhatsApp 24 hours a day while you travel.</li>
-  </ul>
+  <!-- Cancellation ladder -->
+  <section class="container-x pt-12 md:pt-16">
+    <div class="grid gap-10 lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)] lg:gap-14">
+      <div>
+        <SectionHeading title="If you need to cancel" lead="The earlier you tell us, the more we can recover from hotels and return to you. Charges are a share of the total journey price, counted from the day we receive your notice." />
+        <p class="reveal mt-5 text-[0.98rem] leading-relaxed text-ink-soft">Where a hotel or train operator has stricter terms, such as a non-refundable luxury train fare, that charge applies to that part of the journey and is stated on your proposal before you pay. Travel insurance exists for exactly this.</p>
+      </div>
+      <ol class="space-y-2.5" aria-label="Cancellation charges by notice period">
+        {ladder.map(l => (
+          <li class="reveal overflow-hidden rounded-[20px] border border-line bg-bg-elevated">
+            <div class="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 px-5 pt-4">
+              <span class="text-[1rem] font-extrabold text-ink">{l.when} before departure</span>
+              <span class="font-display text-[1.6rem] leading-none text-brand-deep">{l.charge}</span>
+            </div>
+            <p class="px-5 pb-3 pt-1 text-[0.9rem] text-ink-muted">{l.note}</p>
+            <div class="h-2 bg-bg-muted" aria-hidden="true"><div class="h-full bg-brand" style={`width:${l.width}%`}></div></div>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </section>
 
-  <h2>If you need to cancel</h2>
-  <p>Our cancellation terms are on the <a href="/booking-terms">booking and cancellation</a> page. In short: the earlier you tell us, the more we can recover from hotels and return to you. Where a hotel or train operator has non-refundable terms, we say so on the proposal before you pay.</p>
+  <!-- When India changes the plan -->
+  <section class="container-x pt-12 md:pt-16">
+    <div class="reveal grid gap-6 rounded-[30px] bg-brand-soft p-6 sm:p-10 md:grid-cols-[auto_1fr] md:items-center md:gap-10 md:p-12">
+      <Pyramid size="clamp(4rem, 8vw, 6.5rem)" />
+      <div>
+        <h2 class="text-[clamp(1.75rem,1.4rem+1.4vw,2.5rem)] text-ink">If we need to change something</h2>
+        <p class="mt-3 max-w-3xl text-[1.05rem] leading-relaxed text-ink-soft">India sometimes does. A flight is cancelled, a road closes, a hotel floods. We tell you as soon as we know, offer an alternative of an equal or better standard, re-route around it at no extra cost where we can, and refund any difference where the alternative costs less.</p>
+      </div>
+    </div>
+  </section>
 
-  <h2>If we need to change something</h2>
-  <p>India sometimes does. A flight is cancelled, a road closes, a hotel floods. We re-route around it at no extra cost where we can, tell you immediately, and refund any difference where we cannot. In fourteen years nobody has ever been left without a bed.</p>
+  <section class="container-x pt-12 md:pt-16">
+    <SectionHeading title="Questions about booking" />
+    <div class="mt-8"><Faq faqs={faqs} /></div>
+  </section>
 
-  <div class="not-prose mt-10 flex flex-wrap gap-3">
-    <Button href="/plan" track="plan_click">Start a plan</Button>
-    <Button href="/booking-terms" variant="secondary">Read the full terms</Button>
-  </div>
-</ProseLayout>
+  <section class="container-x pt-12 md:pt-16">
+    <div class="reveal relative isolate grid gap-6 overflow-hidden rounded-[30px] bg-brand p-6 text-[#1c1b1a] sm:p-10 md:grid-cols-[1fr_auto] md:items-center md:p-14">
+      <Pyramid size="clamp(12rem, 24vw, 20rem)" tone="ink" opacity={0.12} class="pyramid-deco -bottom-10 right-8 -z-10" />
+      <SectionHeading title="Start with a free proposal" lead="Tell us your dates and the way you like to travel. Your itemised quote arrives within 48 hours, and nothing is due until you say yes." tone="brand" />
+      <div class="flex flex-col gap-2.5 sm:flex-row md:flex-col">
+        <Button href="/plan" size="lg" variant="dark" track="plan_click">Start a plan</Button>
+        <WhatsAppButton href={waMessages.general()} size="lg" variant="dark" trackLabel="booking-page" />
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  dl > div { display: flex; flex-direction: column; }
+</style>

@@ -33,7 +33,7 @@ function matches(j: CollectionEntry<'journeys'>, key: string) {
 }
 ---
 
-<section class="py-14 md:py-24" data-finder>
+<section class="py-10 md:py-16" data-finder>
   <div class="container-x">
     <SectionHeading title={t.home.findTitle} lead={t.home.findLead}>
       <a slot="action" href="/journeys" class="chip !hidden md:!inline-flex">{t.common.allJourneys}</a>
@@ -54,10 +54,11 @@ function matches(j: CollectionEntry<'journeys'>, key: string) {
       </li>
     ))}
     <li class="finder-item" data-moods="*">
-      <div class="flex aspect-[4/5] flex-col justify-end rounded-[26px] bg-night p-6 text-white">
-        <p class="font-display text-[1.9rem] leading-[1.05] tracking-[-0.02em] text-white">{t.home.designOwnTitle}</p>
-        <p class="mt-3 text-[0.98rem] leading-relaxed text-white/80">{t.home.designOwnText}</p>
-        <div class="mt-5"><Button href={localizedPath('/plan', locale)} track="plan_click">{t.home.designOwn}</Button></div>
+      <div class="relative isolate flex aspect-[4/5] flex-col justify-end overflow-hidden rounded-[26px] bg-brand p-6 text-[#1c1b1a]">
+        <svg viewBox="0 0 100 90" class="pyramid-deco -right-6 -top-4 -z-10 w-[70%]" aria-hidden="true"><path d="M53 2 2 88l66 2Z" fill="#1c1b1a" opacity=".14" /><path d="M53 2l15 88 30-11Z" fill="#1c1b1a" opacity=".3" /></svg>
+        <p class="font-display text-[1.9rem] leading-[1.05] tracking-[-0.02em] text-[#1c1b1a]">{t.home.designOwnTitle}</p>
+        <p class="mt-3 text-[0.98rem] font-medium leading-relaxed text-[#1c1b1a]">{t.home.designOwnText}</p>
+        <div class="mt-5"><Button href={localizedPath('/plan', locale)} variant="dark" track="plan_click">{t.home.designOwn}</Button></div>
       </div>
     </li>
   </ul>
@@ -65,10 +66,10 @@ function matches(j: CollectionEntry<'journeys'>, key: string) {
 </section>
 
 <style>
-  .finder-item { transition: opacity 0.45s var(--ease-out), transform 0.6s var(--ease-out), filter 0.45s var(--ease-out); }
-  .finder-item.is-leaving { opacity: 0; transform: translateY(14px) scale(0.97); filter: blur(4px); }
-  .finder-item.is-entering { animation: deal 0.75s var(--ease-out) both; animation-delay: var(--deal, 0ms); }
-  @keyframes deal { from { opacity: 0; transform: translateX(28px) scale(0.97); filter: blur(4px); } to { opacity: 1; transform: none; filter: none; } }
+  .finder-item { transition: opacity 0.25s var(--ease-out), transform 0.3s var(--ease-out); }
+  .finder-item.is-leaving { opacity: 0; transform: translateY(8px) scale(0.98); }
+  .finder-item.is-entering { animation: deal 0.45s var(--ease-out) both; animation-delay: var(--deal, 0ms); }
+  @keyframes deal { from { opacity: 0; transform: translateX(18px) scale(0.98); } to { opacity: 1; transform: none; } }
   @media (prefers-reduced-motion: reduce) { .finder-item, .finder-item.is-entering { transition: none; animation: none; } }
 </style>
 
@@ -89,13 +90,13 @@ function matches(j: CollectionEntry<'journeys'>, key: string) {
         items.forEach(el => {
           el.classList.remove('is-leaving', 'is-entering');
           el.hidden = !show(el);
-          if (!el.hidden && !reduce) { el.style.setProperty('--deal', `${Math.min(n++, 5) * 70}ms`); void el.offsetWidth; el.classList.add('is-entering'); }
+          if (!el.hidden && !reduce) { el.style.setProperty('--deal', `${Math.min(n++, 4) * 45}ms`); void el.offsetWidth; el.classList.add('is-entering'); }
         });
         row.scrollTo({ left: 0, behavior: reduce ? 'auto' : 'smooth' });
       };
       if (reduce) { swap(); return; }
       items.forEach(el => { if (!el.hidden) el.classList.add('is-leaving'); });
-      setTimeout(swap, 280);
+      setTimeout(swap, 180);
     }));
   });
 </script>

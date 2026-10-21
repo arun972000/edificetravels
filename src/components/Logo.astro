@@ -1,9 +1,13 @@
 ---
 /**
  * The Edifice Travels badge, made from the original artwork with its light
- * background removed (src/assets/brand). In dark mode it sits on a white disc
- * so the black ring and lettering stay visible. The wordmark beside it keeps
- * the name readable at header size, where the badge lettering is tiny.
+ * background removed (src/assets/brand). On dark surfaces it sits on a white
+ * disc so the black ring and lettering stay visible. The wordmark beside it
+ * repeats the badge's colours: "Edifice" in the logo orange, "Travels" in
+ * black (white on dark panels). A logotype has no contrast requirement, so
+ * the true logo orange is used here rather than the darker text orange.
+ * `tagline` prints a short descriptor under the wordmark where there is room,
+ * so the name and what we do are read together.
  */
 import { Image } from 'astro:assets';
 import badge from '../assets/brand/edifice-travels-logo.png';
@@ -13,25 +17,36 @@ interface Props {
   compact?: boolean;
   /** Badge size in CSS pixels. The artwork is 180 px, so keep this at 60 or less. */
   size?: number;
+  /** 'night' for black panels such as the footer. */
+  tone?: 'light' | 'night';
+  tagline?: string;
 }
-const { class: className = '', compact = false, size = 44 } = Astro.props;
+const { class: className = '', compact = false, size = 44, tone = 'light', tagline } = Astro.props;
 ---
 
 <span class:list={['inline-flex items-center gap-2.5', className]}>
-  <span class="logo-badge" style={`width:${size}px;height:${size}px`}>
+  <span class:list={['logo-badge', tone === 'night' && 'on-night', size > 44 && tone === 'light' && 'step-down']} style={`width:${size}px;height:${size}px`}>
     <Image src={badge} alt="" width={size} height={size} densities={[1, 2, 3]} loading="eager" class="block h-full w-full" />
   </span>
   {!compact && (
-    <span class="font-sans font-extrabold tracking-[0.08em] text-[0.95rem] leading-none uppercase">
-      <span class="text-brand-deep">Edifice</span> <span>Travels</span>
+    <span class="logo-word flex flex-col">
+      <span class="whitespace-nowrap font-sans text-[0.95rem] font-extrabold uppercase leading-none tracking-[0.08em] sm:text-[1.05rem] lg:text-[0.95rem] xl:text-[1.05rem]">
+        <span class="text-brand">Edifice</span> <span class:list={[tone === 'night' ? 'text-white' : 'text-ink']}>Travels</span>
+      </span>
+      {tagline && <span class:list={['logo-tagline mt-1 hidden whitespace-nowrap text-[0.72rem] font-semibold leading-none tracking-[0.01em] sm:block', tone === 'night' ? 'text-white/70' : 'text-ink-muted']}>{tagline}</span>}
     </span>
   )}
 </span>
 
 <style>
   .logo-badge { display: block; flex-shrink: 0; border-radius: 9999px; }
+  /* Phones: the header badge steps down so the menu and country chip keep their room. */
+  @media (max-width: 39.99rem) { .logo-badge.step-down { width: 44px !important; height: 44px !important; } }
+  .logo-badge.on-night { background: #fff; box-shadow: 0 0 0 2px #fff; }
   :global(:root[data-theme="dark"]) .logo-badge { background: #fff; box-shadow: 0 0 0 1.5px #fff; }
   @media (prefers-color-scheme: dark) {
     :global(:root:not([data-theme="light"])) .logo-badge { background: #fff; box-shadow: 0 0 0 1.5px #fff; }
   }
+  /* Room is tight beside the full menu at 1024 px: the descriptor returns at 1280 px. */
+  @media (min-width: 64rem) and (max-width: 79.99rem) { .logo-tagline { display: none; } }
 </style>

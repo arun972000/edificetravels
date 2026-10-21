@@ -1,0 +1,50 @@
+---
+/**
+ * The promise in numbers. Every figure is counted from the site's own content
+ * or taken from site.ts, so nothing here can drift from the truth: journeys
+ * and places are counted at build time, the reply and quote times are the
+ * public promises, and languages are the locales the site is built in.
+ *
+ * tone: 'night' for black panels (orange numerals), 'brand' for orange
+ * panels (black numerals), 'light' for white pages.
+ */
+import { site } from '../data/site';
+import { LOCALES, type Locale } from '../i18n/config';
+import { getDict } from '../i18n';
+import { allJourneys, allDestinations, allRegions } from '../lib/content';
+
+interface Props {
+  locale?: Locale;
+  tone?: 'night' | 'brand' | 'light';
+  class?: string;
+  /** Which figures to show, in order. */
+  show?: ('journeys' | 'places' | 'regions' | 'reply' | 'quote' | 'languages')[];
+}
+const { locale = 'en', tone = 'night', class: className = '', show = ['journeys', 'places', 'regions', 'reply', 'quote', 'languages'] } = Astro.props;
+const t = getDict(locale);
+const [journeys, places, regions] = await Promise.all([allJourneys(), allDestinations(), allRegions()]);
+const figures = {
+  journeys: { n: journeys.length, label: t.home.statJourneys },
+  places: { n: places.length, label: t.home.statPlaces },
+  regions: { n: regions.length, label: t.home.statRegions },
+  reply: { n: site.replyHours, label: t.home.statReply },
+  quote: { n: 48, label: t.home.statQuote },
+  languages: { n: LOCALES.length, label: t.home.statLanguages },
+};
+const num = tone === 'night' ? 'text-brand' : tone === 'brand' ? 'text-on-brand' : 'text-brand-deep';
+const lab = tone === 'night' ? 'text-white/75' : tone === 'brand' ? 'text-on-brand' : 'text-ink-soft';
+const rule = tone === 'night' ? 'border-white/15' : tone === 'brand' ? 'border-[#1c1b1a]/20' : 'border-line';
+---
+
+<dl class:list={['grid grid-cols-2 gap-x-5 gap-y-6 sm:grid-cols-3', className]}>
+  {show.map(key => (
+    <div class:list={['reveal border-t-2 pt-4', rule]}>
+      <dt class:list={['order-2 mt-1 text-[0.92rem] font-semibold leading-snug', lab]}>{figures[key].label}</dt>
+      <dd class:list={['order-1 font-display text-[clamp(2.6rem,2rem+2.4vw,4rem)] leading-none tracking-[-0.03em] tabular-nums', num]}>{figures[key].n}</dd>
+    </div>
+  ))}
+</dl>
+
+<style>
+  dl > div { display: flex; flex-direction: column; }
+</style>

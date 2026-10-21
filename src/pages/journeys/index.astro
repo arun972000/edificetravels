@@ -5,9 +5,12 @@ import Hero from '../../components/Hero.astro';
 import SectionHeading from '../../components/SectionHeading.astro';
 import JourneyCard from '../../components/JourneyCard.astro';
 import Button from '../../components/Button.astro';
+import Pyramid from '../../components/Pyramid.astro';
+import ThemeTiles from '../../components/home/ThemeTiles.astro';
+import BrowseBar from '../../components/BrowseBar.astro';
 import { photo } from '../../lib/photos';
 import { photoAlt } from '../../data/photo-alt';
-import { allJourneys, allRegions } from '../../lib/content';
+import { allJourneys, allRegions, allThemes, allDestinations } from '../../lib/content';
 import { THEME_LABEL } from '../../lib/format';
 import { breadcrumbLd, itemListLd } from '../../lib/seo';
 import { waMessages } from '../../lib/whatsapp';
@@ -16,6 +19,7 @@ const journeys = await allJourneys();
 const regions = await allRegions();
 const themes = [...new Set(journeys.flatMap(j => j.data.themes))];
 const crumbs = [{ name: 'Home', href: '/' }, { name: 'Journeys', href: '/journeys' }];
+const browseCounts = { journeys: (await allJourneys()).length, interests: (await allThemes()).length, places: (await allDestinations()).length };
 ---
 
 <BaseLayout
@@ -37,6 +41,8 @@ const crumbs = [{ name: 'Home', href: '/' }, { name: 'Journeys', href: '/journey
     whatsapp={waMessages.general()}
     primary={{ href: '/plan', label: 'Design my own', track: 'plan_click' }}
   />
+
+  <BrowseBar current="journeys" counts={browseCounts} class="mt-4" />
 
   <section class="pb-14 pt-4 md:pb-20" aria-labelledby="all-journeys">
     <h2 id="all-journeys" class="sr-only">All journeys</h2>
@@ -62,11 +68,15 @@ const crumbs = [{ name: 'Home', href: '/' }, { name: 'Journeys', href: '/journey
       ))}
     </div>
 
-    <div class="container-x mt-16">
-      <div class="reveal rounded-[30px] bg-night p-6 text-white sm:p-10 md:p-14">
-        <SectionHeading title="The journey you want may be two of these joined together" lead="Rajasthan then Kerala. Tigers then the Taj. Tell us the pieces and we make one line of them." dark />
-        <div class="mt-7"><Button href="/plan" size="lg" track="plan_click">Plan your trip</Button></div>
-      </div>
+  </section>
+
+  <ThemeTiles title="Or browse by interest" lead="Each interest has its own page: the journeys, the places, the season and the questions people ask." action={false} />
+
+  <section class="container-x pb-4">
+    <div class="reveal relative isolate overflow-hidden rounded-[30px] bg-brand p-6 text-[#1c1b1a] sm:p-10 md:p-14">
+      <Pyramid size="clamp(12rem, 24vw, 20rem)" tone="ink" opacity={0.12} class="pyramid-deco -bottom-10 right-8 -z-10" />
+      <SectionHeading title="The journey you want may be two of these joined together" lead="Rajasthan then Kerala. Tigers then the Taj. Tell us the pieces and we make one line of them." tone="brand" />
+      <div class="mt-7"><Button href="/plan" size="lg" variant="dark" track="plan_click">Plan your trip</Button></div>
     </div>
   </section>
 

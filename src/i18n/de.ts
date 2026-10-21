@@ -33,6 +33,11 @@ export const de: Dict = {
     skip: 'Zum Inhalt springen',
     primary: 'Hauptnavigation',
     breadcrumb: 'Pfadnavigation',
+    brandLine: 'Private Indienreisen',
+    menuRoutes: 'Fertige Routen',
+    menuByRegion: 'Nach Region',
+    menuByInterest: 'Nach Interesse',
+    menuSeeAll: 'Alle {n} Reisen ansehen',
   },
 
   common: {
@@ -82,6 +87,12 @@ export const de: Dict = {
     otherCountry: 'Anderes Land',
     searchCountry: 'Land suchen',
     noMatch: 'Kein Land gefunden.',
+    countryHint: 'Wählen Sie Ihr Land. Die Website wechselt in Ihre Sprache und zeigt Ihre Ortszeit und Ihren Flug.',
+    siteLanguage: 'Sprache der Website',
+    suggested: 'Vorschlag',
+    applied: 'Eingestellt für {country}, auf {language}.',
+    appliedLanguage: 'Die Website ist jetzt auf {language}.',
+    switching: 'Seite wird aktualisiert',
   },
 
   local: {
@@ -229,6 +240,30 @@ export const de: Dict = {
       
       'Wir sind ein Reiseteam in Rajouri Garden, Neu-Delhi. Wer Ihre Reise plant, antwortet Ihnen auch auf WhatsApp, von der ersten Frage bis zum Rückflug.',
     meetTeam: 'Mehr über uns',
+    statsTitle: 'Unser Versprechen in Zahlen',
+    statJourneys: 'Reisen als Ausgangspunkt',
+    statPlaces: 'Orte, an die wir Gäste schicken',
+    statRegions: 'Regionen, jede mit eigener Reisezeit',
+    statReply: 'Stunden bis zur Antwort eines Menschen, höchstens',
+    statQuote: 'Stunden bis zu Ihrem detaillierten schriftlichen Angebot',
+    statLanguages: 'Sprachen auf dieser Website',
+    mapTitle: 'Alle Orte, an die wir Gäste schicken, auf einer Karte',
+    mapLead: 'Tippen Sie auf einen Punkt, um den Ort zu öffnen. Die meisten Reisen verbinden drei bis sechs davon, immer in einer Richtung.',
+    mapLink: 'Alle Reiseziele',
+    interestsTitle: 'Oder beginnen Sie mit dem, was Sie lieben',
+    interestsLead: 'Acht Wege nach Indien, jeweils mit den passenden Reisen, Orten und Jahreszeiten.',
+    interestsCount: '{n} Reisen',
+    interestsCountOne: '1 Reise',
+    startHereTitle: 'Wie möchten Sie beginnen?',
+    startHereLead: 'Drei Wege hinein. Jeder endet bei einem Menschen, nie bei einem Buchungsknopf.',
+    doors: [
+      { title: 'Ich weiß, wohin', text: 'Wählen Sie eine Region Indiens und sehen Sie ihre Orte, ihre Reisezeit und die Routen hindurch.', cta: 'Nach Region' },
+      { title: 'Ich weiß, was ich liebe', text: 'Paläste, Tiger, Ayurveda, Küche, Berge: Beginnen Sie mit einem Interesse.', cta: 'Nach Interesse' },
+      { title: 'Zeigen Sie mir eine Route', text: 'Fertige Reisen von neun bis einundzwanzig Tagen, jede ein Ausgangspunkt.', cta: 'Zu den Reisen' },
+    ],
+    doorsTalk: 'Noch unsicher? Eine Nachricht genügt.',
+    brandTitle: 'Warum wir Edifice heißen',
+    brandText: 'Ein Edifice ist ein Bauwerk, mit Sorgfalt errichtet und dafür gemacht, lange zu stehen. So versuchen wir jede Reise zu bauen: auf festem Grund, Tag für Tag, ohne Verborgenes in den Wänden.',
 
     letterLabel: 'Ein paar Zeilen aus Delhi',
     letter: [
@@ -365,6 +400,14 @@ export const de: Dict = {
     officeLine: '(Büro)',
     startPlanner: 'Lieber mit dem Reiseplaner beginnen',
     whoAnswers: 'Wer Ihnen antwortet',
+    prepareTitle: 'Was uns hilft, gut zu antworten',
+    prepare: [
+      'Ungefähre Daten oder einfach der Monat, an den Sie denken',
+      'Wie viele Personen reisen und wie alt eventuelle Kinder sind',
+      'Die Orte oder das Gefühl, die Ihnen am wichtigsten sind',
+      'Wie Sie wohnen möchten: Comfort, Premium oder Luxury',
+    ],
+    prepareNote: 'Nichts davon ist Pflicht. Eine Zeile genügt für den Anfang.',
   },
 
   about: {
@@ -419,6 +462,7 @@ export const de: Dict = {
     colCompany: 'Unternehmen',
     colHelp: 'Planungshilfe',
     colLegal: 'Rechtliches',
+    colInterests: 'Reisen nach Interesse',
     quoted: 'Jede Reise wird auf Anfrage individuell kalkuliert.',
     theme: 'Dunkelmodus',
     themeLabel: 'Darstellung',

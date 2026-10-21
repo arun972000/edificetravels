@@ -77,7 +77,7 @@ itinerary:
     title: "Into the Thar"
     location: "Jaisalmer"
     drive: "5 h across the desert"
-    text: "West into the Thar. The traffic thins to the odd camel cart and army truck, the sand turns gold, and you can see Jaisalmer's sandstone fort on its ridge long before you reach it. Check in, then an evening walk inside the fort, where 2,000 people still live within the walls."
+    text: "West into the Thar. The traffic thins to the odd camel cart and army truck, the sand turns gold, and you can see Jaisalmer's sandstone fort on its ridge long before you reach it. Check in, then an evening walk inside the fort, where about three thousand people still live within the walls."
     stay: { comfort: "Haveli inside or beside the fort", premium: "Suryagarh", luxury: "Suryagarh, suite, plus a tented night at The Serai" }
     image: jaisalmer-fort
   - day: 9

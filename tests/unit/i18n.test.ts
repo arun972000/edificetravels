@@ -8,6 +8,7 @@ import { de } from '../../src/i18n/de';
 import { fr } from '../../src/i18n/fr';
 import { es } from '../../src/i18n/es';
 import { it as itDict } from '../../src/i18n/it';
+import { hi } from '../../src/i18n/hi';
 import { getDict, fmt } from '../../src/i18n';
 
 type Node = unknown;
@@ -34,6 +35,7 @@ describe.each([
   ['fr', fr],
   ['es', es],
   ['it', itDict],
+  ['hi', hi],
 ])('%s dictionary', (_code, dict) => {
   it('has every English key, array length and placeholder', () => {
     const problems: string[] = [];
@@ -44,6 +46,19 @@ describe.each([
   it('contains no generated-text symbols', () => {
     const text = JSON.stringify(dict);
     for (const bad of ['—', ' · ', '…', '→']) expect(text).not.toContain(bad);
+  });
+
+  it('has no exclamation marks', () => {
+    expect(JSON.stringify(dict)).not.toMatch(/[!¡]/);
+  });
+});
+
+describe('Hindi dictionary', () => {
+  it('ends sentences with the danda, not a Latin full stop after Devanagari', () => {
+    const strings: string[] = [];
+    const collect = (v: unknown) => { if (typeof v === 'string') strings.push(v); else if (v && typeof v === 'object') Object.values(v).forEach(collect); };
+    collect(hi);
+    expect(strings.filter(x => /[ऀ-ॿ]\.(\s|$)/.test(x))).toEqual([]);
   });
 });
 

@@ -1,12 +1,15 @@
 ---
 /**
  * Home hero: a rounded postcard of four photographs that cross-fade with a
- * slow drift. As the visitor starts to scroll, the postcard opens out to the
- * full screen, which is the page's one big movement. A live India clock sits
- * on the card; a pause control satisfies WCAG 2.2.2. On wide screens a glass
- * panel offers the first choices.
+ * slow drift, the badge set on it as a postmark. It fills the first screen
+ * and grows with its text, so a long headline in any language is never cut
+ * off; the headline is sized by the screen's height as well as its width.
+ * Scrolling moves the page at once (no held "opening" effect). A live India
+ * clock sits on the card; a pause control satisfies WCAG 2.2.2. On wide
+ * screens a glass panel offers the first choices.
  */
 import { Image } from 'astro:assets';
+import badge from '../../assets/brand/edifice-travels-logo.png';
 import type { CollectionEntry } from 'astro:content';
 import Button from '../Button.astro';
 import WhatsAppButton from '../WhatsAppButton.astro';
@@ -25,17 +28,18 @@ const slides = t.home.slides.map((s, i) => ({ ...s, slug: slugs[i] ?? slugs[0] }
 const words = t.home.heroTitle.split(/\s+/);
 ---
 
-<section class="pc relative h-[calc(100svh-var(--header-h)+28svh)]" data-pc aria-roledescription="carousel" aria-label={t.home.heroEyebrow}>
-  <div class="pc-stage sticky top-[var(--header-h)] h-[calc(100svh-var(--header-h))]" data-pc-stage>
-    <div class="pc-card relative isolate flex h-full flex-col justify-end overflow-hidden bg-[#16181b] text-white" data-pc-card>
+<section class="pc relative px-3 pt-1 md:px-4" data-pc aria-roledescription="carousel" aria-label={t.home.heroEyebrow}>
+  <div class="pc-stage">
+    <div class="pc-card relative isolate flex flex-col overflow-hidden rounded-[28px] bg-[#16181b] text-white md:rounded-[36px]" data-pc-card>
       <div class="absolute inset-0 -z-10">
         {slides.map((s, i) => (
           <div class:list={['pc-slide absolute inset-0', i === 0 && 'is-active']} data-slide={i} aria-hidden={i === 0 ? 'false' : 'true'}>
             <Image
               src={photo(s.slug)}
               alt={i === 0 ? photoAlt(s.slug) : ''}
-              widths={[640, 960, 1280, 1920, 2400]}
+              widths={[640, 960, 1280, 1600, 1920]}
               sizes="100vw"
+              quality={66}
               loading={i === 0 ? 'eager' : 'lazy'}
               fetchpriority={i === 0 ? 'high' : 'low'}
               decoding="async"
@@ -49,14 +53,14 @@ const words = t.home.heroTitle.split(/\s+/);
 
       <!-- Top of the card: slide place, progress and pause. -->
       <div class="absolute inset-x-0 top-0 flex items-center justify-between gap-3 p-4 sm:p-6 md:p-8">
-        <span class="pc-in inline-flex items-center gap-2 rounded-pill border border-white/25 bg-black/25 px-3 py-1.5 text-[0.82rem] font-bold backdrop-blur-md" style="--d:.2s">
+        <span class="pc-in inline-flex items-center gap-2 rounded-pill border border-white/25 bg-black/25 px-3 py-1.5 text-[0.82rem] font-bold backdrop-blur-md" style="--d:.1s">
           <span class="live-dot"></span>
           <span data-local="india-time" data-template={t.local.nowInIndia}>{t.local.nowInIndia.replace('{time}', '').trim()}</span>
         </span>
-        <div class="pc-in flex items-center gap-2" style="--d:.3s">
+        <div class="pc-in flex items-center gap-2" style="--d:.15s">
           <div class="hidden gap-1.5 sm:flex" aria-hidden="true">
             {slides.map((_, i) => (
-              <span class="pc-seg relative h-[3px] w-8 overflow-hidden rounded-full bg-white/30" data-seg={i}><span class="absolute inset-0 origin-left bg-white"></span></span>
+              <span class="pc-seg relative h-[3px] w-8 overflow-hidden rounded-full bg-white/30" data-seg={i}><span class="absolute inset-0 origin-left bg-brand"></span></span>
             ))}
           </div>
           <button type="button" data-pc-toggle class="press grid h-9 w-9 place-items-center rounded-full border border-white/30 bg-black/25 backdrop-blur-md" aria-label={t.home.pause} data-label-pause={t.home.pause} data-label-play={t.home.play}>
@@ -66,32 +70,38 @@ const words = t.home.heroTitle.split(/\s+/);
         </div>
       </div>
 
-      <div class="pc-copy relative grid gap-8 p-5 pb-7 sm:p-8 md:p-10 lg:grid-cols-[1.35fr_0.85fr] lg:items-end lg:p-14" data-pc-copy>
-        <div>
-          <p class="pc-in mb-3 text-[0.95rem] font-semibold text-white/85" style="--d:.15s" aria-live="polite">
-            <span data-pc-place class="font-bold text-[#ffb36b]">{slides[0].place}</span>
+      <!-- The badge as a postmark: the lettered ring turns slowly, the pyramid stays upright. -->
+      <span class="pc-stamp" aria-hidden="true">
+        <Image src={badge} alt="" width={96} height={96} densities={[1, 2]} loading="eager" class="pc-stamp-ring" />
+        <Image src={badge} alt="" width={96} height={96} densities={[1, 2]} loading="eager" class="pc-stamp-mark" />
+      </span>
+
+      <div class="pc-copy relative grid gap-8 px-5 pb-7 pt-28 sm:px-8 sm:pt-32 md:px-10 md:pb-10 lg:grid-cols-[minmax(0,1.35fr)_minmax(0,0.85fr)] lg:items-end lg:px-14 lg:pb-14" data-pc-copy>
+        <div class="min-w-0">
+          <p class="pc-in mb-3 text-[0.95rem] font-semibold text-white/85" style="--d:.1s" aria-live="polite">
+            <span data-pc-place class="font-bold text-[#ff8a4c]">{slides[0].place}</span>
             <span class="ml-1.5" data-pc-caption>{slides[0].caption}</span>
           </p>
-          <h1 class="max-w-[13ch] text-[clamp(2.9rem,2rem+5.2vw,7rem)] leading-[0.93] tracking-[-0.03em] text-white">
+          <h1 class="pc-title max-w-[13ch] leading-[0.95] tracking-[-0.03em] text-white">
             {words.map((w, i) => (
               <><span class="w"><span class="pc-word" style={`--i:${i}`}>{w}</span></span>{i < words.length - 1 ? ' ' : ''}</>
             ))}
           </h1>
-          <p class="pc-in mt-4 max-w-lg text-[1.05rem] leading-relaxed text-white/88 md:text-lead" style="--d:.75s">{t.home.heroLead}</p>
-          <div class="pc-in mt-6 flex flex-wrap gap-2.5" style="--d:.9s">
+          <p class="pc-in mt-4 max-w-lg text-[1.05rem] leading-relaxed text-white/88 md:text-lead" style="--d:.3s">{t.home.heroLead}</p>
+          <div class="pc-in mt-6 flex flex-wrap gap-2.5" style="--d:.38s">
             <Button href={localizedPath('/plan', locale)} size="lg" track="plan_click">{t.common.planTrip}</Button>
             <WhatsAppButton href={waMessages.general()} size="lg" variant="inverse" label={t.common.whatsappSpecialist} trackLabel="hero" locale={locale} />
           </div>
         </div>
 
         <!-- Wide screens: first choices on a glass panel. -->
-        <div class="pc-in hidden rounded-[26px] border border-white/20 bg-white/10 p-5 backdrop-blur-xl lg:block" style="--d:1.05s">
-          <p class="text-[1rem] font-bold text-white">{t.home.startTitle}</p>
+        <div class="pc-in hidden rounded-[26px] border border-white/20 bg-white/10 p-5 backdrop-blur-xl lg:block" style="--d:.45s">
+          <p class="flex items-center gap-2 text-[1rem] font-bold text-white"><span class="brand-tick-light !w-8" aria-hidden="true"></span>{t.home.startTitle}</p>
           <div class="mt-3 flex flex-wrap gap-2">
             {regions.map(r => (
               <a href={`/regions/${r.id}`} class="press inline-flex h-10 items-center rounded-pill bg-white/90 px-4 text-[0.9rem] font-bold text-[#1b1d21] transition-colors hover:bg-white">{regionCopy(r.id, locale, { title: r.data.title, tagline: r.data.tagline }).title}</a>
             ))}
-            <a href={localizedPath('/plan', locale)} class="press inline-flex h-10 items-center rounded-pill border border-white/40 px-4 text-[0.9rem] font-bold text-white hover:bg-white/15">{t.home.designOwn}</a>
+            <a href={localizedPath('/plan', locale)} class="press inline-flex h-10 items-center rounded-pill bg-brand px-4 text-[0.9rem] font-extrabold text-[#1c1b1a] hover:bg-white">{t.home.designOwn}</a>
           </div>
         </div>
       </div>
@@ -101,14 +111,53 @@ const words = t.home.heroTitle.split(/\s+/);
 </section>
 
 <style>
-  /* The postcard: inset with rounded corners at rest, full screen once opened. */
-  .pc-stage { padding: calc(0.75rem * (1 - var(--p, 0))); }
-  .pc-card { border-radius: calc(28px * (1 - var(--p, 0))); height: 100%; }
-  @media (min-width: 48rem) {
-    .pc-stage { padding: calc(1rem * (1 - var(--p, 0))); }
-    .pc-card { border-radius: calc(36px * (1 - var(--p, 0))); }
+  /* The postcard fills the first screen and grows past it if the text needs
+     room. "safe" keeps overflowing text from being pushed off the top. */
+  .pc-card { min-height: calc(100svh - var(--header-h) - 0.75rem); justify-content: safe flex-end; }
+  @media (min-width: 64rem) { .pc-card { min-height: min(calc(100svh - var(--header-h) - 1rem), 56rem); } }
+  /* Sized by height as well as width: a wide, short window gets a smaller
+     headline instead of a cropped one. */
+  .pc-title { font-size: clamp(2.5rem, min(1.6rem + 4.6vw, 10.5svh), 6.4rem); }
+  /* Devanagari sets larger than Latin at the same size, with signs above and
+     below: a step smaller, and a wider measure so each sentence keeps a line. */
+  .pc-title:lang(hi) { font-size: clamp(2.1rem, min(1.3rem + 3.7vw, 8.6svh), 5.2rem); max-width: 15ch; }
+
+  /* Postmark: the badge on a white disc inside a dashed orange ring. It is
+     stamped on once as the hero arrives. After that only the lettered ring
+     turns, once every 40 seconds, while the pyramid stays upright: a spinning
+     pyramid would tumble upside down and read as a loading spinner. Both
+     layers are the same logo file, split by masks at the clear gap between
+     the pyramid and the inner circle (62% of the radius), so nothing is
+     redrawn. The pause button stops it with the slides; reduced motion keeps
+     it still. */
+  .pc-stamp {
+    position: absolute; z-index: 2; top: 4.25rem; right: 1rem;
+    width: 4.25rem; height: 4.25rem; border-radius: 9999px;
+    background: #fff;
+    animation: stamp-in 0.75s cubic-bezier(0.2, 0.9, 0.3, 1.25) 0.35s both;
+    box-shadow: 0 0 0 2px #fff, 0 0 0 4px var(--c-brand), 0 14px 30px -10px rgb(0 0 0 / 0.55);
+    outline: 2px dashed rgb(255 255 255 / 0.75); outline-offset: 7px;
   }
-  .pc-copy { transform: translate3d(0, calc(var(--p, 0) * -24px), 0); }
+  @media (min-width: 48rem) { .pc-stamp { top: 5rem; right: 2rem; width: 6rem; height: 6rem; } }
+  @media (min-width: 64rem) { .pc-stamp { top: 5.5rem; right: 3.5rem; width: 6.5rem; height: 6.5rem; } }
+  .pc-stamp :global(img) { position: absolute; inset: 0.3rem; width: calc(100% - 0.6rem); height: calc(100% - 0.6rem); }
+  .pc-stamp :global(.pc-stamp-ring) {
+    -webkit-mask: radial-gradient(circle closest-side, transparent 61.5%, #000 62.5%);
+    mask: radial-gradient(circle closest-side, transparent 61.5%, #000 62.5%);
+    animation: ring-turn 40s linear infinite;
+    will-change: transform;
+  }
+  .pc-stamp :global(.pc-stamp-mark) {
+    -webkit-mask: radial-gradient(circle closest-side, #000 61.5%, transparent 62.5%);
+    mask: radial-gradient(circle closest-side, #000 61.5%, transparent 62.5%);
+  }
+  .pc.is-paused .pc-stamp :global(.pc-stamp-ring) { animation-play-state: paused; }
+  @keyframes stamp-in {
+    0% { opacity: 0; transform: scale(1.6) rotate(-28deg); }
+    55% { opacity: 1; transform: scale(0.93) rotate(4deg); }
+    100% { opacity: 1; transform: none; }
+  }
+  @keyframes ring-turn { to { transform: rotate(360deg); } }
 
   .pc-slide { opacity: 0; transition: opacity 1.8s var(--ease-in-out); }
   .pc-slide.is-active { opacity: 1; }
@@ -120,12 +169,12 @@ const words = t.home.heroTitle.split(/\s+/);
   .pc.is-paused .icon-pause { display: none; }
   .pc.is-paused .icon-play { display: block; }
 
-  .pc-word { transform: translateY(105%); animation: pc-up 1.2s var(--ease-out) forwards; animation-delay: calc(0.25s + var(--i) * 0.08s); }
-  .pc-in { opacity: 0; transform: translateY(16px); animation: pc-fade 1.1s var(--ease-out) forwards; animation-delay: var(--d); }
+  .pc-word { transform: translateY(110%); animation: pc-up 0.7s var(--ease-out) forwards; animation-delay: calc(0.08s + min(var(--i), 10) * 0.04s); }
+  .pc-in { opacity: 0; transform: translateY(10px); animation: pc-fade 0.6s var(--ease-out) forwards; animation-delay: var(--d); }
   @keyframes pc-up { to { transform: none; } }
   @keyframes pc-fade { to { opacity: 1; transform: none; } }
   @media (prefers-reduced-motion: reduce) {
-    .pc-word, .pc-in { animation: none; opacity: 1; transform: none; }
+    .pc-word, .pc-in, .pc-stamp, .pc-stamp :global(.pc-stamp-ring) { animation: none; opacity: 1; transform: none; }
     .pc-slide.is-active :global(img) { animation: none; }
   }
 </style>
@@ -134,21 +183,6 @@ const words = t.home.heroTitle.split(/\s+/);
   const hero = document.querySelector<HTMLElement>('[data-pc]');
   if (hero) {
     const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const stage = hero.querySelector<HTMLElement>('[data-pc-stage]')!;
-
-    // Open the postcard as the first part of the page scrolls past.
-    if (!reduce) {
-      let raf = 0;
-      const tick = () => {
-        raf = 0;
-        const range = hero.offsetHeight - stage.offsetHeight;
-        const p = Math.min(1, Math.max(0, (window.scrollY - hero.offsetTop + stage.offsetTop * 0) / Math.max(1, range)));
-        hero.style.setProperty('--p', p.toFixed(3));
-      };
-      window.addEventListener('scroll', () => { if (!raf) raf = requestAnimationFrame(tick); }, { passive: true });
-      window.addEventListener('resize', tick);
-      tick();
-    }
 
     // Slides: cross-fade every seven seconds, pause on demand or when hidden.
     const slides = Array.from(hero.querySelectorAll<HTMLElement>('[data-slide]'));

@@ -1,6 +1,6 @@
 # Planner audit
 
-Audited 13 October 2026 against `docs/PLANNER.md` (6 October 2026, with the decision log of 12 October) and the requirements given during the build. Every line below was checked on the built site in `dist/` or in the source, not from memory.
+Audited 13 October 2026, updated 21 October 2026, against `docs/PLANNER.md` (6 October 2026, with the decision log of 12 October) and the requirements given during the build. Every line below was checked on the built site in `dist/` or in the source, not from memory.
 
 Status key:
 
@@ -10,24 +10,40 @@ Status key:
 - **Changed by decision**: the planner recommended it, and a later decision replaced it.
 - **Needs you**: the site is ready, but only the business can supply the fact or do the task.
 
+## Update, 21 October 2026
+
+The client asked for more of the logo's colours and for fuller, more detailed pages. This round:
+
+- **Colour.** The site now uses the logo's own orange (#ea651f) and black (#1c1b1a) as surfaces: a black footer, orange and black panels on every long page, orange chips, numerals and card details, and the badge's pyramid as a graphic device. See DESIGN-SYSTEM.md, version 4. axe reports no violations, light and dark.
+- **Theme hubs.** Eight pages under `/themes`: heritage, wildlife, wellness, spiritual, slow travel, food, family and the mountains, each with journeys, places, a map, the season, reading and FAQs.
+- **Kashmir.** A ten-day "Lakes and Meadows of Kashmir" journey and a Srinagar destination page, with honest government-advice and insurance wording. Both real Google reviews now sit on the journey they describe, and the old Srinagar URLs redirect to it.
+- **Guides.** Three new: a festival calendar, dress and etiquette, and a packing list. Twelve in all.
+- **Fuller pages.** How booking works, responsible travel, reviews, thank-you, contact, about and the 404 page were rebuilt with steps, figures, panels and FAQs. Journey and destination pages gained a month strip and links to theme hubs; region pages a numbered "where to go" panel.
+- **Destination guides.** Every one of the 32 destination pages is now a full guide: the main sights with time to allow, what we arrange, where to stay with the hotels from our journeys by style, what to eat, when to go season by season, getting there by air, rail and road with drive times, a day-by-day plan, a map of nearby places, photographs where we have them, and six to eight questions answered. About 1,000 to 1,600 words each, checked by a test so a new destination cannot be added half done.
+- **Hindi and one country choice.** Home, planner, about and contact are now also in Hindi, at /hi. The language row was removed from the country panel: visitors pick a country only, and India offers English or हिंदी under its name (Canada and Switzerland likewise offer their languages).
+- **Map as signature.** The home page now has every destination on one map, with the promise in numbers beside it.
+- **Photographs.** Nine new Commons photographs, credited on /credits. Coorg, Chettinad, Kolkata, Dharamshala and Shimla had been showing photographs of other places, and now show their own.
+- **Lead capture.** The planner now sends UTM tags (kept from the landing page for the session) and the visitor's time zone.
+- **Itinerary PDF.** Journey pages print cleanly, with every day expanded, and can be saved as a PDF from the print dialog.
+
 ## Summary
 
 | | Count |
 |---|---|
-| Met | 74 |
-| Partly met | 15 |
-| Not met | 7 |
+| Met | 79 |
+| Partly met | 13 |
+| Not met | 4 |
 | Changed by decision | 4 |
 | Needs you | 17 |
 
 Of the planner's ten decisions in section 15, five are decided, three are open and one is settled for now (interim photos). The tenth, the theme, was settled through the design rounds.
 
-The site meets the planner's core: an inbound-first, private-journey site with WhatsApp and email leads, a stated reply time, deep journey pages, five languages with hreflang, static pages that are fast and accessible, and no invented facts.
+The site meets the planner's core: an inbound-first, private-journey site with WhatsApp and email leads, a stated reply time, deep journey pages, six languages with hreflang, static pages that are fast and accessible, and no invented facts.
 
 The gaps fall into three groups:
 
 1. **Things only the business has.** These are real team names and photographs, the LLPIN and GSTIN, more reviews, a professional photo shoot and the operating rota behind the 12-hour promise.
-2. **Planned later phases that are not built yet.** These are theme hub pages, itinerary PDFs, the B2B page and the domestic and outbound hub.
+2. **Planned later phases that are not built yet.** These are the B2B page and the domestic and outbound hub. Theme hubs and printable itineraries were added on 21 October 2026.
 3. **Two deliberate design deviations.** These are the autoplaying home slides, which have a pause button, and page HTML that is over 100 KB before compression (30 to 38 KB once compressed).
 
 ## Requirements from the build conversations
@@ -53,7 +69,7 @@ The gaps fall into three groups:
 | Planner item | Status | Note |
 |---|---|---|
 | Private, tailor-made journeys of 10 to 21 days for long-haul travellers | Met | 11 journeys of 9 to 21 days |
-| Markets: USA, UK, Australia, Canada, Germany, France | Met | The country picker shows local time and typical flight time. Pages exist in English, German, French, Spanish and Italian. |
+| Markets: USA, UK, Australia, Canada, Germany, France | Met | The country picker shows local time and typical flight time. Pages exist in English, Hindi, German, French, Spanish and Italian. Visitors in India choose English or Hindi. |
 | Promise in one sentence on the home page, proven within one scroll | Met | Hero line plus three promise cards: a real person replies, the quote comes in writing, one driver door to door |
 | Named specialist beside every enquiry | Partly met | The team card sits beside every enquiry point. No named person, because the old site names none. |
 | Public reply-time promise | Met | 12 hours, with office hours shown in the visitor's own time |
@@ -76,7 +92,7 @@ The gaps fall into three groups:
 | Photography first, real places | Met | Commons photographs of the real places. The planner prefers your own shoot or Incredible India Content Hub assets. |
 | Avoid the stock Taj-at-sunrise signal | Partly met | The home hero is still a Taj sunrise. Replace it when the shoot happens; the slug stays the same. |
 | Editorial typography | Met | Fraunces and Manrope, self-hosted |
-| Map as signature | Partly met | Every journey page has an SVG route map that draws itself. Tap a stop and it jumps to that day. The home page uses a region mosaic, not an India map. |
+| Map as signature | Met | Every journey page has an SVG route map that draws itself; tap a stop and it jumps to that day. Since 21 October the home page also shows every destination on one map. |
 | Survey of India boundaries | Met | No country outline is drawn anywhere, so the rule does not come into play |
 | No auto-rotating carousels | Not met (deliberate) | The home postcard advances on its own. It has a pause button (WCAG 2.2.2) and stops when reduced motion is set. Turning autoplay off is a one-line change if you prefer the planner's rule. |
 | Indian colour as accent | Met | Saffron on white |
@@ -101,11 +117,11 @@ The gaps fall into three groups:
 | Footer: identity, memberships held, policies, languages, social | Met | X and YouTube added |
 | Newsletter in the footer | Changed by decision | The site promises no newsletter unless asked |
 | Home page | Met | |
-| 12 to 16 journeys | Partly met | 11. The old site also sold Kashmir (Delhi, Agra, Srinagar), Shimla and Manali, Sikkim, Andaman and a Kerala monsoon trip. Both real reviews are about Kashmir, so a Kashmir journey is the most useful next one. |
+| 12 to 16 journeys | Met | 12, with Kashmir added on 21 October. The old site also sold Shimla and Manali, Sikkim, Andaman and a Kerala monsoon trip; those are the natural next four. Confirm the Kashmir route and hotels match what you sell. |
 | 5 to 6 region hubs | Met | 5 |
-| 25 to 30 destination pages | Met | 31 |
-| 6 to 8 theme hubs | Not met | Themes are filters, not pages |
-| 15 to 20 guide articles | Partly met | 9. Missing: dress and etiquette, a festivals calendar, packing. |
+| 25 to 30 destination pages | Met | 32, each a full guide with sights, food, seasons, getting there, where to stay, a day-by-day plan and FAQs |
+| 6 to 8 theme hubs | Met | 8 hubs under /themes, linked from the home page, the journeys index, the header menu, the footer, and every journey and destination that belongs to them |
+| 15 to 20 guide articles | Partly met | 12. Dress and etiquette, a festival calendar and a packing list were added on 21 October. Next: eSIM and connectivity on its own, Indian trains in depth, a 21-day itinerary, and travelling with diaspora family. |
 | 2 to 4 specialist profiles | Needs you | One team profile until real people are named |
 | About, How booking works, Responsible travel, Reviews, Contact | Met | |
 | Privacy, Cookies, Terms, Booking and cancellation, Accessibility | Met | Drafts. A lawyer should review them. |
@@ -124,7 +140,7 @@ Journey page anatomy (planner 6.3):
 | Price tiers | Changed by decision (stay styles without prices) |
 | Specialist card with WhatsApp and pre-filled text | Met, with the team mark in place of a photo |
 | 5 to 8 FAQs | Met |
-| Reviews from this or a similar journey | Not met (no review matches a journey yet) |
+| Reviews from this or a similar journey | Met (both Google reviews are on the Kashmir journey) |
 | Related journeys, "make it yours" call to action | Met |
 | Sticky phone bar | Met (WhatsApp and plan, no price by decision) |
 
@@ -147,7 +163,7 @@ Planner wizard (6.4):
 | GA4 events for WhatsApp, plan and enquiry | Met | Fires once `ga4` is set and the visitor consents |
 | Form fields and consent checkbox | Met | |
 | Hidden page URL | Met | |
-| Hidden UTM parameters and time zone | Not met | Small addition to the planner payload |
+| Hidden UTM parameters and time zone | Met | UTM tags are kept for the session from the landing page and sent with the time zone |
 | Spam protection | Partly met | Honeypot in place. Turnstile is optional. |
 | Auto-reply, CRM routing, WhatsApp Business setup | Needs you | |
 | Specialist face at every enquiry point | Needs you | |
@@ -164,10 +180,10 @@ Planner wizard (6.4):
 | Organization and TravelAgency schema with `sameAs` | Met | Instagram, Facebook, X, YouTube. Add the Google Business Profile link once you have its share URL. |
 | TouristTrip per journey, BreadcrumbList, Article, FAQ | Met | |
 | Product with Offer and AggregateRating | Changed by decision | Offers need prices. Ratings copied from Google must not be marked up on our own pages. |
-| Event schema for festivals | Not met | Comes with a festivals guide |
+| Event schema for festivals | Not met | The festival calendar exists, but most dates follow the lunar calendar and move each year, so no dated Event markup is published until dates are confirmed per year |
 | AI crawlers allowed, reviewed `llms.txt` | Met | |
 | English at the root, language folders, hreflang with x-default, no IP redirects | Met | |
-| German and French for top journeys, region hubs, visa and cost guides | Partly met | Home, planner, About and Contact exist in German, French, Spanish and Italian. Journeys and guides are English only and say so. |
+| German and French for top journeys, region hubs, visa and cost guides | Partly met | Home, planner, About and Contact exist in Hindi, German, French, Spanish and Italian. Journeys and guides are English only and say so. |
 | Translations by a native travel writer | Needs you | |
 
 ## Planner sections 9 and 10: technology, accessibility, legal
@@ -202,7 +218,7 @@ These are business tasks. The site is ready for each of them.
 | Decision 2, price band | Decided: no public prices |
 | Decision 3, brand and domain | Decided: Edifice Travels, edificetravels.com |
 | Decision 4, domestic and outbound | Open |
-| Decision 5, languages | Decided: German, French, Spanish, Italian |
+| Decision 5, languages | Decided: Hindi, German, French, Spanish, Italian |
 | Decision 6, reply coverage and languages | Open |
 | Decision 7, photography | Interim Commons photos. Shoot open. |
 | Decision 8, stack | Decided: Astro |

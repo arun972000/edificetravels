@@ -6,11 +6,11 @@
  */
 import type { APIRoute } from 'astro';
 import { site } from '../data/site';
-import { allJourneys, allRegions, allDestinations, allGuides } from '../lib/content';
+import { allJourneys, allRegions, allDestinations, allGuides, allThemes } from '../lib/content';
 import { companyFacts, url } from '../lib/llms';
 
 export const GET: APIRoute = async () => {
-  const [journeys, regions, destinations, guides] = await Promise.all([allJourneys(), allRegions(), allDestinations(), allGuides()]);
+  const [journeys, regions, destinations, guides, themes] = await Promise.all([allJourneys(), allRegions(), allDestinations(), allGuides(), allThemes()]);
   const lines = [
     `# ${site.name}`,
     '',
@@ -23,6 +23,10 @@ export const GET: APIRoute = async () => {
     '## Journeys',
     '',
     ...journeys.map(j => `- [${j.data.title}](${url(`/journeys/${j.id}`)}): ${j.data.seo.description}`),
+    '',
+    '## Travel by interest',
+    '',
+    ...themes.map(t => `- [${t.data.title}](${url(`/themes/${t.id}`)}): ${t.data.seo.description}`),
     '',
     '## Regions',
     '',
@@ -48,7 +52,7 @@ export const GET: APIRoute = async () => {
     '',
     '## Languages',
     '',
-    `The home, trip planner, about and contact pages are also published in German (${url('/de')}), French (${url('/fr')}), Spanish (${url('/es')}) and Italian (${url('/it')}).`,
+    `The home, trip planner, about and contact pages are also published in Hindi (${url('/hi')}), German (${url('/de')}), French (${url('/fr')}), Spanish (${url('/es')}) and Italian (${url('/it')}).`,
     '',
     '## Optional',
     '',

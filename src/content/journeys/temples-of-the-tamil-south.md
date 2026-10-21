@@ -55,7 +55,7 @@ itinerary:
   - day: 4
     title: "Pondicherry by bicycle"
     location: "Pondicherry"
-    text: "A guided ride at 7 am through the French and Tamil quarters, while the streets are being washed and the kolam patterns are fresh on the doorsteps. The Sri Aurobindo Ashram, the Manakula Vinayagar temple with its elephant at the door, and a market heaped with jasmine. In the afternoon, Auroville, the experimental town 12 km north, or a boat from Chunnambar across the backwater to the beach. Dinner is Creole: a fish curry cooked the French way."
+    text: "A guided ride at 7 am through the French and Tamil quarters, while the streets are being washed and the kolam patterns are fresh on the doorsteps. The Sri Aurobindo Ashram, the Manakula Vinayagar temple, and a market heaped with jasmine. In the afternoon, Auroville, the experimental town 12 km north, or a boat from Chunnambar across the backwater to the beach. Dinner is Creole: a fish curry cooked the French way."
     stay: { comfort: "French Quarter heritage guesthouse", premium: "Palais de Mahé", luxury: "La Villa" }
     image: pondicherry-street
   - day: 5

@@ -31,15 +31,15 @@ const pin = '<path d="M12 21s-6.5-5.6-6.5-11a6.5 6.5 0 0 1 13 0c0 5.4-6.5 11-6.5
 ---
 
 {n > 0 && (
-  <section class="py-14 md:py-24" data-stories>
+  <section class="py-10 md:py-16" data-stories>
     <div class="container-x">
       <SectionHeading title={title ?? t.home.voicesTitle} lead={lead} as={as} size={as === 'h1' ? 'h1' : 'h2'}>
         {showAll && <a slot="action" href="/reviews" class="chip">{t.home.voicesLabel}</a>}
       </SectionHeading>
 
-      <div class="stories mt-8 grid grid-cols-1 gap-4 md:mt-12 lg:grid-cols-[minmax(0,1.65fr)_minmax(0,1fr)] lg:gap-5" data-story-wrap>
+      <div class="stories mt-8 grid grid-cols-1 gap-4 md:mt-9 lg:grid-cols-[minmax(0,1.65fr)_minmax(0,1fr)] lg:gap-5" data-story-wrap>
         <!-- The story in the spotlight -->
-        <div class="story-card relative overflow-hidden rounded-[30px] bg-brand-soft p-6 sm:p-9 md:p-11" data-story-stage>
+        <div class="story-card relative overflow-hidden rounded-[30px] bg-brand p-6 text-on-brand sm:p-9 md:p-11" data-story-stage>
           <span class="story-mark" aria-hidden="true">“</span>
           <div class="story-slides relative" aria-live="polite">
             {reviews.map((r, i) => {
@@ -47,23 +47,23 @@ const pin = '<path d="M12 21s-6.5-5.6-6.5-11a6.5 6.5 0 0 1 13 0c0 5.4-6.5 11-6.5
               return (
                 <div class:list={['story-slide', i === 0 && 'is-active']} id={`story-${i}`} role={n > 1 ? 'tabpanel' : undefined} aria-labelledby={n > 1 ? `story-tab-${i}` : undefined} data-story-slide={i}>
                   <figure class="flex h-full flex-col">
-                    <div class="story-stars flex gap-1 text-brand" role="img" aria-label={fmt(t.common.outOfFive, { n: d.rating })}>
+                    <div class="story-stars flex gap-1 text-on-brand" role="img" aria-label={fmt(t.common.outOfFive, { n: d.rating })}>
                       {Array.from({ length: 5 }, (_, k) => (
                         <svg width="22" height="22" viewBox="0 0 20 20" aria-hidden="true" style={`--k:${k}`} class:list={[k < d.rating && 'on']} set:html={star}></svg>
                       ))}
                     </div>
                     <blockquote class="mt-5 flex-1">
-                      <p class="story-quote font-display text-ink">
+                      <p class="story-quote font-display text-on-brand">
                         {d.quote.split(/\s+/).map((w, k) => (<Fragment><span class="sw" style={`--k:${Math.min(k, 40)}`}>{w}</span>{' '}</Fragment>))}
                       </p>
                     </blockquote>
                     <figcaption class="mt-7 flex items-center gap-3.5">
                       <GuestAvatar name={d.name} size={52} tone={i} />
                       <span class="min-w-0">
-                        <span class="block text-[1.02rem] font-extrabold text-ink">{d.name}</span>
+                        <span class="block text-[1.02rem] font-extrabold text-on-brand">{d.name}</span>
                         {d.trip && (
-                          <span class="mt-0.5 flex items-center gap-1.5 text-[0.9rem] text-ink-soft">
-                            <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true" class="text-brand-deep" set:html={pin}></svg>
+                          <span class="mt-0.5 flex items-center gap-1.5 text-[0.9rem] font-semibold text-on-brand">
+                            <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true" set:html={pin}></svg>
                             {d.trip}
                           </span>
                         )}
@@ -76,7 +76,7 @@ const pin = '<path d="M12 21s-6.5-5.6-6.5-11a6.5 6.5 0 0 1 13 0c0 5.4-6.5 11-6.5
           </div>
           {n > 1 && (
             <div class="mt-7 flex items-center gap-2" data-story-nav hidden>
-              <span class="mr-auto text-[0.88rem] font-bold tabular-nums text-ink-soft" data-story-count data-template={t.home.voiceCount}>{fmt(t.home.voiceCount, { n: 1, total: n })}</span>
+              <span class="mr-auto text-[0.88rem] font-bold tabular-nums text-on-brand" data-story-count data-template={t.home.voiceCount}>{fmt(t.home.voiceCount, { n: 1, total: n })}</span>
               <button type="button" class="story-btn press" data-story-prev aria-label={t.home.prev}>
                 <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M10 3.5 5.5 8l4.5 4.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /></svg>
               </button>
@@ -123,7 +123,7 @@ const pin = '<path d="M12 21s-6.5-5.6-6.5-11a6.5 6.5 0 0 1 13 0c0 5.4-6.5 11-6.5
   .story-mark {
     position: absolute; top: 0.08em; right: 0.14em;
     font-family: var(--font-display); font-size: clamp(7rem, 15vw, 11rem); line-height: 0.75;
-    color: var(--c-brand); opacity: 0.2; pointer-events: none; user-select: none;
+    color: #1c1b1a; opacity: 0.14; pointer-events: none; user-select: none;
   }
   .story-card { touch-action: pan-y; }
   .story-slides { display: grid; }

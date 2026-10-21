@@ -35,6 +35,11 @@ export const en = {
     skip: 'Skip to content',
     primary: 'Primary',
     breadcrumb: 'Breadcrumb',
+    brandLine: 'Private India journeys',
+    menuRoutes: 'Ready-made routes',
+    menuByRegion: 'By region',
+    menuByInterest: 'By interest',
+    menuSeeAll: 'See all {n} journeys',
   },
 
   common: {
@@ -84,6 +89,12 @@ export const en = {
     otherCountry: 'Another country',
     searchCountry: 'Search for your country',
     noMatch: 'No country found.',
+    countryHint: 'Choose your country. The site switches to your language and shows your local time and flight.',
+    siteLanguage: 'Site language',
+    suggested: 'Suggested',
+    applied: 'Set for {country}, in {language}.',
+    appliedLanguage: 'Showing the site in {language}.',
+    switching: 'Updating the page',
   },
 
   local: {
@@ -231,6 +242,30 @@ export const en = {
       
       'We are a travel team in Rajouri Garden, New Delhi. The people who plan your journey are the ones who reply on WhatsApp, from your first question to your flight home.',
     meetTeam: 'More about us',
+    statsTitle: 'The promise, in numbers',
+    statJourneys: 'journeys to start from',
+    statPlaces: 'places we send guests',
+    statRegions: 'regions, each with its own season',
+    statReply: 'hours, at most, to a reply from a person',
+    statQuote: 'hours to your itemised written quote',
+    statLanguages: 'languages on this website',
+    mapTitle: 'Every place we send guests, on one map',
+    mapLead: 'Tap a dot to open that place. Most journeys join three to six of them and travel in one direction.',
+    mapLink: 'All destinations',
+    interestsTitle: 'Or start from what you love',
+    interestsLead: 'Eight ways into India, each with the journeys, places and seasons that suit it.',
+    interestsCount: '{n} journeys',
+    interestsCountOne: '1 journey',
+    startHereTitle: 'How would you like to begin?',
+    startHereLead: 'Three ways in. Each one ends with a person, never a booking button.',
+    doors: [
+      { title: 'I know where', text: 'Choose a region of India and see its places, its season and the routes through it.', cta: 'Browse by region' },
+      { title: 'I know what I love', text: 'Palaces, tigers, Ayurveda, food, mountains: start from an interest.', cta: 'Browse by interest' },
+      { title: 'Show me a route', text: 'Ready-made journeys of nine to twenty-one days, each one a starting point.', cta: 'See the journeys' },
+    ],
+    doorsTalk: 'Not sure yet? One message is enough.',
+    brandTitle: 'Why we are called Edifice',
+    brandText: 'An edifice is a building made with care, meant to stand for a long time. It is how we try to build every journey: on firm ground, one day at a time, with nothing hidden in the walls.',
 
     letterLabel: 'A note from Delhi',
     letter: [
@@ -367,6 +402,14 @@ export const en = {
     officeLine: '(office)',
     startPlanner: 'Start with the planner instead',
     whoAnswers: 'Who answers',
+    prepareTitle: 'What helps us reply well',
+    prepare: [
+      'Rough dates, or just the month you have in mind',
+      'How many of you are travelling, and the ages of any children',
+      'The places, or the feeling, you care about most',
+      'How you like to stay: Comfort, Premium or Luxury',
+    ],
+    prepareNote: 'None of it is required. One line is enough to start.',
   },
 
   about: {
@@ -421,6 +464,7 @@ export const en = {
     colCompany: 'Company',
     colHelp: 'Planning help',
     colLegal: 'Legal',
+    colInterests: 'Travel by interest',
     quoted: 'Every journey is quoted individually on enquiry.',
     theme: 'Dark mode',
     themeLabel: 'Theme',

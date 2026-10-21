@@ -1,0 +1,49 @@
+---
+/**
+ * India by interest: one tile per theme hub, a photograph with the theme's
+ * name and how many journeys it gathers. Two columns on phones, four on wide
+ * screens. Names come from the locale where a translation exists; the hub
+ * pages themselves are in English.
+ */
+import { Image } from 'astro:assets';
+import SectionHeading from '../SectionHeading.astro';
+import { photo } from '../../lib/photos';
+import { allThemes, journeysByTheme } from '../../lib/content';
+import { getDict, fmt, themeCopy } from '../../i18n';
+import type { Locale } from '../../i18n/config';
+
+interface Props { locale?: Locale; title?: string; lead?: string; as?: 'h2' | 'h3'; action?: boolean; exclude?: string }
+const { locale = 'en', title, lead, action = true, exclude } = Astro.props;
+const t = getDict(locale);
+const themes = await Promise.all((await allThemes()).filter(th => th.id !== exclude).map(async th => ({
+  id: th.id,
+  title: themeCopy(th.id, locale, th.data.title),
+  image: th.data.heroImage,
+  count: (await journeysByTheme(th.data.theme)).length,
+})));
+const countLabel = (n: number) => (n === 1 ? t.home.interestsCountOne : fmt(t.home.interestsCount, { n }));
+---
+
+{themes.length > 0 && (
+  <section class="py-10 md:py-16">
+    <div class="container-x">
+      <SectionHeading title={title ?? t.home.interestsTitle} lead={lead ?? t.home.interestsLead}>
+        {action && <a slot="action" href="/themes" class="chip">{t.footer.colInterests}</a>}
+      </SectionHeading>
+      <ul class="mt-8 grid grid-cols-2 gap-2.5 md:mt-9 md:gap-3 lg:grid-cols-4" role="list">
+        {themes.map((th, i) => (
+          <li>
+            <a href={`/themes/${th.id}`} class="group press block">
+              <div class="frame frame-accent reveal-img aspect-[4/5] sm:aspect-[4/3] lg:aspect-[4/5]">
+                <Image src={photo(th.image)} alt="" widths={[360, 560, 800]} sizes="(min-width: 1024px) 19rem, 50vw" class="absolute inset-0 h-full w-full object-cover" loading="lazy" decoding="async" />
+                <div class="absolute inset-0 bg-[linear-gradient(to_top,rgba(20,18,16,0.85)_0%,rgba(20,18,16,0.15)_55%,transparent_75%)]" aria-hidden="true"></div>
+                <span class:list={['absolute left-3 top-3 rounded-pill px-3 py-1 text-[0.78rem] font-extrabold', i % 2 === 0 ? 'bg-brand text-[#1c1b1a]' : 'bg-[#1c1b1a] text-white']}>{countLabel(th.count)}</span>
+                <h3 class="absolute inset-x-3 bottom-3 font-display text-[1.3rem] font-normal leading-[1.08] tracking-[-0.015em] text-white sm:inset-x-4 sm:bottom-4 sm:text-[1.55rem]">{th.title}</h3>
+              </div>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+)}

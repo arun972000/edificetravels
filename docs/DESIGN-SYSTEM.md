@@ -1,6 +1,86 @@
 # Edifice Travels Design System
 
-## Version 3: Postcards (12 October 2026, current)
+## Version 4: The logo's own colours (21 October 2026, current)
+
+The client asked for the site to carry the colours of the logo, saying the orange was used too lightly. Version 3's layout, type, photography and motion stay. What changed is where colour lives: the orange and the black of the pyramid badge now carry whole surfaces, not only buttons. Where this section and version 3 disagree, this section and `src/styles/global.css` win.
+
+**Brand pair, sampled from the logo artwork**
+- **Orange:** `#ea651f` (`--c-brand`). Used for fills: buttons, chips when chosen, numerals, whole panels.
+- **Black:** `#1c1b1a` (`--c-ink`, `--c-night`). Used for text, the footer and dark panels.
+- **Orange for text on white:** `#b5440b` (`--c-brand-deep`), 5.5:1 on white and 5.0:1 on the muted panels. Never use the fill orange for small text on white (3.3:1).
+- **Tint:** `#fdeee4` (`--c-brand-soft`) for quiet orange panels; `#fbd9c4` (`--c-brand-tint`) for rails and tracks.
+- **Neutrals** were warmed to sit with the black: muted panels `#f6f3f0`, lines `#ebe5df`.
+
+**Contrast rules**
+- Text on an orange fill is always the logo black, at full opacity (5.3:1). Translucent black on orange drops below 4.5:1 and is not allowed.
+- Orange text on a black panel uses the fill orange (5.3:1).
+- White on orange only at 24 px and above.
+- The wordmark uses the true logo orange; logotypes have no contrast requirement.
+- axe (WCAG 2.2 AA) reports no violations on 23 audited page and size combinations, in light and dark (21 October 2026).
+
+**Surfaces.** A page now alternates white sections with one orange panel and one black panel, never two of the same colour in a row.
+- `surface-brand` and `surface-night` utilities, or `bg-brand` / `bg-[#1c1b1a]` directly.
+- `SectionHeading` takes `tone="light" | "dark" | "brand"` and adapts the title, lead and accent rule.
+- Buttons: `primary` is orange with black text and turns black with orange text on hover; `dark` is black (for orange panels); `secondary` is a black outline. `WhatsAppButton` has a `dark` variant for orange panels.
+
+**Brand devices**
+- **The two-tone rule** (`brand-tick`, `brand-tick-light`, `brand-tick-ink`): a short bar, two thirds orange and one third black, above every section heading. It brings the brand to each section without highlighting a word in a headline (brand voice rule 6).
+- **The pyramid** (`components/Pyramid.astro`): the badge's pyramid as an SVG, small beside labels and drawn large and faint (`pyramid-deco`) in the corner of orange and black panels. Tones: `brand`, `night`, `ink`.
+- **The header hairline:** a 3 px orange and black line along the top of the header.
+- **Orange edge on cards:** journey, destination, guide and theme cards grow an orange line along the foot of the photo on hover (`frame-accent`).
+
+**New components**
+- `BrandStats.astro`: the promise in numbers. Every figure is counted from the content or taken from `site.ts`, so it cannot drift.
+- `MonthStrip.astro`: twelve months with the good ones in orange, on journey, destination and theme pages.
+- `home/IndiaMap.astro`: every destination on one map, on a black panel, with the stats beside it (the planner's "map as signature").
+- `home/ThemeTiles.astro`: the eight theme hubs as photo tiles with journey counts.
+- `Gallery.astro`: photographs of one place, laid out for however many there are (one as a wide banner, two side by side, three or more as a mosaic).
+
+**Destination pages** (`pages/destinations/[id].astro`) read as a full guide, in this order: overview with key facts and the month strip; the story and "do not miss"; numbered sights with time to allow; what we arrange (orange panel); where to stay, with hotels by style taken from the journeys; food (black panel); when to go; getting there with a map of nearby places; a day-by-day plan; photographs; questions; journeys that pass through and the four nearest places. Section tabs follow the reader down the page. The fields live in the destination schema, and `tests/content` fails the build if a destination is missing sights, food, seasons, road times, stay areas, a plan or at least four questions.
+
+**Footer.** Logo black, orange column headings, a "Travel by interest" chip row, the toran across the top and a faint pyramid in the corner.
+
+**Print.** Journey pages have a "Print or save as PDF" button. The print stylesheet removes navigation and buttons, expands every day and shows every photo.
+
+### Version 4.1: faster, tighter, clearer (21 October 2026)
+
+The client found the motion slow, the spacing too generous and the language and country choice confusing. What changed, and the rules that now apply:
+
+**Motion is quick.**
+- Reveals take 0.5 to 0.6 s and move 14 px.
+- Photos "develop" in 0.7 s from a 3% inset.
+- Headline words rise in 0.6 s with a 28 ms stagger, capped at ten words.
+- There is no blur filter anywhere and no parallax.
+- Nothing holds the scroll: the home postcard no longer "opens" while you scroll, and "A day in India" is a grid of six cards, not six pinned screens.
+- Page transitions are 0.28 to 0.4 s.
+- Rule: no entrance animation longer than 0.7 s, and no effect that ties movement to the scroll position.
+
+**Spacing is tighter.** Sections use `py-10 md:py-16` (was `py-14 md:py-24`), and gaps between blocks on a page use `pt-12 md:pt-16`. Heroes are `min-h-[66svh] md:min-h-[72svh]` (tall) or `min-h-[50svh] md:min-h-[56svh]` (medium).
+
+**Nothing is cut off.**
+- Cards with text over photographs use `min-h`, never a fixed height, so long translations grow the card.
+- The home headline is sized by screen height as well as width (`min(..., 10.5svh)`), and the postcard uses `justify-content: safe flex-end`.
+- The word-rise mask reaches above the cap height and below the baseline, so accents and descenders are never clipped.
+- Buttons wrap onto two lines rather than run off a phone screen.
+
+**Country is the only choice.** Pick a country; its language comes with it, the page reloads in that language, and a short note confirms the change, in the language just chosen. Each country row shows the language it will use. A country that reads more than one of the site's languages shows them as buttons under its name, and the button pressed is the choice: India (English, हिंदी), Canada (English, Français), Switzerland (Deutsch, Français, Italiano). "Another country" means English. There is no separate language control (removed 21 October 2026 at the client's request, as two controls confused people).
+
+**Hindi.** Devanagari is set in Noto Serif Devanagari beside Fraunces and Noto Sans Devanagari beside Manrope, from the same font stacks, so Latin words in Hindi text keep the brand faces. The two files (about 120 KB each) download only on pages that show Hindi. On Hindi pages there is no letter spacing (it breaks the joined top line), headings get more line height, and the hero headline is a step smaller with a wider measure. Times read the way people say them ("दोपहर 3:58"), and sentences end with the danda (।), which a test checks.
+
+**The hero badge.** The badge is stamped on once as the hero arrives. After that only its lettered ring turns, once every 40 seconds, while the pyramid stays upright; a whole spinning logo would turn the pyramid upside down and read as a loading spinner. Both layers are the same logo file split by masks, the pause button stops it with the slides, and reduced motion keeps it still.
+
+**Ways to browse are named once.** The header's Journeys menu shows ready-made routes, regions and interests side by side. Index pages share a "Ways to browse" bar (`BrowseBar.astro`). The home page offers the same three doors under "How would you like to begin?".
+
+**Brand.**
+- A bigger header badge with a descriptor line.
+- The badge as a postmark on the home postcard.
+- A "Why we are called Edifice" band with the badge large beside a mosaic of six destinations.
+- A favicon that matches the badge.
+- A footer with a closing line, contact tiles, link columns, interests and round social icons.
+
+**Images.** WebP quality 72 sitewide, and 66 for hero photographs, which are capped at 1,920 px wide. Frames shimmer in the brand tint while a photo loads, then the photo fades in. Hovering a link prerenders the page in Chrome and Edge (`experimental.clientPrerender`).
+
+## Version 3: Postcards (12 October 2026)
 
 The owner asked for white pages instead of cream, an entirely new layout, a phone experience without faults, professional and emotional motion, and a less formal, more interactive language and country picker with real flags. Images and fonts stay as approved. Sections 1 onward below describe version 2 and are kept for history. Where they disagree with this section, this section and `src/styles/global.css` win.
 
@@ -265,6 +345,6 @@ All effects use transform, opacity or a covering panel, run once, and stop under
 
 ## 6. Language and country
 
-- Locales: English at the root, German, French, Spanish and Italian under `/de`, `/fr`, `/es`, `/it` for the home page, planner, about and contact. All other pages are English and say so to visitors who chose another language.
+- Locales: English at the root, Hindi, German, French, Spanish and Italian under `/hi`, `/de`, `/fr`, `/es`, `/it` for the home page, planner, about and contact. All other pages are English and say so to visitors who chose another language.
 - Strings: `src/i18n/*.ts` (identical shape enforced by type), content names in `src/i18n/content.ts`.
 - Country: chosen in the header dialog or guessed from the time zone; sets local time, reply window in the visitor's clock, typical flight time to Delhi and the e-Visa note. Country never changes content or prices.

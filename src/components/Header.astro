@@ -1,18 +1,21 @@
 ---
 /**
- * Site header: a light white bar that stays reachable. The locale chip
- * shows the visitor's flag flying on a small pole and opens the country and
- * language popover; on phones the menu is a light dropdown card with links,
- * region chips and the two ways to reach us.
+ * Site header: a light white bar that stays reachable, with the badge and
+ * wordmark large enough to register. On wide screens "Journeys" opens a menu
+ * that shows the three ways to browse side by side (ready-made routes, by
+ * region, by interest), so the structure of the site is clear before anyone
+ * clicks. The locale chip shows the visitor's flag on a small pole and opens
+ * the country and language panel. On phones the menu is a dropdown card
+ * with links, region and interest chips, and the two ways to reach us.
  */
 import Logo from './Logo.astro';
 import FlagWave from './FlagWave.astro';
 import Button from './Button.astro';
 import WhatsAppButton from './WhatsAppButton.astro';
 import { waMessages } from '../lib/whatsapp';
-import { getDict, regionCopy } from '../i18n';
+import { getDict, fmt, regionCopy, themeCopy, journeyCopy } from '../i18n';
 import { localizedPath, basePath, type Locale } from '../i18n/config';
-import { allRegions } from '../lib/content';
+import { allRegions, allThemes, allJourneys } from '../lib/content';
 
 interface Props {
   /** Kept for old call sites. The header is always solid now. */
@@ -23,37 +26,58 @@ const { locale = 'en' } = Astro.props;
 const t = getDict(locale);
 const current = basePath(Astro.url.pathname);
 const nav = [
-  { label: t.nav.journeys, href: '/journeys', base: '/journeys' },
+  { label: t.nav.journeys, href: '/journeys', base: '/journeys', mega: true },
   { label: t.nav.destinations, href: '/destinations', base: '/destinations' },
   { label: t.nav.guide, href: '/guide', base: '/guide' },
   { label: t.nav.about, href: localizedPath('/about', locale), base: '/about' },
   { label: t.nav.contact, href: localizedPath('/contact', locale), base: '/contact' },
 ];
-const isActive = (b: string) => current === b || current.startsWith(b + '/');
-const regions = (await allRegions()).map(r => ({ id: r.id, title: regionCopy(r.id, locale, { title: r.data.title, tagline: r.data.tagline }).title }));
+const isActive = (b: string) => current === b || current.startsWith(b + '/') || (b === '/journeys' && (current.startsWith('/themes') || current.startsWith('/regions')));
+const themes = (await allThemes()).map(th => ({ id: th.id, title: themeCopy(th.id, locale, th.data.title) }));
+const journeysAll = await allJourneys();
+const regions = (await allRegions()).map(r => ({
+  id: r.id,
+  title: regionCopy(r.id, locale, { title: r.data.title, tagline: r.data.tagline }).title,
+  count: journeysAll.filter(j => j.data.region === r.id).length,
+}));
+const routes = journeysAll.slice(0, 6).map(j => ({ id: j.id, title: journeyCopy(j.id, locale, { title: j.data.title, tagline: '' }).title, days: j.data.days }));
 ---
 
 <header id="site-header" class="site-header fixed inset-x-0 top-0 z-50">
   <div id="locale-notice" class="bg-ink text-bg" hidden>
     <div class="container-x flex flex-wrap items-center justify-between gap-x-4 gap-y-1 py-2 text-[0.85rem]">
       <span data-notice-text></span>
-      <a data-notice-link href="/" class="font-bold text-[#ffb36b] underline underline-offset-2"></a>
+      <a data-notice-link href="/" class="font-bold text-[#ff8a4c] underline underline-offset-2"></a>
     </div>
   </div>
-  <div class="container-x flex h-[var(--header-h)] items-center justify-between gap-3">
+  <div class="container-x flex h-[var(--header-h)] items-center justify-between gap-3" data-header-row>
     <a href={localizedPath('/', locale)} class="press flex items-center rounded-md" aria-label={`Edifice Travels, ${t.nav.home}`}>
-      <Logo />
+      <Logo size={48} tagline={t.nav.brandLine} />
     </a>
 
     <nav aria-label={t.nav.primary} class="hidden lg:block">
-      <ul class="flex items-center gap-1 rounded-pill bg-bg-muted p-1">
+      <ul class="flex items-center gap-0.5 rounded-pill bg-bg-muted p-1">
         {nav.map(item => (
           <li>
-            <a
-              href={item.href}
-              aria-current={isActive(item.base) ? 'page' : undefined}
-              class="nav-link block rounded-pill px-4 py-2 text-[0.95rem] font-semibold text-ink-soft transition-colors duration-300 hover:text-ink aria-[current=page]:bg-bg-elevated aria-[current=page]:text-ink aria-[current=page]:shadow-1"
-            >{item.label}</a>
+            {item.mega ? (
+              <button
+                type="button"
+                data-mega-toggle
+                aria-expanded="false"
+                aria-controls="mega-journeys"
+                aria-current={isActive(item.base) ? 'page' : undefined}
+                class="nav-link inline-flex items-center gap-1.5 whitespace-nowrap rounded-pill px-3 py-2 text-[0.95rem] font-semibold text-ink-soft transition-colors duration-300 hover:text-brand-deep aria-expanded:bg-bg-elevated aria-expanded:text-ink aria-[current=page]:bg-brand aria-[current=page]:text-on-brand xl:px-4"
+              >
+                {item.label}
+                <svg class="mega-chev" width="12" height="12" viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 6 8 10.5 12.5 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /></svg>
+              </button>
+            ) : (
+              <a
+                href={item.href}
+                aria-current={isActive(item.base) ? 'page' : undefined}
+                class="nav-link block whitespace-nowrap rounded-pill px-3 py-2 text-[0.95rem] font-semibold text-ink-soft transition-colors duration-300 hover:text-brand-deep aria-[current=page]:bg-brand aria-[current=page]:text-on-brand aria-[current=page]:shadow-[var(--shadow-brand)] xl:px-4"
+              >{item.label}</a>
+            )}
           </li>
         ))}
       </ul>
@@ -63,7 +87,7 @@ const regions = (await allRegions()).map(r => ({ id: r.id, title: regionCopy(r.i
       <button
         type="button"
         data-locale-open
-        class="locale-chip press inline-flex h-11 items-center gap-1.5 rounded-pill border border-line bg-bg-elevated pl-2.5 pr-3.5 text-[0.9rem] font-bold text-ink transition-colors hover:border-ink/40"
+        class="locale-chip press inline-flex h-11 items-center gap-1.5 rounded-pill border border-line bg-bg-elevated pl-2.5 pr-3.5 text-[0.9rem] font-bold text-ink transition-colors hover:border-brand"
         aria-haspopup="dialog"
         aria-label={t.locale.button}
         title={t.locale.button}
@@ -77,11 +101,11 @@ const regions = (await allRegions()).map(r => ({ id: r.id, title: regionCopy(r.i
         </span>
         <span data-locale-code class="uppercase tabular-nums">{locale}</span>
       </button>
-      <span class="hidden sm:inline-flex">
+      <span class="hidden sm:inline-flex lg:hidden xl:inline-flex">
         <WhatsAppButton href={waMessages.general()} variant="icon" trackLabel="header" locale={locale} />
       </span>
       <span class="hidden md:inline-flex">
-        <Button href={localizedPath('/plan', locale)} size="sm" track="plan_click" class="!h-11 !px-5">{t.nav.plan}</Button>
+        <Button href={localizedPath('/plan', locale)} size="sm" track="plan_click" class="!h-11 whitespace-nowrap !px-5">{t.nav.plan}</Button>
       </span>
       <button
         type="button"
@@ -98,13 +122,54 @@ const regions = (await allRegions()).map(r => ({ id: r.id, title: regionCopy(r.i
     </div>
   </div>
 
+  <!-- Wide screens: the three ways to browse journeys, side by side. -->
+  <div id="mega-journeys" class="mega hidden lg:block" data-mega hidden>
+    <div class="container-x">
+      <div class="mega-card grid grid-cols-[1.25fr_0.9fr_1.25fr_0.95fr] gap-8 rounded-[26px] border border-line border-t-4 border-t-brand bg-bg-elevated p-7">
+        <div>
+          <p class="kicker">{t.nav.menuRoutes}</p>
+          <ul class="mt-3 space-y-0.5">
+            {routes.map(r => (
+              <li><a href={`/journeys/${r.id}`} class="mega-link flex items-baseline justify-between gap-3"><span>{r.title}</span><span class="shrink-0 text-[0.78rem] font-bold text-ink-muted">{fmt(t.common.days, { n: r.days })}</span></a></li>
+            ))}
+          </ul>
+          <a href="/journeys" class="mt-3 inline-flex items-center gap-1.5 text-[0.9rem] font-extrabold text-brand-deep underline decoration-brand decoration-2 underline-offset-4">{fmt(t.nav.menuSeeAll, { n: journeysAll.length })}</a>
+        </div>
+        <div>
+          <p class="kicker">{t.nav.menuByRegion}</p>
+          <ul class="mt-3 space-y-0.5">
+            {regions.map(r => (
+              <li><a href={`/regions/${r.id}`} class="mega-link flex items-baseline justify-between gap-3"><span>{r.title}</span>{r.count > 0 && <span class="grid h-5 min-w-5 place-items-center rounded-full bg-brand-soft px-1.5 text-[0.72rem] font-extrabold text-brand-deep">{r.count}</span>}</a></li>
+            ))}
+          </ul>
+          <a href="/destinations" class="mt-3 inline-flex text-[0.9rem] font-extrabold text-brand-deep underline decoration-brand decoration-2 underline-offset-4">{t.nav.destinations}</a>
+        </div>
+        <div>
+          <p class="kicker">{t.nav.menuByInterest}</p>
+          <ul class="mt-3 grid grid-cols-2 gap-x-4 gap-y-0.5">
+            {themes.map(th => <li><a href={`/themes/${th.id}`} class="mega-link block">{th.title}</a></li>)}
+          </ul>
+          <a href="/themes" class="mt-3 inline-flex text-[0.9rem] font-extrabold text-brand-deep underline decoration-brand decoration-2 underline-offset-4">{t.footer.colInterests}</a>
+        </div>
+        <div class="relative isolate flex flex-col justify-between overflow-hidden rounded-[20px] bg-brand p-5 text-[#1c1b1a]">
+          <svg viewBox="0 0 100 90" class="pyramid-deco -bottom-3 -right-3 -z-10 w-28" aria-hidden="true"><path d="M53 2 2 88l66 2Z" fill="#1c1b1a" opacity=".14" /><path d="M53 2l15 88 30-11Z" fill="#1c1b1a" opacity=".3" /></svg>
+          <div>
+            <p class="font-display text-[1.45rem] leading-tight">{t.home.designOwnTitle}</p>
+            <p class="mt-2 text-[0.9rem] font-medium leading-snug">{t.home.designOwnText}</p>
+          </div>
+          <div class="mt-4"><Button href={localizedPath('/plan', locale)} variant="dark" size="sm" track="plan_click">{t.home.designOwn}</Button></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <div id="mobile-menu" class="mobile-menu lg:hidden" hidden>
     <div class="mm-scrim" data-menu-scrim aria-hidden="true"></div>
     <div class="mm-card">
       <ul class="p-1.5">
         {nav.map(item => (
           <li>
-            <a href={item.href} class="flex items-center justify-between rounded-[14px] px-3.5 py-3 text-[1.05rem] font-bold text-ink transition-colors hover:bg-bg-muted aria-[current=page]:bg-brand-soft" aria-current={isActive(item.base) ? 'page' : undefined}>
+            <a href={item.href} class="flex items-center justify-between rounded-[14px] px-3.5 py-3 text-[1.05rem] font-bold text-ink transition-colors hover:bg-brand-soft aria-[current=page]:bg-brand aria-[current=page]:text-on-brand" aria-current={isActive(item.base) ? 'page' : undefined}>
               <span>{item.label}</span>
               <svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true" class="text-ink-muted"><path d="M6 3.5 10.5 8 6 12.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" /></svg>
             </a>
@@ -112,17 +177,37 @@ const regions = (await allRegions()).map(r => ({ id: r.id, title: regionCopy(r.i
         ))}
       </ul>
       <div class="border-t border-line px-3.5 pb-3 pt-3">
-        <p class="text-[0.8rem] font-bold text-ink-muted">{t.home.regionsLabel}</p>
+        <p class="text-[0.8rem] font-bold text-brand-deep">{t.nav.menuByRegion}</p>
         <div class="no-scrollbar -mx-3.5 mt-2 flex gap-1.5 overflow-x-auto px-3.5">
           {regions.map(r => <a href={`/regions/${r.id}`} class="chip !h-9 shrink-0 !px-3.5 !text-[0.85rem]">{r.title}</a>)}
         </div>
       </div>
+      {themes.length > 0 && (
+        <div class="border-t border-line px-3.5 pb-3 pt-3">
+          <p class="text-[0.8rem] font-bold text-brand-deep">{t.nav.menuByInterest}</p>
+          <div class="no-scrollbar -mx-3.5 mt-2 flex gap-1.5 overflow-x-auto px-3.5">
+            {themes.map(th => <a href={`/themes/${th.id}`} class="chip !h-9 shrink-0 !px-3.5 !text-[0.85rem]">{th.title}</a>)}
+          </div>
+        </div>
+      )}
       <div class="grid grid-cols-2 gap-2 border-t border-line p-3">
         <Button href={localizedPath('/plan', locale)} size="sm" track="plan_click" class="!h-11 w-full">{t.nav.plan}</Button>
         <WhatsAppButton href={waMessages.general()} size="sm" label="WhatsApp" trackLabel="mobile-menu" locale={locale} class="[&>a]:!h-11 [&>a]:w-full" />
       </div>
     </div>
   </div>
+  <script is:inline>
+    // Laptop widths with long translated labels (French, Italian): if the row
+    // would overflow, the badge stands alone. Its ring already carries the name.
+    (function () {
+      var row = document.querySelector('[data-header-row]');
+      if (!row) return;
+      var fit = function () { row.classList.remove('is-tight'); if (row.scrollWidth > row.clientWidth + 1) row.classList.add('is-tight'); };
+      fit();
+      addEventListener('resize', fit, { passive: true });
+      if (document.fonts) document.fonts.ready.then(fit);
+    })();
+  </script>
 </header>
 
 <style>
@@ -134,8 +219,10 @@ const regions = (await allRegions()).map(r => ({ id: r.id, title: regionCopy(r.i
     border-bottom: 1px solid transparent;
     transition: border-color 0.4s var(--ease-out), transform 0.5s var(--ease-out), background-color 0.4s var(--ease-out);
   }
+  /* The badge's two colours as a hairline along the very top. */
+  .site-header::before { content: ''; position: absolute; inset: 0 0 auto 0; height: 3px; background: linear-gradient(90deg, var(--c-brand) 0 62%, var(--c-ink) 62% 100%); }
   .site-header.is-scrolled { border-bottom-color: var(--c-line); }
-  .site-header.is-hidden:not(.is-open) { transform: translateY(-100%); }
+  .site-header.is-hidden:not(.is-open):not(.is-mega) { transform: translateY(-100%); }
   .site-header.is-open { background: var(--c-bg); }
 
   .burger { position: relative; display: block; width: 18px; height: 12px; }
@@ -145,12 +232,21 @@ const regions = (await allRegions()).map(r => ({ id: r.id, title: regionCopy(r.i
   .site-header.is-open .burger span:first-child { top: 5px; transform: rotate(45deg); }
   .site-header.is-open .burger span:last-child { top: 5px; transform: rotate(-45deg); }
 
+  .mega { position: absolute; top: 100%; left: 0; right: 0; padding-top: 6px; }
+  .mega[hidden] { display: none; }
+  .mega-card { box-shadow: 0 30px 70px -24px rgb(28 27 26 / 0.38), 0 2px 8px rgb(28 27 26 / 0.06); opacity: 0; transform: translateY(-6px); transition: opacity 0.22s ease, transform 0.35s var(--ease-out); }
+  .site-header.is-mega .mega-card { opacity: 1; transform: none; }
+  .mega-link { border-radius: 10px; margin-inline: -0.5rem; padding: 0.4rem 0.5rem; font-size: 0.95rem; font-weight: 650; color: var(--c-ink); transition: background-color 0.15s, color 0.15s; }
+  .mega-link:hover, .mega-link:focus-visible { background: var(--c-brand-soft); color: var(--c-brand-deep); }
+  .mega-chev { transition: transform 0.3s var(--ease-out); }
+  [data-mega-toggle][aria-expanded="true"] .mega-chev { transform: rotate(180deg); }
+
   .mobile-menu { position: fixed; inset: calc(var(--header-h) + var(--notice-h, 0px)) 0 0 0; }
   .mm-scrim { position: absolute; inset: 0; background: rgb(12 13 15 / 0.28); opacity: 0; transition: opacity 0.3s ease; }
   .mm-card {
     position: absolute; top: 6px; left: 12px; right: 12px;
     max-height: calc(100% - 18px); overflow-y: auto;
-    border: 1px solid var(--c-line); border-radius: 20px;
+    border: 1px solid var(--c-line); border-top: 4px solid var(--c-brand); border-radius: 20px;
     background: var(--c-bg-elevated);
     box-shadow: 0 18px 50px -18px rgb(20 22 26 / 0.35), 0 2px 8px rgb(20 22 26 / 0.06);
     transform-origin: calc(100% - 22px) 0;
@@ -159,7 +255,7 @@ const regions = (await allRegions()).map(r => ({ id: r.id, title: regionCopy(r.i
   }
   .site-header.is-open .mm-scrim { opacity: 1; }
   .site-header.is-open .mm-card { opacity: 1; transform: none; }
-  @media (prefers-reduced-motion: reduce) { .mm-card, .mm-scrim { transition: none; } }
+  @media (prefers-reduced-motion: reduce) { .mm-card, .mm-scrim, .mega-card { transition: none; } }
 </style>
 
 <script>
@@ -174,7 +270,7 @@ const regions = (await allRegions()).map(r => ({ id: r.id, title: regionCopy(r.i
   const onScroll = () => {
     const y = window.scrollY;
     header.classList.toggle('is-scrolled', y > 8);
-    const busy = header.classList.contains('is-open') || (pop && !pop.hidden);
+    const busy = header.classList.contains('is-open') || header.classList.contains('is-mega') || (pop && !pop.hidden);
     if (y > 520 && y > lastY + 6 && !busy) header.classList.add('is-hidden');
     else if (y < lastY - 6 || y < 520) header.classList.remove('is-hidden');
     document.documentElement.classList.toggle('header-hidden', header.classList.contains('is-hidden') && !header.classList.contains('is-open'));
@@ -196,4 +292,29 @@ const regions = (await allRegions()).map(r => ({ id: r.id, title: regionCopy(r.i
   menu?.querySelector('[data-menu-scrim]')?.addEventListener('click', () => setOpen(false));
   document.addEventListener('keydown', e => { if (e.key === 'Escape') setOpen(false); });
   window.matchMedia('(min-width: 64rem)').addEventListener('change', e => { if (e.matches) setOpen(false); });
+
+  // Journeys menu (wide screens): opens on click, or after a short hover with
+  // a mouse; closes on Escape, an outside click, or when focus leaves it.
+  const megaBtn = header.querySelector<HTMLButtonElement>('[data-mega-toggle]');
+  const mega = header.querySelector<HTMLElement>('[data-mega]');
+  if (megaBtn && mega) {
+    let timer = 0;
+    const setMega = (open: boolean) => {
+      window.clearTimeout(timer);
+      if (open === (megaBtn.getAttribute('aria-expanded') === 'true')) return;
+      megaBtn.setAttribute('aria-expanded', String(open));
+      if (open) { mega.hidden = false; requestAnimationFrame(() => header.classList.add('is-mega')); }
+      else { header.classList.remove('is-mega'); timer = window.setTimeout(() => { mega.hidden = true; }, 220); }
+    };
+    megaBtn.addEventListener('click', () => setMega(megaBtn.getAttribute('aria-expanded') !== 'true'));
+    const fine = window.matchMedia('(hover: hover) and (pointer: fine)');
+    const zone = [megaBtn, mega];
+    zone.forEach(el => {
+      el.addEventListener('mouseenter', () => { if (!fine.matches) return; window.clearTimeout(timer); timer = window.setTimeout(() => setMega(true), 120); });
+      el.addEventListener('mouseleave', () => { if (!fine.matches) return; window.clearTimeout(timer); timer = window.setTimeout(() => setMega(false), 220); });
+    });
+    document.addEventListener('keydown', e => { if (e.key === 'Escape' && megaBtn.getAttribute('aria-expanded') === 'true') { setMega(false); megaBtn.focus(); } });
+    document.addEventListener('click', e => { if (!header.contains(e.target as Node)) setMega(false); });
+    header.addEventListener('focusout', e => { const to = e.relatedTarget as Node | null; if (to && !mega.contains(to) && to !== megaBtn) setMega(false); });
+  }
 </script>

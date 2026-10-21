@@ -31,7 +31,10 @@ const INDIA = { minLat: 6.5, maxLat: 36.5, minLng: 67.5, maxLng: 97.5 };
 
 export default function RouteMap({ stops, mode = 'route', title = 'Route', fitIndia = false }: Props) {
   const ref = useRef<SVGSVGElement>(null);
-  const [drawn, setDrawn] = useState(false);
+  // Drawn by default, so the server-rendered map shows every stop even before
+  // (or without) script. The draw-in animation is added only for a map that
+  // is still off screen when the script arrives.
+  const [drawn, setDrawn] = useState(true);
   const [active, setActive] = useState<number | null>(null);
   const [moving, setMoving] = useState(false);
 
@@ -129,11 +132,14 @@ export default function RouteMap({ stops, mode = 'route', title = 'Route', fitIn
     const el = ref.current;
     if (!el) return;
     const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (reduce || !('IntersectionObserver' in window)) { setDrawn(true); return; }
+    if (reduce || !('IntersectionObserver' in window)) return;
     setMoving(true);
+    const r = el.getBoundingClientRect();
+    if (r.top < window.innerHeight && r.bottom > 0) return; // already on screen: leave it drawn
+    setDrawn(false);
     const io = new IntersectionObserver(entries => {
       if (entries.some(e => e.isIntersecting)) { setDrawn(true); io.disconnect(); }
-    }, { threshold: 0.3 });
+    }, { threshold: 0.05 });
     io.observe(el);
     return () => io.disconnect();
   }, []);
@@ -151,9 +157,9 @@ export default function RouteMap({ stops, mode = 'route', title = 'Route', fitIn
   };
 
   return (
-    <figure className="route-map rounded-[26px] bg-bg-muted p-3 sm:p-5 md:p-6">
+    <figure className="route-map rounded-[26px] border-t-[6px] border-brand bg-brand-soft p-3 sm:p-5 md:p-6">
       <figcaption className="mb-3 flex flex-wrap items-center justify-between gap-x-4 gap-y-1 px-1 text-[0.85rem] font-semibold text-ink-muted">
-        <span className="font-bold text-ink">{title}</span>
+        <span className="font-extrabold text-ink">{title}</span>
         {mode === 'route' && <span>{points.length} stops. Tap a stop to go to that day.</span>}
       </figcaption>
       <svg ref={ref} viewBox={`0 0 ${W} ${H}`} role="group" aria-label={`${title}: ${points.map(p => p.name).join(', ')}`} className="h-auto w-full">
@@ -178,17 +184,17 @@ export default function RouteMap({ stops, mode = 'route', title = 'Route', fitIn
             strokeLinecap="round"
             strokeDasharray="2000"
             strokeDashoffset={drawn ? 0 : 2000}
-            style={{ transition: 'stroke-dashoffset 1.8s cubic-bezier(.2,.7,.2,1)' }}
+            style={{ transition: 'stroke-dashoffset 1.1s cubic-bezier(.2,.7,.2,1)' }}
           />
         )}
 
         {path && drawn && moving && (
           <g aria-hidden="true">
             <circle r="9" fill="var(--c-brand)" opacity="0.22">
-              <animateMotion dur={`${Math.max(7, points.length * 1.8)}s`} begin="1.9s" repeatCount="indefinite" path={path} />
+              <animateMotion dur={`${Math.max(7, points.length * 1.8)}s`} begin="1.2s" repeatCount="indefinite" path={path} />
             </circle>
             <circle r="4.5" fill="var(--c-brand-deep)" stroke="var(--c-bg-elevated)" strokeWidth="2">
-              <animateMotion dur={`${Math.max(7, points.length * 1.8)}s`} begin="1.9s" repeatCount="indefinite" path={path} />
+              <animateMotion dur={`${Math.max(7, points.length * 1.8)}s`} begin="1.2s" repeatCount="indefinite" path={path} />
             </circle>
           </g>
         )}
@@ -208,14 +214,14 @@ export default function RouteMap({ stops, mode = 'route', title = 'Route', fitIn
               onMouseLeave={() => setActive(null)}
               onFocus={() => setActive(i)}
               onBlur={() => setActive(null)}
-              style={{ opacity: drawn ? 1 : 0, transition: `opacity .5s ${0.25 + i * 0.12}s` }}
+              style={{ opacity: drawn ? 1 : 0, transition: `opacity .35s ${0.08 + Math.min(i, 12) * 0.04}s` }}
             >
               <circle cx={p.x} cy={p.y} r={isActive ? 16 : 12} fill="var(--c-brand)" opacity="0.18" />
               {/* Visible focus/hover ring, since the group suppresses the browser outline. */}
               {isActive && <circle cx={p.x} cy={p.y} r="11" fill="none" stroke="var(--c-brand-deep)" strokeWidth="2" />}
               <circle cx={p.x} cy={p.y} r="6" fill="var(--c-brand)" stroke="var(--c-bg-elevated)" strokeWidth="2.5" />
               {mode === 'route' && (
-                <text x={p.x} y={p.y + 3.5} textAnchor="middle" fontSize="8" fontWeight="700" fill="#1b1d21">{i + 1}</text>
+                <text x={p.x} y={p.y + 3.5} textAnchor="middle" fontSize="8" fontWeight="700" fill="#1c1b1a">{i + 1}</text>
               )}
               {labels[i]?.show && (
                 <text

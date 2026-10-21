@@ -1,32 +1,133 @@
 ---
-import ProseLayout from '../layouts/ProseLayout.astro';
+/**
+ * Responsible travel: what we do about the places and people our journeys
+ * depend on, written down so guests can hold us to it. No badges, no
+ * certifications we do not hold.
+ */
+import { getImage } from 'astro:assets';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Hero from '../components/Hero.astro';
+import SectionHeading from '../components/SectionHeading.astro';
+import Button from '../components/Button.astro';
+import WhatsAppButton from '../components/WhatsAppButton.astro';
+import Pyramid from '../components/Pyramid.astro';
+import Gallery from '../components/Gallery.astro';
+import { photo } from '../lib/photos';
+import { photoAlt } from '../data/photo-alt';
+import { waLink } from '../lib/whatsapp';
+import { breadcrumbLd } from '../lib/seo';
+
+const crumbs = [{ name: 'Home', href: '/' }, { name: 'Responsible travel', href: '/responsible-travel' }];
+const og = await getImage({ src: photo('rural-village'), width: 1200, format: 'jpeg' });
+const wa = waLink('Hi, I have a question about how your journeys work with local people, wildlife and the places you visit.');
+
+const groups = [
+  {
+    title: 'The people who make your journey',
+    icon: 'M16 19v-1a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v1M9 10a3 3 0 1 0 0-6 3 3 0 0 0 0 6Zm13 9v-1a4 4 0 0 0-3-3.9M16 4.1a3 3 0 0 1 0 5.8',
+    items: [
+      'Drivers are paid a full daily rate plus overnight allowances, not a share of commissions. We do not route you through shops for kickbacks, and our drivers are told not to.',
+      'Guides are local to the place they show you and licensed where licensing exists. We pay them the day rate they ask, not the lowest we can find.',
+      'Where a family-run heritage stay or homestay is the best option, we use it over a chain hotel, and we tell you why.',
+    ],
+  },
+  {
+    title: 'Wildlife',
+    icon: 'M12 21c-4 0-7-2.5-7-6 0-2 1-3.5 2.5-4.5M12 21c4 0 7-2.5 7-6 0-2-1-3.5-2.5-4.5M8 6.5a2 2 0 1 0 0-.1M16 6.5a2 2 0 1 0 0-.1M4.5 10a1.8 1.8 0 1 0 0-.1M19.5 10a1.8 1.8 0 1 0 0-.1',
+    items: [
+      'No elephant rides, anywhere, including at Amber Fort, where we use jeeps.',
+      'No contact with captive big cats, no "tiger temples", no photo opportunities with drugged animals.',
+      'Safari drives follow park rules on distance and noise. If a guide breaks them to get you closer, tell us.',
+      'Camel rides in the Thar are with animals that are owned, worked and rested by the families who run them; we visit the camps before we use them.',
+    ],
+  },
+  {
+    title: 'Water and plastic',
+    icon: 'M12 3s6 6.5 6 11a6 6 0 0 1-12 0c0-4.5 6-11 6-11Z',
+    items: [
+      'Every vehicle carries a refill container, and we give guests a bottle to refill rather than a daily stack of plastic.',
+      'Where we cannot guarantee filtered water we say so, and bottled water is provided.',
+    ],
+  },
+  {
+    title: 'Places under pressure',
+    icon: 'M3 20h18M5 20V9l7-5 7 5v11M9 20v-6h6v6',
+    items: [
+      'We time visits to the most crowded monuments for early mornings, which is better for you and better for the site.',
+      'In Ladakh we build in acclimatisation days and use local homestays in the valleys.',
+      'We do not sell "undiscovered" villages as attractions.',
+    ],
+  },
+];
 ---
 
-<ProseLayout title="Responsible travel" description="What Edifice Travels does about the places and people its journeys depend on: local guides, fair pay, wildlife rules, plastic, and what we do not claim." eyebrow="Our commitments" lead="Nothing on this page is a certification badge. It is what we do, written down so you can hold us to it." updated="10 October 2026">
-  <h2>The people who make your journey</h2>
-  <ul>
-    <li>Drivers are paid a full daily rate plus overnight allowances, not a share of commissions. We do not route you through shops for kickbacks, and our drivers are told not to.</li>
-    <li>Guides are local to the place they show you and licensed where licensing exists. We pay them the day rate they ask, not the lowest we can find.</li>
-    <li>Where a family-run heritage stay or homestay is the best option, we use it over a chain hotel, and we tell you why.</li>
-  </ul>
+<BaseLayout
+  title="Responsible travel"
+  description="What Edifice Travels does about the places and people its journeys depend on: local guides, fair pay, wildlife rules, plastic, and what we do not claim."
+  jsonLd={[breadcrumbLd(crumbs)]}
+  image={og.src}
+  imageAlt={photoAlt('rural-village')}
+>
+  <Hero
+    image={photo('rural-village')}
+    alt={photoAlt('rural-village')}
+    eyebrow="Our commitments"
+    title="Good for the places, and the people in them"
+    lead="Nothing on this page is a certification badge. It is what we do, written down so you can hold us to it."
+    height="medium"
+    breadcrumbs={crumbs}
+  />
 
-  <h2>Wildlife</h2>
-  <ul>
-    <li>No elephant rides, anywhere, including at Amber Fort, where we use jeeps.</li>
-    <li>No contact with captive big cats, no "tiger temples", no photo opportunities with drugged animals.</li>
-    <li>Safari drives follow park rules on distance and noise. If a guide breaks them to get you closer, tell us.</li>
-    <li>Camel rides in the Thar are with animals that are owned, worked and rested by the families who run them; we visit the camps before we use them.</li>
-  </ul>
+  <section class="container-x pt-10 md:pt-14">
+    <p class="reveal max-w-4xl font-display text-[clamp(1.5rem,1.2rem+1.2vw,2.3rem)] leading-[1.28] tracking-[-0.015em] text-ink">Your journey depends on a driver, a dozen guides, the families who run small hotels and the places themselves. We would rather pay them properly and protect what makes them worth seeing than save a little on each.</p>
+    <p class="reveal mt-4 text-small text-ink-muted">Last updated 21 October 2026.</p>
+  </section>
 
-  <h2>Water and plastic</h2>
-  <p>Every vehicle carries a refill container; we provide guests with a bottle to refill rather than a daily stack of plastic. Where we cannot guarantee filtered water we say so and bottled water is provided.</p>
+  <section class="container-x pt-12 md:pt-16" aria-label="What we commit to">
+    <ul class="grid gap-3 md:grid-cols-2">
+      {groups.map((g, i) => (
+        <li class:list={['reveal rounded-[28px] p-6 sm:p-8', i === 0 || i === 3 ? 'bg-[#1c1b1a] text-white' : 'border border-line border-t-[6px] border-t-brand bg-bg-elevated']}>
+          <div class="flex items-center gap-3.5">
+            <span class:list={['grid h-12 w-12 shrink-0 place-items-center rounded-full', i === 0 || i === 3 ? 'bg-brand text-[#1c1b1a]' : 'bg-brand-soft text-brand-deep']} aria-hidden="true">
+              <svg width="22" height="22" viewBox="0 0 24 24"><path d={g.icon} fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" /></svg>
+            </span>
+            <h2 class:list={['font-display text-[clamp(1.5rem,1.3rem+0.8vw,2rem)] leading-tight', i === 0 || i === 3 ? '!text-white' : 'text-ink']}>{g.title}</h2>
+          </div>
+          <ul class="mt-6 space-y-3.5">
+            {g.items.map(item => (
+              <li class:list={['flex gap-3 text-[1rem] leading-relaxed', i === 0 || i === 3 ? 'text-white/85' : 'text-ink-soft']}>
+                <span class="mt-2 h-2 w-2 shrink-0 rounded-full bg-brand" aria-hidden="true"></span>
+                <span>{item}</span>
+              </li>
+            ))}
+          </ul>
+        </li>
+      ))}
+    </ul>
+  </section>
 
-  <h2>Places under pressure</h2>
-  <p>We time visits to the most crowded monuments for early mornings, which is better for you and better for the site. In Ladakh we build in acclimatisation days and use local homestays in the valleys. We do not sell "undiscovered" villages as attractions.</p>
+  <section class="container-x pt-10 md:pt-14">
+    <Gallery slugs={['ranthambore-tiger', 'rural-village', 'hero-ladakh', 'alleppey-houseboat', 'jodhpur-blue-city']} />
+  </section>
 
-  <h2>What we do not claim</h2>
-  <p>We hold no sustainability certification and do not offset carbon on your behalf. If you would like to offset your flights we can suggest reputable schemes, but we will not sell you a sticker. When we have earned a recognised accreditation we will list it here with its number.</p>
+  <section class="container-x pt-10 md:pt-14">
+    <div class="reveal grid gap-8 rounded-[30px] bg-bg-muted p-6 sm:p-10 md:grid-cols-[minmax(0,1fr)_minmax(0,1.2fr)] md:gap-12 md:p-12">
+      <SectionHeading title="What we do not claim" />
+      <div class="space-y-4 text-[1.02rem] leading-relaxed text-ink-soft">
+        <p>We hold no sustainability certification and do not offset carbon on your behalf. If you would like to offset your flights we can suggest reputable schemes, but we will not sell you a sticker.</p>
+        <p>When we have earned a recognised accreditation we will list it here with its number. Until then, this page is the promise.</p>
+      </div>
+    </div>
+  </section>
 
-  <h2>Tell us when we fall short</h2>
-  <p>If a driver, guide or hotel on your journey does not behave as this page says, we want to know before you get home. WhatsApp your specialist. We follow it up with the supplier every time.</p>
-</ProseLayout>
+  <section class="container-x pt-10 md:pt-14">
+    <div class="reveal relative isolate grid gap-6 overflow-hidden rounded-[30px] bg-brand p-6 text-[#1c1b1a] sm:p-10 md:grid-cols-[1fr_auto] md:items-center md:p-14">
+      <Pyramid size="clamp(12rem, 24vw, 20rem)" tone="ink" opacity={0.12} class="pyramid-deco -bottom-10 right-8 -z-10" />
+      <SectionHeading title="Tell us when we fall short" lead="If a driver, guide or hotel on your journey does not behave as this page says, we want to know before you get home. Message your specialist. We follow it up with the supplier every time." tone="brand" />
+      <div class="flex flex-col gap-2.5 sm:flex-row md:flex-col">
+        <WhatsAppButton href={wa} size="lg" variant="dark" label="WhatsApp us" trackLabel="responsible" />
+        <Button href="/themes/wildlife" size="lg" variant="secondary">Wildlife, done properly</Button>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

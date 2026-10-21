@@ -17,13 +17,15 @@ import WhatsAppButton from '../../components/WhatsAppButton.astro';
 import SectionTabs from '../../components/SectionTabs.astro';
 import Buta from '../../components/decor/Buta.astro';
 import LocalInfo from '../../components/LocalInfo.astro';
+import MonthStrip from '../../components/MonthStrip.astro';
+import Pyramid from '../../components/Pyramid.astro';
 import RouteMap from '../../islands/RouteMap';
 import { photo } from '../../lib/photos';
 import { photoAlt } from '../../data/photo-alt';
-import { formatMonths, PACE_LABEL, REGION_LABEL, THEME_LABEL } from '../../lib/format';
+import { PACE_LABEL, REGION_LABEL, THEME_LABEL } from '../../lib/format';
 import { waMessages } from '../../lib/whatsapp';
 import { breadcrumbLd, faqLd, journeyLd } from '../../lib/seo';
-import { specialistById, relatedJourneys, reviewsForJourney, stopDays } from '../../lib/content';
+import { specialistById, relatedJourneys, reviewsForJourney, stopDays, allThemes } from '../../lib/content';
 
 export async function getStaticPaths() {
   const journeys = await getCollection('journeys');
@@ -41,6 +43,8 @@ const planHref = `/plan?journey=${journey.id}`;
 const days = stopDays(d.stops);
 const mapStops = d.stops.map((s, i) => ({ ...s, day: days[i] }));
 const og = await getImage({ src: photo(d.heroImage), width: 1200, format: 'jpeg' });
+// Theme hubs this journey belongs to, for "more like this" links.
+const hubs = (await allThemes()).filter(h => (d.themes as string[]).includes(h.data.theme));
 
 const crumbs = [
   { name: 'Home', href: '/' },
@@ -63,7 +67,6 @@ const ld = [
 const facts = [
   { label: 'Duration', value: `${d.days} days, ${d.days - 1} nights` },
   { label: 'Route', value: d.routeSummary },
-  { label: 'Best months', value: formatMonths(d.bestMonths) },
   { label: 'Pace', value: PACE_LABEL[d.pace] },
   { label: 'Your quote', value: 'Within 48 hours' },
 ];
@@ -94,6 +97,16 @@ const facts = [
 
   <section id="overview" class="container-x pt-8 md:pt-12">
     <FactsBar facts={facts} />
+    <div class="mt-4 grid gap-4 rounded-[22px] bg-bg-muted p-4 sm:p-5 lg:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)] lg:items-center lg:gap-8">
+      <MonthStrip months={d.bestMonths} />
+      <div class="flex flex-wrap items-center gap-2 lg:justify-end">
+        {hubs.map(h => <a href={`/themes/${h.id}`} class="chip !h-9 !px-3.5 !text-[0.85rem]">{h.data.title}</a>)}
+        <button type="button" class="print-trip chip !h-9 !border-ink !bg-ink !px-3.5 !text-[0.85rem] !text-bg hover:!border-brand hover:!bg-brand hover:!text-on-brand" data-print>
+          <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 9V3h10v6M7 18H5a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2M7 14h10v7H7z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
+          Print or save as PDF
+        </button>
+      </div>
+    </div>
     <div class="mt-12 grid grid-cols-1 gap-12 lg:grid-cols-[minmax(0,1fr)_minmax(0,23rem)] lg:gap-16">
       <div class="min-w-0">
         <SectionHeading title="What you will remember" />
@@ -112,7 +125,8 @@ const facts = [
 
       <aside class="space-y-3 follow-header lg:sticky lg:top-[calc(var(--sticky-top)+5rem)] lg:self-start">
         <SpecialistCard specialist={specialist} whatsapp={wa} context="Plans this journey with you" />
-        <div class="reveal rounded-[24px] bg-night p-6 text-white">
+        <div class="reveal relative isolate overflow-hidden rounded-[24px] bg-[#1c1b1a] p-6 text-white">
+          <Pyramid size="9rem" tone="night" opacity={0.09} class="pyramid-deco -bottom-4 -right-4 -z-10" />
           <p class="font-display text-[1.6rem] leading-tight text-white">Your quote, within 48 hours</p>
           <p class="mt-2 text-[0.95rem] leading-relaxed text-white/80">Itemised and in writing, every hotel named, nothing hidden. Change anything before you decide.</p>
           <div class="mt-5 grid gap-2">
@@ -127,37 +141,37 @@ const facts = [
     </div>
   </section>
 
-  <section id="route" class="container-x pt-16 md:pt-24">
+  <section id="route" class="container-x pt-12 md:pt-16">
     <SectionHeading title="One direction, no doubling back" lead="Tap a stop to jump to that day." />
     <div class="reveal mt-8 md:mt-10">
       <RouteMap client:visible stops={mapStops} title={d.routeSummary} />
     </div>
   </section>
 
-  <section id="days" class="container-x pt-16 md:pt-24">
+  <section id="days" class="container-x pt-12 md:pt-16">
     <SectionHeading title={`${d.days} days, as we would do them`} lead="Hotels are shown for each style. Everything here can change." />
-    <div class="mt-8 md:mt-12">
+    <div class="mt-8 md:mt-9">
       <DayByDay days={d.itinerary} />
     </div>
   </section>
 
   {d.gallery.length > 0 && (
-    <section class="container-x pt-14 md:pt-20">
+    <section class="container-x pt-10 md:pt-14">
       <Gallery slugs={d.gallery} />
     </section>
   )}
 
-  <section id="stays" class="container-x pt-16 md:pt-24">
+  <section id="stays" class="container-x pt-12 md:pt-16">
     <SectionHeading title="One route, and your choice of how the nights feel" lead="The journey is written for the Comfort style. Premium and Luxury change the hotels, the car and how much is arranged just for you." />
     <div class="mt-8 md:mt-10"><StayStyles tiers={d.tiers} planHref={planHref} /></div>
   </section>
 
-  <section id="included" class="container-x grid gap-3 pt-16 md:grid-cols-2 md:pt-24">
-    <div class="reveal rounded-[26px] bg-bg-muted p-6 sm:p-8">
+  <section id="included" class="container-x grid gap-3 pt-12 md:grid-cols-2 md:pt-16">
+    <div class="reveal rounded-[26px] border-t-[6px] border-brand bg-brand-soft p-6 sm:p-8">
       <h2 class="text-[clamp(1.6rem,1.3rem+1.2vw,2.2rem)] text-ink">What is included</h2>
       <ul class="mt-6 space-y-3 text-[0.98rem] text-ink-soft">
         {d.inclusions.map(i => (
-          <li class="flex gap-3"><span class="mt-0.5 grid h-5 w-5 shrink-0 place-items-center rounded-full bg-success text-white" aria-hidden="true"><svg width="10" height="10" viewBox="0 0 12 12"><path d="M2.5 6.5l2.2 2.2L9.5 3.8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span>{i}</span></li>
+          <li class="flex gap-3"><span class="mt-0.5 grid h-5 w-5 shrink-0 place-items-center rounded-full bg-brand text-[#1c1b1a]" aria-hidden="true"><svg width="10" height="10" viewBox="0 0 12 12"><path d="M2.5 6.5l2.2 2.2L9.5 3.8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span>{i}</span></li>
         ))}
       </ul>
     </div>
@@ -171,7 +185,7 @@ const facts = [
     </div>
   </section>
 
-  <Buta class="pt-16 md:pt-24" />
+  <Buta class="pt-12 md:pt-16" />
 
   <section id="questions" class="container-x pt-10 md:pt-14">
     <SectionHeading title="What people ask before this one" />
@@ -179,7 +193,7 @@ const facts = [
   </section>
 
   {reviews.length > 0 && (
-    <section class="pt-16 md:pt-24">
+    <section class="pt-12 md:pt-16">
       <div class="container-x"><SectionHeading title="Guests on this journey, in their words" /></div>
       <ul class="swipe mt-8" role="list" tabindex="0" aria-label="Guest reviews, scroll sideways for more">
         {reviews.map(r => <li class="reveal"><ReviewCard review={r} class="h-full" /></li>)}
@@ -187,8 +201,9 @@ const facts = [
     </section>
   )}
 
-  <section class="container-x pt-16 md:pt-24">
-    <div class="reveal grid gap-6 rounded-[30px] bg-night p-6 text-white sm:p-10 md:grid-cols-[1fr_auto] md:items-center md:p-14">
+  <section class="container-x pt-12 md:pt-16">
+    <div class="reveal relative isolate grid gap-6 overflow-hidden rounded-[30px] bg-[#1c1b1a] p-6 text-white sm:p-10 md:grid-cols-[1fr_auto] md:items-center md:p-14">
+      <Pyramid size="clamp(12rem, 24vw, 20rem)" tone="night" opacity={0.08} class="pyramid-deco -bottom-10 right-10 -z-10" />
       <SectionHeading title="Tell us what you would change" lead="A day-by-day proposal and your itemised quote come back within 48 hours, in writing." dark />
       <div class="flex flex-col gap-2.5 sm:flex-row md:flex-col">
         <Button href={planHref} size="lg" track="plan_click">Ask for a quote</Button>
@@ -198,11 +213,18 @@ const facts = [
   </section>
 
   {related.length > 0 && (
-    <section class="pt-16 md:pt-24">
+    <section class="pt-12 md:pt-16">
       <div class="container-x"><SectionHeading title="Journeys that pair with this one" /></div>
       <ul class="swipe mt-8" role="list">
         {related.map(j => <li class="reveal"><JourneyCard journey={j} vt /></li>)}
       </ul>
     </section>
   )}
+  <script>
+    document.querySelectorAll<HTMLButtonElement>('[data-print]').forEach(b => b.addEventListener('click', () => {
+      document.querySelectorAll<HTMLElement>('.day-by-day').forEach(d => { d.dataset.collapsed = 'false'; });
+      document.querySelectorAll('.reveal, .reveal-img, .split').forEach(el => el.classList.add('is-visible'));
+      window.print();
+    }));
+  </script>
 </BaseLayout>

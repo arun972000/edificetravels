@@ -1,26 +1,41 @@
 ---
+/**
+ * Photographs of one place, laid out for however many there are: one as a
+ * wide banner, two side by side, three or more as a mosaic with the first
+ * one large. Each carries its alt text as a small caption on the photo.
+ */
 import { Image } from 'astro:assets';
 import { photo, hasPhoto } from '../lib/photos';
 import { photoAlt } from '../data/photo-alt';
 interface Props { slugs: string[]; captions?: Record<string, string>; }
 const { slugs, captions = {} } = Astro.props;
 const items = slugs.filter(hasPhoto);
+const n = items.length;
+const grid = n === 1 ? 'grid-cols-1' : n === 2 ? 'grid-cols-1 sm:grid-cols-2' : 'grid-cols-2 md:grid-cols-3';
 ---
 
-{items.length > 0 && (
-  <div class="grid grid-cols-2 gap-2 md:grid-cols-3 md:gap-3">
-    {items.map((s, i) => (
-      <figure class:list={['reveal-img relative overflow-hidden rounded-[20px]', i === 0 && 'col-span-2 row-span-2']}>
-        <Image
-          src={photo(s)}
-          alt={captions[s] ?? photoAlt(s)}
-          widths={[480, 800, 1200]}
-          sizes={i === 0 ? '(min-width: 768px) 66vw, 100vw' : '(min-width: 768px) 33vw, 50vw'}
-          class="aspect-[4/3] h-full w-full object-cover"
-          loading="lazy"
-          decoding="async"
-        />
-      </figure>
-    ))}
+{n > 0 && (
+  <div class:list={['grid gap-2 md:gap-3', grid]}>
+    {items.map((s, i) => {
+      const caption = captions[s] ?? photoAlt(s);
+      const big = n >= 3 && i === 0;
+      return (
+        <figure class:list={['reveal-img relative overflow-hidden rounded-[20px]', big && 'col-span-2 row-span-2']}>
+          <Image
+            src={photo(s)}
+            alt={caption}
+            widths={n === 1 ? [720, 1200, 1800] : [480, 800, 1200]}
+            sizes={n === 1 ? '(min-width: 1312px) 77rem, 100vw' : big ? '(min-width: 768px) 66vw, 100vw' : n === 2 ? '(min-width: 640px) 50vw, 100vw' : '(min-width: 768px) 33vw, 50vw'}
+            quality={70}
+            class:list={['h-full w-full object-cover', n === 1 ? 'aspect-[16/9] md:aspect-[21/9]' : 'aspect-[4/3]']}
+            loading="lazy"
+            decoding="async"
+          />
+          {caption && (
+            <figcaption class="pointer-events-none absolute inset-x-0 bottom-0 bg-[linear-gradient(to_top,rgba(20,18,16,0.8),transparent)] px-4 pb-3 pt-10 text-[0.82rem] font-semibold text-white" aria-hidden="true">{caption}</figcaption>
+          )}
+        </figure>
+      );
+    })}
   </div>
 )}

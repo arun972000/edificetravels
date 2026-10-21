@@ -22,10 +22,10 @@ const t = getDict(locale);
 >
   <p id="consent-title" class="sr-only">{t.consent.title}</p>
   <p id="consent-desc" class="leading-snug text-ink-soft">
-    {t.consent.text} <a href="/cookies" class="underline underline-offset-2">{t.consent.link}</a>.
+    {t.consent.text} <a href="/cookies" class="underline underline-offset-2">{t.consent.link}</a>{locale === 'hi' ? '।' : '.'}
   </p>
   <div class="mt-2.5 flex justify-end gap-1.5">
-    <button type="button" data-consent="granted" class="press h-9 rounded-pill bg-ink px-4 text-[0.82rem] font-bold text-bg">{t.consent.accept}</button>
+    <button type="button" data-consent="granted" class="press h-9 rounded-pill bg-brand px-4 text-[0.82rem] font-extrabold text-[#1c1b1a]">{t.consent.accept}</button>
     <button type="button" data-consent="denied" class="press h-9 rounded-pill px-3 text-[0.82rem] font-bold text-ink-soft hover:text-ink">{t.consent.decline}</button>
   </div>
 </div>
@@ -48,8 +48,10 @@ const t = getDict(locale);
     window.gtag('config', ga4, { anonymize_ip: true });
   }
 
+  // A page prerendered on hover is not a visit yet: wait until it is shown.
+  const whenShown = fn => (document.prerendering ? document.addEventListener('prerenderingchange', fn, { once: true }) : fn());
   const choice = read();
-  if (choice === 'granted') loadAnalytics();
+  if (choice === 'granted') whenShown(loadAnalytics);
   if (!choice && box) {
     box.hidden = false;
     box.classList.remove('hidden');

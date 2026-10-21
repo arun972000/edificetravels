@@ -35,7 +35,7 @@ const groups = [...new Set(guides.map(g => g.data.category))].map(c => ({ c, ite
 
   {groups.map(g => (
     <section id={`topic-${g.c}`} class="scroll-mt-[calc(var(--header-h)+4.5rem)] py-10 md:py-14">
-      <div class="container-x"><SectionHeading title={CATEGORY[g.c] ?? g.c} /></div>
+      <div class="container-x"><SectionHeading eyebrow={`${g.items.length} ${g.items.length === 1 ? 'guide' : 'guides'}`} title={CATEGORY[g.c] ?? g.c} /></div>
       <ul class="swipe mt-7 lg:!grid-flow-row lg:!grid-cols-3 lg:!overflow-visible" role="list">
         {g.items.map(x => <li class="reveal"><GuideCard guide={x} /></li>)}
       </ul>

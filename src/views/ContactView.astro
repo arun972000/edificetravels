@@ -7,6 +7,7 @@ import WhatsAppButton from '../components/WhatsAppButton.astro';
 import Button from '../components/Button.astro';
 import SpecialistCard from '../components/SpecialistCard.astro';
 import LocalInfo from '../components/LocalInfo.astro';
+import Pyramid from '../components/Pyramid.astro';
 import { site } from '../data/site';
 import { photo } from '../lib/photos';
 import { photoAlt } from '../data/photo-alt';
@@ -38,21 +39,21 @@ const cards = [
       </div>
     </div>
 
-    <div class="mt-8 grid gap-2.5 md:mt-12 lg:grid-cols-3 lg:gap-3">
-      <div class="reveal flex flex-col rounded-[24px] bg-bg-muted p-6">
-        <p class="eyebrow">{cards[0].kicker}</p>
-        <p class="mt-1.5 text-[1.3rem] font-extrabold leading-snug text-ink">{cards[0].title}</p>
-        <p class="mt-2 text-small text-ink-soft">{cards[0].text}</p>
+    <div class="mt-8 grid grid-cols-1 gap-2.5 md:mt-9 lg:grid-cols-3 lg:gap-3">
+      <div class="reveal flex flex-col rounded-[24px] bg-[#1c1b1a] p-6 text-white">
+        <p class="text-[0.9rem] font-extrabold text-brand">{cards[0].kicker}</p>
+        <p class="mt-1.5 text-[1.3rem] font-extrabold leading-snug text-white">{cards[0].title}</p>
+        <p class="mt-2 text-small text-white/80">{cards[0].text}</p>
         <div class="mt-6"><WhatsAppButton href={waMessages.general()} trackLabel="contact-page" locale={locale} /></div>
-        <p class="mt-3 text-small text-ink-muted">{site.phoneDisplay}</p>
+        <p class="mt-3 text-small text-white/70">{site.phoneDisplay}</p>
       </div>
-      <div class="reveal flex flex-col rounded-[24px] bg-bg-muted p-6">
-        <p class="eyebrow">{cards[1].kicker}</p>
-        <p class="mt-1.5 text-[1.3rem] font-extrabold leading-snug text-ink">{cards[1].title}</p>
-        <p class="mt-2 text-small text-ink-soft">{cards[1].text}</p>
-        <p class="mt-6"><a href={`mailto:${site.email}`} class="font-semibold text-brand-deep underline underline-offset-4">{site.email}</a></p>
+      <div class="reveal flex flex-col rounded-[24px] bg-brand p-6 text-[#1c1b1a]">
+        <p class="text-[0.9rem] font-extrabold">{cards[1].kicker}</p>
+        <p class="mt-1.5 text-[1.3rem] font-extrabold leading-snug">{cards[1].title}</p>
+        <p class="mt-2 text-small font-medium">{cards[1].text}</p>
+        <p class="mt-6"><a href={`mailto:${site.email}`} class="inline-flex min-h-12 max-w-full items-center break-all rounded-pill bg-[#1c1b1a] px-5 py-2 font-bold text-white transition-colors hover:bg-white hover:text-[#1c1b1a]">{site.email}</a></p>
       </div>
-      <div class="reveal flex flex-col rounded-[24px] bg-bg-muted p-6">
+      <div class="reveal flex flex-col rounded-[24px] border border-line border-t-[6px] border-t-brand bg-bg-elevated p-6">
         <p class="eyebrow">{cards[2].kicker}</p>
         <p class="mt-1.5 text-[1.3rem] font-extrabold leading-snug text-ink">{cards[2].title}</p>
         <p class="mt-2 text-small text-ink-soft">{cards[2].text}</p>
@@ -63,15 +64,32 @@ const cards = [
       </div>
     </div>
 
-    <div class="mt-3 grid gap-3 lg:mt-6 lg:grid-cols-2">
-      <div class="reveal rounded-[24px] bg-night p-6 text-small text-white/80 sm:p-7">
+    <div class="mt-3 grid grid-cols-1 gap-3 lg:mt-6 lg:grid-cols-2">
+      <div class="reveal relative isolate overflow-hidden rounded-[24px] bg-[#1c1b1a] p-6 text-small text-white/80 sm:p-7">
+        <Pyramid size="10rem" tone="night" opacity={0.08} class="pyramid-deco -bottom-6 -right-6 -z-10" />
         <h2 class="font-sans text-[1.1rem] font-extrabold tracking-normal text-white">{t.contact.office}</h2>
         <p class="mt-3 font-semibold text-white">{site.legalName}</p>
         <p>{site.address.street && <span>{site.address.street}, </span>}{site.address.locality} {site.address.postalCode}, India</p>
         <div class="mt-6"><LocalInfo locale={locale} show={['india-time', 'your-time', 'reply-window', 'flight', 'visa']} light /></div>
-        <div class="mt-6"><Button href={localizedPath('/plan', locale)} track="plan_click">{t.contact.startPlanner}</Button></div>
+        <div class="mt-6"><Button href={localizedPath('/plan', locale)} track="plan_click" class="!h-auto min-h-12 max-w-full !whitespace-normal py-3 text-center">{t.contact.startPlanner}</Button></div>
       </div>
       {specialists[0] && <SpecialistCard specialist={specialists[0]} whatsapp={waMessages.general()} context={t.contact.whoAnswers} locale={locale} />}
+    </div>
+
+    <div class="reveal mt-3 grid gap-6 rounded-[24px] bg-brand-soft p-6 sm:p-8 lg:mt-6 lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)] lg:gap-10">
+      <div>
+        <span class="brand-tick mb-4" aria-hidden="true"></span>
+        <h2 class="font-display text-[clamp(1.6rem,1.3rem+1.2vw,2.3rem)] leading-tight text-ink">{t.contact.prepareTitle}</h2>
+        <p class="mt-3 text-[1rem] text-ink-soft">{t.contact.prepareNote}</p>
+      </div>
+      <ol class="grid gap-2.5 sm:grid-cols-2">
+        {t.contact.prepare.map((item, i) => (
+          <li class="flex items-start gap-3 rounded-[18px] bg-bg-elevated p-4">
+            <span class="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-brand text-[0.9rem] font-extrabold text-[#1c1b1a]" aria-hidden="true">{i + 1}</span>
+            <span class="pt-1 text-[0.98rem] font-semibold leading-snug text-ink">{item}</span>
+          </li>
+        ))}
+      </ol>
     </div>
   </div>
 </BaseLayout>

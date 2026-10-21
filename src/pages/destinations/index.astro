@@ -5,16 +5,18 @@ import Hero from '../../components/Hero.astro';
 import SectionHeading from '../../components/SectionHeading.astro';
 import DestinationCard from '../../components/DestinationCard.astro';
 import Button from '../../components/Button.astro';
+import BrowseBar from '../../components/BrowseBar.astro';
 import RouteMap from '../../islands/RouteMap';
 import { photo } from '../../lib/photos';
 import { photoAlt } from '../../data/photo-alt';
-import { allDestinations, allRegions } from '../../lib/content';
+import { allDestinations, allRegions, allJourneys, allThemes } from '../../lib/content';
 import { breadcrumbLd, itemListLd } from '../../lib/seo';
 import { waMessages } from '../../lib/whatsapp';
 
 const destinations = await allDestinations();
 const regions = await allRegions();
 const crumbs = [{ name: 'Home', href: '/' }, { name: 'Destinations', href: '/destinations' }];
+const browseCounts = { journeys: (await allJourneys()).length, interests: (await allThemes()).length, places: (await allDestinations()).length };
 const stops = destinations.map(d => ({ name: d.data.title, lat: d.data.lat, lng: d.data.lng, href: `/destinations/${d.id}` }));
 ---
 
@@ -29,7 +31,9 @@ const stops = destinations.map(d => ({ name: d.data.title, lat: d.data.lat, lng:
 >
   <Hero image={photo('varanasi-ghats')} alt={photoAlt('varanasi-ghats')} title="India, place by place" lead="How long to stay, when to go, what to do early and what to skip. Written by the people who send you there." height="medium" breadcrumbs={crumbs} whatsapp={waMessages.general()} />
 
-  <section class="container-x py-14 md:py-20">
+  <BrowseBar current="places" counts={browseCounts} class="mt-4" />
+
+  <section class="container-x py-10 md:py-14">
     <div class="grid grid-cols-1 gap-10 lg:grid-cols-[1fr_1.1fr] lg:items-start">
       <div>
         <SectionHeading title="Every place we send guests, on one map" lead="Tap a dot to open that place. Most journeys join three to six of them, travelling in one direction." />
@@ -45,7 +49,7 @@ const stops = destinations.map(d => ({ name: d.data.title, lat: d.data.lat, lng:
     const list = destinations.filter(d => d.data.region === r.id);
     return list.length > 0 && (
       <section class="container-x py-10 md:py-14">
-        <SectionHeading title={r.data.title}>
+        <SectionHeading eyebrow={`${list.length} ${list.length === 1 ? 'place' : 'places'}`} title={r.data.title}>
           <a slot="action" href={`/regions/${r.id}`} class="chip">About {r.data.title}</a>
         </SectionHeading>
         <div class="mt-7 grid grid-cols-2 gap-x-3 gap-y-8 sm:grid-cols-3 lg:grid-cols-4 lg:gap-x-5">

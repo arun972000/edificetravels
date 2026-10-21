@@ -2,6 +2,14 @@
 
 The design and code are ready. What will make the site feel truly yours, and convert, is material only Edifice Travels can provide. Listed in order of impact.
 
+## New on 21 October 2026: please check these
+
+- **The Kashmir journey** (`src/content/journeys/lakes-and-meadows-of-kashmir.md`). It follows the Delhi, Agra and Srinagar route the old site sold, then adds Gulmarg and Pahalgam. Confirm the route, the number of nights and the hotels named in each style are ones you book.
+- **The travel advice wording on Kashmir.** The journey and the Srinagar page say plainly that several governments advise against travel to Jammu and Kashmir outside Ladakh and that insurance may not cover it. Keep this wording unless your lawyer advises otherwise; it protects guests and you.
+- **The eight theme hubs** (`src/content/themes/`). Each lists the destinations and journeys we recommend for that interest. Remove any place you would not send guests for that reason.
+- **The three new guides**: the festival calendar, dress and etiquette, and the packing list. A quick read by someone in the team is enough.
+- **Photographs.** Coorg, Chettinad, Kolkata, Dharamshala and Shimla now show photographs of their own places, from Wikimedia Commons with credits. Replace them with your own whenever you have them.
+
 ## 1. Owned photography and one short film (biggest emotional lift)
 
 Licensed Commons photographs carry the site today, credited on /credits. They are good, but guests can tell the difference between stock India and *your* India.

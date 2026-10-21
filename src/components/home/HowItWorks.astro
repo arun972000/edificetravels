@@ -5,6 +5,7 @@
  */
 import SectionHeading from '../SectionHeading.astro';
 import Button from '../Button.astro';
+import Pyramid from '../Pyramid.astro';
 import WhatsAppButton from '../WhatsAppButton.astro';
 import { waMessages } from '../../lib/whatsapp';
 import { getDict } from '../../i18n';
@@ -16,25 +17,26 @@ const t = getDict(locale);
 const steps = t.home.howSteps.map((title, i) => ({ title, text: t.plan.next[i] ?? '' }));
 ---
 
-<section class="py-14 md:py-24" data-how>
+<section class="py-10 md:py-16" data-how>
   <div class="container-x">
-    <div class="rounded-[32px] bg-bg-muted px-5 py-10 sm:px-8 md:px-12 md:py-16">
-      <SectionHeading title={t.home.howTitle} />
+    <div class="relative isolate overflow-hidden rounded-[32px] bg-brand px-5 py-10 text-on-brand sm:px-8 md:px-12 md:py-16">
+      <Pyramid size="clamp(14rem, 30vw, 26rem)" tone="ink" opacity={0.12} class="pyramid-deco -bottom-8 -right-8 -z-10" />
+      <SectionHeading title={t.home.howTitle} tone="brand" />
       <ol class="how relative mt-10 grid gap-8 md:mt-14 md:grid-cols-3 md:gap-8">
-        <span class="how-line absolute left-[1.35rem] top-2 bottom-2 w-0.5 rounded-full bg-line md:bottom-auto md:left-6 md:right-6 md:top-[1.35rem] md:h-0.5 md:w-auto" aria-hidden="true"><span class="how-fill absolute inset-0 rounded-full bg-brand" data-how-fill></span></span>
+        <span class="how-line absolute left-[1.35rem] top-2 bottom-2 w-0.5 rounded-full bg-[#1c1b1a]/20 md:bottom-auto md:left-6 md:right-6 md:top-[1.35rem] md:h-0.5 md:w-auto" aria-hidden="true"><span class="how-fill absolute inset-0 rounded-full bg-[#1c1b1a]" data-how-fill></span></span>
         {steps.map((s, i) => (
           <li class="reveal relative grid grid-cols-[2.75rem_1fr] gap-4 md:block" style={`--delay:${i * 160}ms`}>
-            <span class="relative z-10 grid h-11 w-11 place-items-center rounded-full bg-ink text-[1rem] font-extrabold text-bg ring-[6px] ring-bg-muted">{i + 1}</span>
+            <span class="relative z-10 grid h-11 w-11 place-items-center rounded-full bg-[#1c1b1a] text-[1rem] font-extrabold text-brand ring-[6px] ring-brand">{i + 1}</span>
             <div class="md:mt-5">
-              <h3 class="text-[1.2rem] font-extrabold leading-snug text-ink md:text-[1.3rem]">{s.title}</h3>
-              <p class="mt-1.5 max-w-sm text-[0.98rem] leading-relaxed text-ink-soft">{s.text}</p>
+              <h3 class="text-[1.2rem] font-extrabold leading-snug !text-on-brand md:text-[1.3rem]">{s.title}</h3>
+              <p class="mt-1.5 max-w-sm text-[0.98rem] font-medium leading-relaxed text-on-brand">{s.text}</p>
             </div>
           </li>
         ))}
       </ol>
-      <div class="reveal mt-10 flex flex-wrap gap-2.5 md:mt-12">
-        <Button href={localizedPath('/plan', locale)} size="lg" track="plan_click">{t.common.planTrip}</Button>
-        <WhatsAppButton href={waMessages.general()} size="lg" trackLabel="how" locale={locale} />
+      <div class="reveal mt-10 flex flex-wrap gap-2.5 md:mt-9">
+        <Button href={localizedPath('/plan', locale)} size="lg" variant="dark" track="plan_click">{t.common.planTrip}</Button>
+        <WhatsAppButton href={waMessages.general()} size="lg" variant="dark" trackLabel="how" locale={locale} />
       </div>
     </div>
   </div>

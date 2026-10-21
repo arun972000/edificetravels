@@ -6,6 +6,9 @@ whereToGo:
   - name: "Ladakh"
     blurb: "A high Buddhist desert of monasteries and lakes beyond the main range. June to September only, and a week at least."
     destination: leh-ladakh
+  - name: "Kashmir"
+    blurb: "A houseboat on Dal Lake, the Mughal gardens of Srinagar and the meadows of Gulmarg and Pahalgam. April to June and September to October, with your government's travel advice read first."
+    destination: srinagar
   - name: "Amritsar and the Punjab plains"
     blurb: "The Golden Temple at dawn and the border at dusk. This is where we start journeys into the western Himalaya."
     destination: amritsar

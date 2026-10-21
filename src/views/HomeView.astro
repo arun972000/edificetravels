@@ -15,6 +15,9 @@ import JourneyFinder from '../components/home/JourneyFinder.astro';
 import DayStack from '../components/home/DayStack.astro';
 import RegionBento from '../components/home/RegionBento.astro';
 import HowItWorks from '../components/home/HowItWorks.astro';
+import IndiaMap from '../components/home/IndiaMap.astro';
+import StartChooser from '../components/home/StartChooser.astro';
+import Pyramid from '../components/Pyramid.astro';
 import SectionHeading from '../components/SectionHeading.astro';
 import SpecialistCard from '../components/SpecialistCard.astro';
 import Testimonials from '../components/Testimonials.astro';
@@ -50,48 +53,47 @@ const finalWords = t.home.finalTitle.split(/\s+/);
 <BaseLayout title={t.meta.homeTitle} description={t.meta.homeDescription} imageAlt="Edifice Travels: some places you see, India you feel" locale={locale}>
   <PostcardHero locale={locale} regions={regions} />
 
-  <TripStarter locale={locale} regions={regions} />
+  <TripStarter locale={locale} />
 
-  <!-- The feeling, said once, lighting up as it is read. -->
-  <section class="relative isolate overflow-hidden py-16 md:py-28">
-    <Rangoli class="absolute left-1/2 top-1/2 -z-10 -translate-x-1/2 -translate-y-1/2" />
-    <div class="container-x">
-      <div class="reveal mb-6 flex justify-center"><Diya /></div>
-      <p class="lit mx-auto max-w-[28ch] text-center font-display text-[clamp(1.75rem,1.2rem+2.6vw,3.6rem)] leading-[1.16] tracking-[-0.02em] text-ink md:max-w-[32ch]">
-        {manifestoWords.map((w, i) => <><span class="word">{w}</span>{i < manifestoWords.length - 1 ? ' ' : ''}</>)}
-      </p>
-      <div class="reveal mt-10 flex flex-col items-center gap-4">
-        <Button href={lp('/about')} variant="secondary">{t.nav.about}</Button>
-        <LocalInfo locale={locale} show={['reply-window']} class="text-center" />
-      </div>
-    </div>
-  </section>
-
-  <Buta class="mt-2" />
+  <StartChooser locale={locale} regions={regions} />
 
   <JourneyFinder journeys={journeys} locale={locale} />
+
+  <!-- The feeling, said once, lighting up as it is read. -->
+  <section class="relative isolate overflow-hidden py-8 md:py-12">
+    <Rangoli class="absolute left-1/2 top-1/2 -z-10 -translate-x-1/2 -translate-y-1/2 scale-75" />
+    <div class="container-x">
+      <div class="reveal mb-4 flex justify-center"><Diya /></div>
+      <p class="lit mx-auto max-w-[34ch] text-center font-display text-[clamp(1.45rem,1.1rem+1.6vw,2.5rem)] leading-[1.2] tracking-[-0.015em] text-ink md:max-w-[40ch]">
+        {manifestoWords.map((w, i) => <><span class="word">{w}</span>{i < manifestoWords.length - 1 ? ' ' : ''}</>)}
+      </p>
+      <Buta class="mt-6" />
+    </div>
+  </section>
 
   <DayStack locale={locale} />
 
   <RegionBento regions={regions} locale={locale} />
 
-  <HowItWorks locale={locale} />
+  <IndiaMap locale={locale} />
 
-  <Buta class="mt-4" />
+  <HowItWorks locale={locale} />
 
   <!-- Guests -->
   <Testimonials reviews={reviews} locale={locale} />
 
   <!-- The people -->
-  <section class="py-14 md:py-24">
+  <section class="py-10 md:py-16">
     <div class="container-x">
       <SectionHeading title={t.home.peopleTitle} lead={t.home.peopleLead} />
-      <div class="mt-8 grid grid-cols-1 gap-3 md:mt-12 lg:grid-cols-[1.5fr_1fr]">
-        <figure class="reveal flex flex-col justify-between rounded-[28px] bg-night p-6 text-white sm:p-8">
-          <div class="space-y-4 font-display text-[1.2rem] leading-[1.5] text-white/95 md:text-[1.3rem]">
+      <div class="mt-8 grid grid-cols-1 gap-3 md:mt-9 lg:grid-cols-[1.5fr_1fr]">
+        <figure class="reveal relative isolate flex flex-col justify-between overflow-hidden rounded-[28px] bg-[#1c1b1a] p-6 text-white sm:p-8">
+          <Pyramid size="14rem" tone="night" opacity={0.08} class="pyramid-deco -bottom-6 -right-6 -z-10" />
+          <span class="font-display text-[4.5rem] leading-[0.6] text-brand" aria-hidden="true">“</span>
+          <div class="space-y-4 font-display text-[1.05rem] leading-[1.5] text-white/95 sm:text-[1.2rem] md:text-[1.3rem]">
             {t.home.letter.map(para => <p>{para}</p>)}
           </div>
-          <figcaption class="mt-8 flex items-center gap-3 text-[0.92rem] font-bold text-white/80">
+          <figcaption class="mt-8 flex items-center gap-3 text-[0.92rem] font-bold text-brand">
             <span class="block h-10 w-10 shrink-0 overflow-hidden rounded-full bg-white" aria-hidden="true">
               <Image src={badge} alt="" width={40} height={40} densities={[1, 2, 3]} class="h-full w-full" loading="lazy" />
             </span>
@@ -107,26 +109,27 @@ const finalWords = t.home.finalTitle.split(/\s+/);
   </section>
 
   <!-- Before you go -->
-  <section class="py-14 md:py-24">
+  <section class="py-10 md:py-16">
     <div class="container-x">
       <SectionHeading title={t.home.guidesTitle}>
         <a slot="action" href="/guide" class="chip">{t.home.guidesLink}</a>
       </SectionHeading>
     </div>
-    <ul class="swipe mt-8" role="list">
+    <ul class="swipe mt-7 lg:!grid-flow-row lg:!grid-cols-4 lg:!overflow-visible" role="list">
       {guides.map(g => <li class="reveal"><GuideCard guide={g} locale={locale} /></li>)}
     </ul>
   </section>
 
   <!-- Begin: a last postcard. -->
-  <section class="px-3 pt-10 md:px-4 md:pt-16">
-    <div class="relative isolate flex min-h-[86svh] items-end overflow-hidden rounded-[28px] bg-[#16181b] text-white md:min-h-[80svh] md:items-center md:rounded-[36px]">
+  <section class="px-3 pt-6 md:px-4 md:pt-10">
+    <div class="relative isolate flex min-h-[70svh] items-end overflow-hidden rounded-[28px] bg-[#16181b] text-white md:min-h-[min(64svh,40rem)] md:items-center md:rounded-[36px]">
       <div class="reveal-img absolute inset-0 -z-10 !rounded-none">
-        <Image src={photo('traveller-couple')} alt="" widths={[720, 1280, 1920, 2400]} sizes="100vw" class="h-full w-full object-cover" loading="lazy" decoding="async" />
+        <Image src={photo('traveller-couple')} alt="" widths={[720, 1280, 1600, 1920]} sizes="calc(100vw - 2rem)" quality={66} class="h-full w-full object-cover" loading="lazy" decoding="async" />
       </div>
-      <div class="absolute inset-0 -z-10 bg-[linear-gradient(to_top,rgba(10,11,13,0.85)_0%,rgba(10,11,13,0.4)_50%,rgba(10,11,13,0.25)_100%)]" aria-hidden="true"></div>
+      <div class="absolute inset-0 -z-10 bg-[linear-gradient(to_top,rgba(20,18,16,0.88)_0%,rgba(20,18,16,0.42)_50%,rgba(20,18,16,0.25)_100%)]" aria-hidden="true"></div>
+      <div class="absolute inset-x-0 bottom-0 h-2 bg-brand" aria-hidden="true"></div>
       <div class="container-x py-12 md:py-20 md:text-center">
-        <h2 class="split max-w-[14ch] text-[clamp(2.75rem,1.9rem+4.6vw,6.5rem)] leading-[0.95] tracking-[-0.03em] text-white md:mx-auto">
+        <h2 class="split max-w-[14ch] text-[clamp(2.5rem,min(1.7rem+3.6vw,10svh),5.25rem)] leading-[0.98] tracking-[-0.03em] text-white md:mx-auto">
           {finalWords.map((w, i) => <><span class="w"><span style={`--i:${i}`}>{w}</span></span>{i < finalWords.length - 1 ? ' ' : ''}</>)}
         </h2>
         <p class="reveal mt-5 max-w-xl text-[1.05rem] leading-relaxed text-white/85 md:mx-auto md:text-lead">{t.home.finalLead}</p>

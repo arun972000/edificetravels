@@ -1,6 +1,6 @@
 # Edifice Travels website
 
-Static, inbound-first tourism site for Edifice Travels in five languages, built with Astro 7, Tailwind 4 and two small Preact islands. Leads go to WhatsApp and email. There is no backend, and no prices are published.
+Static, inbound-first tourism site for Edifice Travels in six languages (English, Hindi, German, French, Spanish, Italian), built with Astro 7, Tailwind 4 and two small Preact islands. Leads go to WhatsApp and email. There is no backend, and no prices are published.
 
 ## Run
 
@@ -24,7 +24,7 @@ Node 22 or newer. Copy `.env.example` to `.env` and add the Web3Forms key before
 
 ## Design
 
-Version 3, "Postcards". White pages, photographs in soft rounded frames, Fraunces headings with Manrope text, and a phone-first layout. A planning dock is fixed to the bottom of the phone screen, rows swipe sideways, choices are chips, and section chips stick to the top of long pages. The country picker is a small popover with real flags and live clocks. Motion is slow and deliberate: the home postcard opens to the full screen, photos develop, the day-in-India cards stack, and timelines draw themselves. Read `docs/DESIGN-SYSTEM.md` (version 3 section) before adding a page and `docs/BRAND-VOICE.md` before writing copy.
+Version 4, "Postcards" in the logo's colours. The badge's orange (#ea651f) and black (#1c1b1a) carry whole panels, the footer, chips, numerals and card details, with the pyramid from the badge as a graphic device. White pages, photographs in soft rounded frames, Fraunces headings with Manrope text, and a phone-first layout. A planning dock is fixed to the bottom of the phone screen, rows swipe sideways, choices are chips, and section chips stick to the top of long pages. The country picker is a small popover with real flags and live clocks. Motion is quick and light (every entrance under 0.7 s, nothing tied to the scroll position): photos develop, headlines rise word by word, and timelines draw themselves. Country and language are one choice in the header: pick a country, its language follows and the page reloads. Read `docs/DESIGN-SYSTEM.md` (version 4, then version 3) before adding a page; it has the contrast rules for text on orange and `docs/BRAND-VOICE.md` before writing copy.
 
 ## Where things live
 
@@ -44,11 +44,13 @@ Version 3, "Postcards". White pages, photographs in soft rounded frames, Fraunce
 | `src/data/photo-alt.ts` | What each photograph shows, used as alt text |
 | `src/i18n/` | Locale dictionaries (en, de, fr, es, it), routing helpers, translated content names |
 | `src/views/` | Page bodies shared by every language (home, plan, contact, about) |
-| `src/content/` | Journeys, regions, destinations, guides (Markdown), specialists and reviews (JSON) |
+| `src/content/` | Journeys, regions, destinations, guides and theme hubs (Markdown), specialists and reviews (JSON) |
 | `src/content.config.ts` | Schemas. A bad field fails the build |
 | `src/assets/photos/` | Photography by slug. Replace a file to replace an image everywhere |
 | `src/components/home/` | Home sections: postcard hero, trip starter, journey finder, day stack, region mosaic, how it works |
 | `src/components/MobileDock.astro`, `SectionTabs.astro` | Phone planning dock; sticky section chips for long pages |
+| `src/components/Pyramid.astro`, `BrandStats.astro`, `MonthStrip.astro` | The badge's pyramid as a graphic; the promise in numbers (counted from content); best months as twelve cells |
+| `src/pages/themes/` | Theme hubs (travel by interest), built from `src/content/themes` |
 | `public/flags/` | Country flags for the picker (`npm run flags` refreshes them from country-flag-icons, MIT) |
 | `src/islands/` | Preact islands (React-compatible API): RouteMap, Wizard |
 | `src/components/decor/` | Traditional decorations: toran, rangoli, diya, buta. `site.decor` turns them off |

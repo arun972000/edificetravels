@@ -48,6 +48,15 @@ export const PHOTO_ALT: Record<string, string> = {
   'ayurveda-spa': 'Small boats on calm backwaters at Kumarakom, Kerala',
   'traveller-couple': 'A fruit seller paddling his shikara on Dal Lake, Srinagar',
   'yoga-sunrise': 'Priests lifting lamps through incense smoke at the evening Ganga aarti, Varanasi',
+  'srinagar-houseboats': 'Carved wooden houseboats lit at dusk along the shore of Dal Lake, Srinagar, with mountains behind',
+  'srinagar-shalimar-bagh': 'Water falling over a stone terrace in the Mughal garden of Shalimar Bagh, Srinagar, under chinar trees',
+  'gulmarg-meadows': 'Horses grazing on the open meadow at Gulmarg, ringed by pine forest',
+  'pahalgam-lidder': 'The pale blue Lidder river running over boulders below pine forest at Pahalgam',
+  'coorg-hills': 'Forested hills of Kodagu rolling to the horizon from Raja\'s Seat, Madikeri',
+  'chettinad-mansion': 'A Chettiar merchant mansion with a carved parapet on a quiet street in Kanadukathan',
+  'kolkata-howrah-bridge': 'Crowds crossing the steel cantilever Howrah Bridge over the Hooghly, Kolkata',
+  'dharamshala-mcleod-ganj': 'McLeod Ganj on its forested ridge above the Kangra valley, with a red flag in the foreground',
+  'shimla-town': 'Shimla\'s houses spread along a forested ridge under a clear sky',
 };
 
 /** Alt text for a photo slug, or the fallback when the slug has none. */

@@ -8,6 +8,7 @@ import Faq from '../../components/Faq.astro';
 import GuideCard from '../../components/GuideCard.astro';
 import SpecialistCard from '../../components/SpecialistCard.astro';
 import Button from '../../components/Button.astro';
+import Pyramid from '../../components/Pyramid.astro';
 import { photo } from '../../lib/photos';
 import { photoAlt } from '../../data/photo-alt';
 import { formatDate } from '../../lib/format';
@@ -63,7 +64,8 @@ const ld = [
       </div>
       <aside class="space-y-3 follow-header lg:sticky lg:top-[calc(var(--sticky-top)+1.5rem)] lg:self-start">
         <SpecialistCard specialist={author} whatsapp={wa} context="Written by" compact />
-        <div class="reveal rounded-[24px] bg-night p-6 text-white">
+        <div class="reveal relative isolate overflow-hidden rounded-[24px] bg-[#1c1b1a] p-6 text-white">
+          <Pyramid size="9rem" tone="night" opacity={0.09} class="pyramid-deco -bottom-4 -right-4 -z-10" />
           <p class="font-display text-[1.6rem] leading-tight text-white">Planning a trip?</p>
           <p class="mt-2 text-[0.95rem] text-white/80">Six questions and a specialist replies within 12 hours with a first plan.</p>
           <div class="mt-4"><Button href="/plan" track="plan_click">Plan your trip</Button></div>

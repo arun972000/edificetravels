@@ -32,7 +32,7 @@ const accessKey = import.meta.env.PUBLIC_FORM_ACCESS_KEY ?? '';
       <Breadcrumbs items={crumbs} class="mb-6" />
       <SectionHeading as="h1" size="h1" title={t.plan.title} lead={t.plan.lead} />
 
-      <div class="mt-8 grid grid-cols-1 gap-8 md:mt-12 lg:grid-cols-[minmax(0,1fr)_minmax(0,23rem)] lg:items-start lg:gap-10">
+      <div class="mt-8 grid grid-cols-1 gap-8 md:mt-9 lg:grid-cols-[minmax(0,1fr)_minmax(0,23rem)] lg:items-start lg:gap-10">
         <Wizard
           client:load
           endpoint={site.formEndpoint}
@@ -54,7 +54,7 @@ const accessKey = import.meta.env.PUBLIC_FORM_ACCESS_KEY ?? '';
           <div class="reveal rounded-[24px] bg-bg-muted p-6">
             <h2 class="font-sans text-[1.05rem] font-extrabold tracking-normal text-ink">{t.plan.nextTitle}</h2>
             <ol class="mt-4 space-y-4 text-[0.95rem] text-ink-soft">
-              {t.plan.next.map((n, i) => <li class="flex gap-3"><span class="grid h-7 w-7 shrink-0 place-items-center rounded-full bg-ink text-[0.8rem] font-extrabold text-bg">{i + 1}</span><span>{n}</span></li>)}
+              {t.plan.next.map((n, i) => <li class="flex gap-3"><span class="grid h-7 w-7 shrink-0 place-items-center rounded-full bg-brand text-[0.8rem] font-extrabold text-on-brand">{i + 1}</span><span>{n}</span></li>)}
             </ol>
           </div>
           <div class="reveal rounded-[24px] border border-line p-6">

@@ -186,8 +186,13 @@ export function destinationLd(d: {
   lng: number;
   state: string;
   highlights: string[];
+  /** Named sights; preferred over highlights for the attraction list when present. */
+  sights?: { name: string; text: string }[];
 }) {
   const url = abs(`/destinations/${d.id}`);
+  const attractions = d.sights?.length
+    ? d.sights.map(s => ({ '@type': 'TouristAttraction', name: s.name, description: s.text }))
+    : d.highlights.map(h => ({ '@type': 'TouristAttraction', name: h }));
   return {
     '@context': 'https://schema.org',
     '@type': 'TouristDestination',
@@ -198,7 +203,7 @@ export function destinationLd(d: {
     image: abs(d.image),
     geo: { '@type': 'GeoCoordinates', latitude: d.lat, longitude: d.lng },
     containedInPlace: { '@type': 'AdministrativeArea', name: `${d.state}, India` },
-    includesAttraction: d.highlights.map(h => ({ '@type': 'TouristAttraction', name: h })),
+    includesAttraction: attractions,
   };
 }
 

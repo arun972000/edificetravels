@@ -104,6 +104,28 @@ const destinations = defineCollection({
     highlights: z.array(z.string()).min(3).max(6),
     experiences: z.array(z.object({ title: z.string(), text: z.string() })).min(2).max(5),
     tips: z.array(z.string()).default([]),
+    /** The sights worth the time, best first, with how long each takes. */
+    sights: z.array(z.object({ name: z.string(), text: z.string(), time: z.string().optional() })).max(10).default([]),
+    /** What to eat here, by name, with where or how it is best. */
+    food: z.array(z.object({ name: z.string(), text: z.string() })).max(6).default([]),
+    /** The year in this place, season by season. */
+    seasons: z.array(z.object({ months: z.string(), text: z.string() })).max(5).default([]),
+    /** Arriving and moving around. Times are approximate and say so. */
+    gettingThere: z
+      .object({
+        air: z.string().optional(),
+        rail: z.string().optional(),
+        road: z.array(z.object({ from: z.string(), time: z.string() })).max(6).default([]),
+        around: z.string().optional(),
+      })
+      .optional(),
+    /** Where to stay: a line on the choice, then the areas. Hotel names come from the journeys. */
+    stay: z.object({ intro: z.string(), areas: z.array(z.object({ name: z.string(), text: z.string() })).max(4).default([]) }).optional(),
+    /** How we would spend the ideal stay, day by day. */
+    plan: z.array(z.object({ title: z.string(), text: z.string() })).max(5).default([]),
+    faqs: z.array(faq).max(8).default([]),
+    /** Further photographs of this place only (never a lookalike). */
+    gallery: z.array(photo).max(6).default([]),
     seo: z.object({ title: z.string().optional(), description: z.string().max(170) }),
   }),
 });
@@ -123,6 +145,36 @@ const guides = defineCollection({
     readingMinutes: z.number().int().positive(),
     faqs: z.array(faq).default([]),
     featured: z.boolean().default(false),
+  }),
+});
+
+/**
+ * Theme hubs: India by interest (heritage, wildlife, wellness and so on).
+ * Each hub gathers the journeys tagged with its theme, the places that suit
+ * it, the right season and the guides worth reading first.
+ */
+const themes = defineCollection({
+  loader: glob({ pattern: '**/*.md', base: './src/content/themes' }),
+  schema: z.object({
+    /** Short name, used in cards, chips and the footer. */
+    title: z.string(),
+    /** The journey theme this hub gathers. */
+    theme: z.enum(THEMES),
+    /** The page headline: it says something, it is not a label. */
+    headline: z.string(),
+    tagline: z.string(),
+    heroImage: photo,
+    /** What we arrange for this interest, and why India does it well. */
+    reasons: z.array(z.object({ title: z.string(), text: z.string() })).min(3).max(6),
+    /** Destination ids that suit this interest, best first. */
+    destinations: z.array(z.string()).min(2).max(8),
+    /** Guide ids worth reading first. */
+    guides: z.array(z.string()).default([]),
+    bestMonths: z.array(month).min(1),
+    seasonNote: z.string(),
+    faqs: z.array(faq).min(3).max(8),
+    order: z.number().int().default(100),
+    seo: z.object({ title: z.string().max(60).optional(), description: z.string().max(160) }),
   }),
 });
 
@@ -164,4 +216,4 @@ const reviews = defineCollection({
   }),
 });
 
-export const collections = { journeys, regions, destinations, guides, specialists, reviews };
+export const collections = { journeys, regions, destinations, guides, themes, specialists, reviews };

@@ -3,6 +3,10 @@
  * The one button. Renders an <a> when given href, otherwise a <button>.
  * Pill shaped, at least 44px tall on phones, presses in slightly when tapped.
  * No arrows: the label says what happens. `arrow` is accepted and ignored.
+ *
+ * Colours follow the logo: the primary is the badge orange with black text
+ * and turns black with orange text on hover; `dark` is the reverse, for use
+ * on orange panels.
  */
 interface Props {
   href?: string;
@@ -27,19 +31,19 @@ const {
 } = Astro.props;
 
 const base =
-  'btn inline-flex items-center justify-center gap-2 rounded-pill font-sans font-bold whitespace-nowrap select-none transition-[background-color,color,border-color,box-shadow,transform] duration-300 ease-out active:scale-[0.97] focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-brand-deep disabled:pointer-events-none disabled:opacity-50';
+  'btn inline-flex max-w-full items-center justify-center gap-2 rounded-pill text-center font-sans font-bold leading-tight select-none transition-[background-color,color,border-color,box-shadow,transform] duration-300 ease-out active:scale-[0.97] focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-brand-deep disabled:pointer-events-none disabled:opacity-50';
 const sizes = {
-  sm: 'h-10 px-4 text-[0.9375rem]',
-  md: 'h-12 px-6 text-[0.98rem]',
-  lg: 'h-14 px-7 text-[1.03rem]',
+  sm: 'min-h-10 py-1.5 px-4 text-[0.9375rem]',
+  md: 'min-h-12 py-2 px-6 text-[0.98rem]',
+  lg: 'min-h-14 py-2.5 px-7 text-[1.03rem]',
 };
 const variants = {
-  primary: 'bg-brand text-[#1b1d21] shadow-[0_10px_24px_-12px_rgb(237_119_23/0.8)] hover:bg-[#f2852b] hover:shadow-[0_14px_30px_-12px_rgb(237_119_23/0.9)]',
-  dark: 'bg-ink text-bg hover:bg-[color-mix(in_oklab,var(--c-ink)_88%,var(--c-brand))]',
-  secondary: 'border border-line bg-bg-elevated text-ink hover:border-ink/40',
-  ghost: 'h-auto px-0 text-ink underline decoration-brand decoration-2 underline-offset-[7px] hover:decoration-[3px]',
-  inverse: 'bg-white text-[#1b1d21] hover:bg-white/90',
-  light: 'border border-white/45 bg-white/12 text-white backdrop-blur-md hover:bg-white/22',
+  primary: 'bg-brand text-on-brand shadow-[var(--shadow-brand)] hover:bg-[#1c1b1a] hover:text-[#ff8a4c] hover:shadow-[0_14px_30px_-14px_rgb(28_27_26/0.6)]',
+  dark: 'bg-[#1c1b1a] text-white hover:bg-white hover:text-[#1c1b1a]',
+  secondary: 'border-2 border-ink bg-bg-elevated text-ink hover:bg-ink hover:text-bg',
+  ghost: 'h-auto px-0 text-ink underline decoration-brand decoration-2 underline-offset-[7px] hover:decoration-[3px] hover:text-brand-deep',
+  inverse: 'bg-white text-[#1c1b1a] hover:bg-brand hover:text-[#1c1b1a]',
+  light: 'border border-white/45 bg-white/12 text-white backdrop-blur-md hover:bg-white hover:text-[#1c1b1a]',
 };
 const classes = [base, variant === 'ghost' ? 'text-[0.98rem] font-bold' : sizes[size], variants[variant], className].join(' ');
 ---

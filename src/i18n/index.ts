@@ -5,7 +5,7 @@
 import { en, type Dict } from './en';
 import { DEFAULT_LOCALE, LOCALE_TAGS, RANGE_JOINER, type Locale } from './config';
 
-const modules = import.meta.glob<Record<string, Dict>>('./{de,fr,es,it}.ts', { eager: true });
+const modules = import.meta.glob<Record<string, Dict>>('./{de,fr,es,it,hi}.ts', { eager: true });
 const dicts: Partial<Record<Locale, Dict>> = { en };
 for (const [path, mod] of Object.entries(modules)) {
   const code = path.replace('./', '').replace('.ts', '') as Locale;
@@ -90,6 +90,8 @@ type ContentModule = {
   journeyText?: Partial<Record<Locale, Record<string, Pair>>>;
   regionText?: Partial<Record<Locale, Record<string, Pair>>>;
   specialistRole?: Partial<Record<Locale, Record<string, string>>>;
+  themeText?: Partial<Record<Locale, Record<string, string>>>;
+  placeText?: Partial<Record<Locale, Record<string, string>>>;
 };
 const contentMods = import.meta.glob<ContentModule>('./content.ts', { eager: true });
 const contentMod: ContentModule = Object.values(contentMods)[0] ?? {};
@@ -99,6 +101,13 @@ export function journeyCopy(id: string, locale: Locale, fallback: Pair): Pair {
 }
 export function regionCopy(id: string, locale: Locale, fallback: Pair): Pair {
   return contentMod.regionText?.[locale]?.[id] ?? fallback;
+}
+export function themeCopy(id: string, locale: Locale, fallback: string): string {
+  return contentMod.themeText?.[locale]?.[id] ?? fallback;
+}
+/** A town name as written in a locale (Hindi spells them in Devanagari). */
+export function placeCopy(name: string, locale: Locale): string {
+  return contentMod.placeText?.[locale]?.[name] ?? name;
 }
 export function roleCopy(id: string, locale: Locale, fallback: string): string {
   return contentMod.specialistRole?.[locale]?.[id] ?? fallback;

@@ -1,11 +1,24 @@
 ---
+/**
+ * Footer in the badge's own colours, on the logo black, kept to about one
+ * screen on a phone and two thirds of one on a laptop:
+ * 1. Who we are (the badge, one line, the two ways to start) beside how to
+ *    reach us (WhatsApp, email, the office, the hours).
+ * 2. Five link groups (journeys, interests, company, planning help, legal):
+ *    a row of columns from tablets up, folding rows on phones.
+ * 3. One slim bar: company identity, round social icons and the theme switch.
+ * Each page closes with its own call to action, so the footer does not repeat
+ * one in large type; the address appears once.
+ */
 import Logo from './Logo.astro';
 import WhatsAppButton from './WhatsAppButton.astro';
 import Button from './Button.astro';
+import Pyramid from './Pyramid.astro';
 import Toran from './decor/Toran.astro';
 import { site } from '../data/site';
 import { waMessages } from '../lib/whatsapp';
-import { getDict } from '../i18n';
+import { allThemes } from '../lib/content';
+import { getDict, themeCopy } from '../i18n';
 import { localizedPath, type Locale } from '../i18n/config';
 
 interface Props { locale?: Locale }
@@ -14,6 +27,7 @@ const t = getDict(locale);
 const L = t.footer.links;
 const lp = (p: string) => localizedPath(p, locale);
 const year = new Date().getFullYear();
+const themes = (await allThemes()).map(th => ({ label: themeCopy(th.id, locale, th.data.title), href: `/themes/${th.id}` }));
 const columns = [
   { title: t.footer.colJourneys, items: [
     { label: L.allJourneys, href: '/journeys' },
@@ -23,6 +37,7 @@ const columns = [
     { label: L.himalaya, href: '/regions/himalaya' },
     { label: L.east, href: '/regions/east-northeast' },
   ] },
+  ...(themes.length ? [{ title: t.footer.colInterests, items: themes }] : []),
   { title: t.footer.colCompany, items: [
     { label: L.story, href: lp('/about') },
     { label: L.specialists, href: `${lp('/about')}#specialists` },
@@ -47,83 +62,124 @@ const columns = [
     { label: L.credits, href: '/credits' },
   ] },
 ];
+const mapUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${site.address.street}, ${site.address.locality} ${site.address.postalCode}`)}`;
+const socials = [
+  { name: 'Instagram', href: site.social.instagram, icon: 'M7 3h10a4 4 0 0 1 4 4v10a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4V7a4 4 0 0 1 4-4Zm5 5a4 4 0 1 0 0 8 4 4 0 0 0 0-8Zm5.5-1.5h.01' },
+  { name: 'Facebook', href: site.social.facebook, icon: 'M14 8h3V4h-3a4 4 0 0 0-4 4v3H7v4h3v6h4v-6h3l1-4h-4V8Z' },
+  { name: 'YouTube', href: site.social.youtube, icon: 'M3 8.5A3.5 3.5 0 0 1 6.5 5h11A3.5 3.5 0 0 1 21 8.5v7a3.5 3.5 0 0 1-3.5 3.5h-11A3.5 3.5 0 0 1 3 15.5v-7ZM10 9v6l5-3-5-3Z' },
+  { name: 'X', href: site.social.twitter, icon: 'M4 4h4.5L20 20h-4.5ZM19.5 4l-6.3 7.1M4.5 20l6.3-7.1' },
+].filter(s => s.href);
+const icons = {
+  wa: 'M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12Z',
+  mail: 'M4 6h16v12H4zM4 7l8 6 8-6',
+  pin: 'M12 21s-6.5-5.6-6.5-11a6.5 6.5 0 0 1 13 0c0 5.4-6.5 11-6.5 11ZM12 12.3a2.3 2.3 0 1 0 0-4.6 2.3 2.3 0 0 0 0 4.6Z',
+  clock: 'M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18ZM12 7v5l3 2',
+};
 ---
 
-<footer class="px-3 pb-3 pt-20 md:px-4 md:pb-4 md:pt-28">
-  <div class="relative overflow-hidden rounded-[32px] bg-bg-muted text-ink-soft">
-    <Toran class="absolute inset-x-0 top-0" />
-    <div class:list={['container-x relative pb-10', site.decor ? 'pt-20 md:pt-24' : 'pt-12 md:pt-16']}>
-      <div class="grid gap-10 lg:grid-cols-[1.25fr_2fr] lg:gap-16">
-        <div class="max-w-md">
-          <a href={lp('/')} class="press inline-flex text-ink" aria-label={`Edifice Travels, ${t.nav.home}`}><Logo size={52} /></a>
-          <p class="mt-6 font-display text-[clamp(1.75rem,1.4rem+1.4vw,2.5rem)] leading-[1.08] text-ink">{t.footer.tagline}</p>
-          <p class="mt-4 text-small">{t.footer.based}</p>
-          <div class="mt-6 flex flex-wrap gap-2">
-            <Button href={lp('/plan')} track="plan_click">{t.nav.plan}</Button>
-            <WhatsAppButton href={waMessages.general()} trackLabel="footer" locale={locale} />
+<footer class="px-3 pb-3 pt-8 md:px-4 md:pb-4 md:pt-10">
+  <div class="foot relative isolate overflow-hidden rounded-[28px] bg-[#1c1b1a] text-white/75">
+    <Toran class="absolute inset-x-0 top-0 z-10" />
+    <Pyramid size="clamp(12rem, 22vw, 20rem)" tone="night" opacity={0.05} class="pyramid-deco -bottom-8 -right-8 -z-10" />
+    <div class:list={['container-x relative pb-5', site.decor ? 'pt-12 md:pt-14' : 'pt-8 md:pt-10']}>
+
+      <div class="grid gap-7">
+        <!-- 1. Who we are, how to reach us, how to start. -->
+        <div class="grid gap-5 md:grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)] md:gap-x-10 xl:grid-cols-[minmax(0,1fr)_minmax(0,1.6fr)] xl:gap-x-16">
+          <div>
+            <a href={lp('/')} class="press inline-flex" aria-label={`Edifice Travels, ${t.nav.home}`}><Logo size={44} tone="night" /></a>
+            <p class="mt-3 max-w-xs text-[0.9rem] leading-relaxed text-white/65">{t.footer.based}</p>
+            <div class="mt-4 flex flex-wrap gap-2">
+              <Button href={lp('/plan')} size="sm" track="plan_click">{t.nav.plan}</Button>
+              <WhatsAppButton href={waMessages.general()} size="sm" trackLabel="footer" locale={locale} />
+            </div>
           </div>
-          <div class="mt-6 space-y-1.5 text-small">
-            <p><a class="font-semibold text-ink underline-offset-4 hover:underline" href={`mailto:${site.email}`}>{site.email}</a></p>
-            <p><a class="font-semibold text-ink underline-offset-4 hover:underline" href={`tel:${site.phoneTel}`}>{site.phoneDisplay}</a> <span class="text-ink-muted">{t.footer.whatsappCalls}</span></p>
-            <p class="text-ink-muted">{t.footer.hours}</p>
-          </div>
+          <ul class="foot-contact grid gap-2.5 text-[0.9rem] xl:grid-cols-2 xl:gap-x-8 xl:gap-y-3 xl:self-center" role="list">
+            <li>
+              <a href={waMessages.general()} target="_blank" rel="noopener" data-track="whatsapp_click" data-label="footer-contact" class="foot-line">
+                <span class="foot-ico bg-whatsapp text-[#0b3d1f]" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24"><path d={icons.wa} fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round" /></svg></span>
+                <span><span class="font-bold text-white">{site.phoneDisplay}</span> <span class="text-white/55">{t.footer.whatsappCalls}</span></span>
+              </a>
+            </li>
+            <li>
+              <a href={`mailto:${site.email}`} class="foot-line">
+                <span class="foot-ico bg-brand text-[#1c1b1a]" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24"><path d={icons.mail} fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round" /></svg></span>
+                <span class="break-all font-bold text-white">{site.email}</span>
+              </a>
+            </li>
+            <li>
+              <a href={mapUrl} target="_blank" rel="noopener" class="foot-line">
+                <span class="foot-ico bg-white text-[#1c1b1a]" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24"><path d={icons.pin} fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round" /></svg></span>
+                <span class="text-white/80">{site.address.street}, {site.address.locality} {site.address.postalCode}</span>
+              </a>
+            </li>
+            <li class="foot-line">
+              <span class="foot-ico bg-white/10 text-white" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24"><path d={icons.clock} fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" /></svg></span>
+              <span class="text-white/60">{t.footer.hours}</span>
+            </li>
+          </ul>
         </div>
 
-        <!-- Phones: each group folds open. -->
-        <div class="divide-y divide-line border-y border-line lg:hidden">
+        <!-- 2a. Phones: each group folds open. -->
+        <div class="divide-y divide-white/12 border-y border-white/12 md:hidden">
           {columns.map(col => (
-            <details class="foot-group group">
-              <summary class="flex cursor-pointer list-none items-center justify-between py-4 text-[1rem] font-bold text-ink [&::-webkit-details-marker]:hidden">
+            <details class="group">
+              <summary class="flex min-h-12 cursor-pointer list-none items-center justify-between text-[0.95rem] font-bold text-brand [&::-webkit-details-marker]:hidden">
                 {col.title}
-                <span class="grid h-8 w-8 place-items-center rounded-full bg-bg-elevated transition-transform duration-500 group-open:rotate-45" aria-hidden="true">
-                  <svg width="12" height="12" viewBox="0 0 12 12"><path d="M6 1v10M1 6h10" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" /></svg>
+                <span class="grid h-7 w-7 place-items-center rounded-full bg-white/10 text-white transition-[transform,background-color] duration-300 group-open:rotate-45 group-open:bg-brand group-open:text-[#1c1b1a]" aria-hidden="true">
+                  <svg width="11" height="11" viewBox="0 0 12 12"><path d="M6 1v10M1 6h10" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" /></svg>
                 </span>
               </summary>
-              <ul class="grid grid-cols-2 gap-x-4 gap-y-3 pb-5 text-small">
-                {col.items.map(it => <li><a href={it.href} class="text-ink-soft hover:text-ink">{it.label}</a></li>)}
+              <ul class="grid grid-cols-2 gap-x-4 pb-3 text-[0.9rem]">
+                {col.items.map(it => <li><a href={it.href} class="flex min-h-10 items-center text-white/75 hover:text-white">{it.label}</a></li>)}
               </ul>
             </details>
           ))}
         </div>
 
-        <!-- Larger screens: four columns. -->
-        <div class="hidden grid-cols-4 gap-8 lg:grid">
+        <!-- 2b. Tablets: three columns; laptops and up: five. -->
+        <div class="hidden gap-x-6 gap-y-8 border-t border-white/12 pt-7 md:grid md:grid-cols-3 lg:grid-cols-5">
           {columns.map(col => (
-            <nav aria-label={col.title}>
-              <h2 class="mb-4 font-sans text-[0.95rem] font-bold tracking-normal text-ink">{col.title}</h2>
-              <ul class="space-y-2.5 text-small">
-                {col.items.map(it => <li><a href={it.href} class="text-ink-soft underline-offset-4 transition-colors hover:text-ink hover:underline">{it.label}</a></li>)}
+            <nav aria-label={col.title} class="min-w-0">
+              <h2 class="mb-3 font-sans text-[0.9rem] font-extrabold leading-snug tracking-normal !text-brand">{col.title}</h2>
+              <ul class="space-y-2 hyphens-auto break-words text-[0.88rem] leading-snug">
+                {col.items.map(it => <li><a href={it.href} class="text-white/70 underline-offset-4 transition-colors hover:text-white hover:underline hover:decoration-brand">{it.label}</a></li>)}
               </ul>
             </nav>
           ))}
         </div>
       </div>
 
-      <div class="mt-12 flex flex-col gap-4 border-t border-line pt-6 text-[0.82rem] text-ink-muted md:flex-row md:items-center md:justify-between">
-        <p>
-          © {year} {site.name}, a unit of {site.legalName}. {site.address.street}, {site.address.locality} {site.address.postalCode}, India.
+      <!-- 3. Identity, social and theme. -->
+      <div class="mt-7 flex flex-col gap-4 border-t border-white/12 pt-5 text-[0.8rem] leading-relaxed text-white/50 md:flex-row md:items-center md:justify-between">
+        <p class="max-w-3xl">
+          © {year} {site.name}, a unit of {site.legalName}.
           {site.llpin && <span> LLPIN {site.llpin}.</span>}
           {site.gstin && <span> GSTIN {site.gstin}.</span>}
           {' '}{t.footer.quoted}
         </p>
-        <div class="flex items-center gap-4">
-          {site.social.instagram && <a href={site.social.instagram} rel="noopener" target="_blank" class="font-semibold hover:text-ink">Instagram</a>}
-          {site.social.facebook && <a href={site.social.facebook} rel="noopener" target="_blank" class="font-semibold hover:text-ink">Facebook</a>}
-          {site.social.youtube && <a href={site.social.youtube} rel="noopener" target="_blank" class="font-semibold hover:text-ink">YouTube</a>}
-          {site.social.twitter && <a href={site.social.twitter} rel="noopener" target="_blank" class="font-semibold hover:text-ink">X</a>}
-          <button type="button" id="theme-toggle" class="press inline-flex h-10 items-center gap-2 rounded-pill border border-line bg-bg-elevated px-3.5 font-semibold text-ink" aria-label={t.footer.theme} aria-pressed="false">
-            <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 3a9 9 0 1 0 9 9c0-.46-.04-.92-.1-1.36a5.39 5.39 0 0 1-4.4 2.26 5.4 5.4 0 0 1-3.14-9.8c-.45-.07-.91-.1-1.36-.1Z"/></svg>
+        <div class="flex shrink-0 flex-wrap items-center gap-1.5">
+          {socials.map(s => (
+            <a href={s.href} rel="noopener" target="_blank" class="press grid h-10 w-10 place-items-center rounded-full border border-white/15 text-white/85 transition-colors hover:border-brand hover:bg-brand hover:text-[#1c1b1a]" aria-label={s.name} title={s.name}>
+              <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><path d={s.icon} fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" /></svg>
+            </a>
+          ))}
+          <button type="button" id="theme-toggle" class="press ml-1 inline-flex h-10 items-center gap-2 rounded-pill border border-white/15 bg-white/5 px-3.5 font-semibold text-white/85 hover:border-brand" aria-label={t.footer.theme} aria-pressed="false">
+            <svg width="13" height="13" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 3a9 9 0 1 0 9 9c0-.46-.04-.92-.1-1.36a5.39 5.39 0 0 1-4.4 2.26 5.4 5.4 0 0 1-3.14-9.8c-.45-.07-.91-.1-1.36-.1Z"/></svg>
             <span>{t.footer.themeLabel}</span>
           </button>
         </div>
       </div>
     </div>
-    <div class="foot-mark pointer-events-none select-none px-4 pb-2 text-center font-display text-[clamp(4.5rem,17vw,15rem)] leading-[0.8] text-ink/[0.05]" aria-hidden="true"></div>
+    <div class="h-1.5 bg-brand" aria-hidden="true"></div>
   </div>
 </footer>
 
 <style>
-  .foot-mark::before { content: "Edifice"; }
+  .foot-line { display: flex; align-items: flex-start; gap: 0.7rem; min-height: 1.75rem; border-radius: 10px; }
+  a.foot-line { transition: color 0.2s; }
+  a.foot-line:hover > span:last-child, a.foot-line:hover > span:last-child > span { color: #fff; text-decoration: underline; text-decoration-color: var(--c-brand); text-underline-offset: 4px; }
+  .foot-ico { display: grid; height: 1.75rem; width: 1.75rem; flex-shrink: 0; place-items: center; border-radius: 9999px; margin-top: -0.1rem; }
 </style>
 
 <script>

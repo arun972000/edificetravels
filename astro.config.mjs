@@ -29,9 +29,9 @@ export default defineConfig({
     preact({ compat: true }),
     sitemap({
       filter: page => !page.includes('/thank-you') && !page.includes('/404'),
-      // Home, planner, about and contact exist in five languages: list each
+      // Home, planner, about and contact exist in six languages: list each
       // version with its alternates, as the hreflang tags on the pages do.
-      i18n: { defaultLocale: 'en', locales: { en: 'en', de: 'de', fr: 'fr', es: 'es', it: 'it' } },
+      i18n: { defaultLocale: 'en', locales: { en: 'en', de: 'de', fr: 'fr', es: 'es', it: 'it', hi: 'hi' } },
       serialize(item) {
         const guide = item.url.match(/\/guide\/([^/]+)$/)?.[1];
         if (guide && guideUpdated[guide]) item.lastmod = new Date(guideUpdated[guide]).toISOString();
@@ -42,12 +42,24 @@ export default defineConfig({
   image: {
     // Modern formats by default; the Image component picks the smallest.
     responsiveStyles: true,
+    // WebP at quality 72 (sharp's default is 80): about a quarter lighter,
+    // with no visible change on photographs under a gradient overlay.
+    service: {
+      entrypoint: 'astro/assets/services/sharp',
+      config: { webp: { quality: 72, smartSubsample: true }, jpeg: { quality: 76, mozjpeg: true } },
+    },
   },
   // Prefetch a page when a visitor hovers or taps its link. Prefetching every
   // link in view cost phone visitors a dozen page downloads on the home page.
+  // With clientPrerender, Chrome and Edge go further and prerender the page
+  // (photographs included) during the hover, so the click opens instantly;
+  // other browsers fall back to a plain prefetch.
   prefetch: {
     prefetchAll: true,
     defaultStrategy: 'hover',
+  },
+  experimental: {
+    clientPrerender: true,
   },
   vite: {
     plugins: [tailwindcss()],

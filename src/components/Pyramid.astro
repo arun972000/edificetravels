@@ -1,0 +1,36 @@
+---
+/**
+ * The pyramid from the Edifice Travels badge: a large orange face and a
+ * narrow black one. Used as the brand's graphic device, as a small mark
+ * beside labels or drawn large and faint behind a panel. Always decorative.
+ *
+ * tone: 'brand' (orange and black, for light surfaces),
+ *       'night' (orange and white, for black panels),
+ *       'ink' (two shades of black, for orange panels).
+ */
+interface Props {
+  size?: number | string;
+  tone?: 'brand' | 'night' | 'ink';
+  class?: string;
+  style?: string;
+  opacity?: number;
+}
+const { size = 20, tone = 'brand', class: className = '', style = '', opacity } = Astro.props;
+const faces = {
+  brand: ['var(--c-brand)', 'var(--c-ink)'],
+  night: ['var(--c-brand)', '#ffffff'],
+  ink: ['#1c1b1a', 'rgb(28 27 26 / 0.55)'],
+}[tone];
+const w = typeof size === 'number' ? `${size}px` : size;
+---
+
+<svg
+  viewBox="0 0 100 90"
+  aria-hidden="true"
+  focusable="false"
+  class:list={['shrink-0', className]}
+  style={`width:${w};height:auto;${opacity !== undefined ? `opacity:${opacity};` : ''}${style}`}
+>
+  <path d="M53 2 2 88l66 2Z" fill={faces[0]} />
+  <path d="M53 2l15 88 30-11Z" fill={faces[1]} />
+</svg>

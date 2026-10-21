@@ -9,7 +9,7 @@ const d = destination.data;
 ---
 
 <a href={`/destinations/${destination.id}`} class:list={['group press block', className]}>
-  <div class="frame aspect-[4/5]">
+  <div class="frame frame-accent aspect-[4/5]">
     <Image
       src={photo(d.heroImage)}
       alt=""
@@ -21,10 +21,10 @@ const d = destination.data;
     />
     <div class="absolute inset-0 bg-[linear-gradient(to_top,rgba(10,11,13,0.72)_0%,transparent_55%)]" aria-hidden="true"></div>
     <div class="absolute inset-x-3 bottom-3 text-white">
-      <p class="text-[0.78rem] font-semibold text-white/80">{d.state}</p>
+      <p class="text-[0.78rem] font-bold text-[#ff8a4c]">{d.state}</p>
       <h3 class="font-display text-[1.45rem] font-normal leading-[1.05] tracking-[-0.02em] text-white">{d.title}</h3>
     </div>
   </div>
   <p class="mt-2.5 line-clamp-2 px-1 text-[0.9rem] leading-snug text-ink-soft">{d.tagline}</p>
-  <p class="mt-1.5 px-1 text-[0.82rem] font-semibold text-ink-muted">Ideal stay: {d.idealNights}</p>
+  <p class="mt-1.5 px-1 text-[0.82rem] font-bold text-brand-deep">Ideal stay: {d.idealNights}</p>
 </a>

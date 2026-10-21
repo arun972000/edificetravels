@@ -1,13 +1,17 @@
 ---
 /**
- * Country and language: a small popover that opens under the flag chip.
- * One tap changes the language; one tap sets the country. No Save button,
- * no full-screen sheet. The chosen flag flies; the others rest with a soft
- * curl and lift when hovered. Country names come from Intl.DisplayNames, so
- * no list needs translating. Wired up in scripts/locale.ts.
+ * Country and language, as one choice. The visitor picks the country they are
+ * travelling from; the site switches to that country's language and reloads
+ * with their local time and flight filled in. Each country row says which
+ * language it will use, so nothing happens by surprise. Where a country reads
+ * more than one of our languages (India: English and हिंदी), the row shows
+ * each language as its own button under the country's name, and that button
+ * is the choice. There is no separate language control. After a choice the
+ * page reloads and a short note confirms what changed. Wired up in
+ * scripts/locale.ts.
  */
 import { COUNTRIES } from '../data/countries';
-import { LOCALES, LOCALE_NAMES, LOCALE_TAGS, type Locale } from '../i18n/config';
+import { LOCALE_NAMES, LOCALE_TAGS, type Locale } from '../i18n/config';
 import { getDict } from '../i18n';
 import FlagWave from './FlagWave.astro';
 
@@ -17,57 +21,73 @@ const t = getDict(locale);
 const names = new Intl.DisplayNames([LOCALE_TAGS[locale]], { type: 'region' });
 const countries = COUNTRIES.map(c => ({ ...c, name: names.of(c.code) ?? c.code }))
   .sort((a, b) => a.name.localeCompare(b.name, LOCALE_TAGS[locale]));
-const LANG_FLAG: Record<Locale, string> = { en: 'gb', de: 'de', fr: 'fr', es: 'es', it: 'it' };
 const tick = '<svg width="14" height="14" viewBox="0 0 12 12" aria-hidden="true"><path d="M2.5 6.5l2.2 2.2L9.5 3.8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 ---
 
-<div id="locale-pop" class="locale-pop" role="dialog" aria-labelledby="locale-pop-title" hidden>
-  <div class="flex items-center justify-between gap-2 pl-4 pr-2 pt-2.5">
-    <h2 id="locale-pop-title" class="font-sans text-[0.9rem] font-extrabold tracking-normal text-ink">{t.locale.languageLabel}</h2>
-    <button type="button" data-locale-close class="grid h-8 w-8 place-items-center rounded-full text-ink-muted transition-colors hover:bg-bg-muted hover:text-ink" aria-label={t.locale.close}>
+<div id="locale-pop" class="locale-pop" role="dialog" aria-labelledby="locale-pop-title" aria-describedby="locale-pop-hint" hidden>
+  <div class="flex items-start justify-between gap-2 pl-4 pr-2 pt-3">
+    <div>
+      <h2 id="locale-pop-title" class="font-sans text-[1rem] font-extrabold leading-snug tracking-normal text-ink">{t.locale.dialogTitle}</h2>
+      <p id="locale-pop-hint" class="mt-1 text-[0.8rem] leading-snug text-ink-soft">{t.locale.countryHint}</p>
+    </div>
+    <button type="button" data-locale-close class="grid h-8 w-8 shrink-0 place-items-center rounded-full text-ink-muted transition-colors hover:bg-bg-muted hover:text-ink" aria-label={t.locale.close}>
       <svg width="12" height="12" viewBox="0 0 20 20" aria-hidden="true"><path d="M5 5l10 10M15 5L5 15" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" /></svg>
     </button>
   </div>
 
-  <div class="grid grid-cols-5 gap-1 px-2.5 pt-1.5" role="radiogroup" aria-label={t.locale.languageLabel}>
-    {LOCALES.map(l => (
-      <button type="button" role="radio" aria-checked={l === locale ? 'true' : 'false'} data-lang={l} lang={l} title={LOCALE_NAMES[l]} aria-label={LOCALE_NAMES[l]} class="lang-opt fly-host">
-        <FlagWave code={LANG_FLAG[l]} size="md" />
-        <span class="text-[0.72rem] font-extrabold uppercase">{l}</span>
-      </button>
-    ))}
-  </div>
-
-  <div class="mx-4 mt-3 h-px bg-line"></div>
-
-  <p class="px-4 pt-2.5 text-[0.9rem] font-extrabold text-ink">{t.locale.countryLabel}</p>
-  <label class="relative mx-2.5 mt-1.5 block">
+  <label class="relative mx-2.5 mt-3 block">
     <span class="sr-only">{t.locale.searchCountry}</span>
     <svg class="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-ink-muted" width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" stroke-width="2.4"/><path d="m20 20-3.5-3.5" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>
-    <input type="search" data-country-search placeholder={t.locale.searchCountry} autocomplete="off" class="h-10 w-full rounded-pill bg-bg-muted pl-8 pr-3 text-[16px] text-ink outline-none placeholder:text-[0.85rem] placeholder:text-ink-muted focus:bg-bg-elevated focus:shadow-[0_0_0_1.5px_var(--c-ink)] sm:text-[0.9rem]" />
+    <input type="search" data-country-search placeholder={t.locale.searchCountry} autocomplete="off" class="h-10 w-full rounded-pill bg-bg-muted pl-8 pr-3 text-[16px] text-ink outline-none placeholder:text-[0.85rem] placeholder:text-ink-muted focus:bg-bg-elevated focus:shadow-[0_0_0_1.5px_var(--c-brand)] sm:text-[0.9rem]" />
   </label>
-  <ul class="country-list mt-1.5 max-h-[11rem] overflow-y-auto overscroll-contain px-1.5 pb-1.5" role="listbox" aria-label={t.locale.countryLabel} data-country-list>
+
+  <ul class="country-list mt-1.5 max-h-[17rem] overflow-y-auto overscroll-contain px-1.5 pb-1.5" aria-label={t.locale.countryLabel} data-country-list>
     {countries.map(c => (
-      <li>
-        <button type="button" role="option" aria-selected="false" data-country={c.code} data-name={c.name.toLowerCase()} class="country-opt fly-host">
-          <FlagWave code={c.code} size="sm" />
-          <span class="min-w-0 flex-1 truncate text-left">{c.name}</span>
-          <span class="opt-tick" set:html={tick} />
-        </button>
+      <li data-row={c.code} data-name={c.name.toLowerCase()}>
+        {c.langs.length === 1 ? (
+          <button type="button" data-country={c.code} data-lang={c.langs[0]} class="country-opt fly-host">
+            <FlagWave code={c.code} size="sm" />
+            <span class="min-w-0 flex-1 truncate text-left">{c.name}</span>
+            <span class="suggest-badge" hidden data-suggest-badge>{t.locale.suggested}</span>
+            <span class="opt-lang" lang={c.langs[0]}>{LOCALE_NAMES[c.langs[0]]}</span>
+            <span class="opt-tick" set:html={tick} />
+          </button>
+        ) : (
+          <div class="country-multi fly-host" role="group" aria-label={c.name} data-multi>
+            <span class="flex min-w-0 items-center gap-[0.6rem]">
+              <FlagWave code={c.code} size="sm" />
+              <span class="min-w-0 flex-1 truncate">{c.name}</span>
+              <span class="suggest-badge" hidden data-suggest-badge>{t.locale.suggested}</span>
+            </span>
+            <span class="lang-pick">
+              {c.langs.map(l => (
+                <button type="button" data-country={c.code} data-lang={l} lang={l} class="lang-opt">
+                  <span class="opt-tick" set:html={tick} />{LOCALE_NAMES[l]}
+                </button>
+              ))}
+            </span>
+          </div>
+        )}
       </li>
     ))}
-    <li>
-      <button type="button" role="option" aria-selected="false" data-country="" data-name="" class="country-opt" data-other>
+    <li data-row="" data-other>
+      <button type="button" data-country="" data-lang="en" class="country-opt">
         <span class="grid h-[14px] w-[21px] shrink-0 place-items-center rounded-[3px] bg-bg-muted"><svg width="10" height="10" viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2.4" d="M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18Zm-8.5-6h17M3.5 9h17"/></svg></span>
         <span class="min-w-0 flex-1 truncate text-left">{t.locale.otherCountry}</span>
+        <span class="opt-lang" lang="en">{LOCALE_NAMES.en}</span>
         <span class="opt-tick" set:html={tick} />
       </button>
     </li>
   </ul>
   <p class="px-4 pb-2 text-[0.8rem] text-ink-muted" data-country-empty hidden>{t.locale.noMatch}</p>
+  <p class="border-t border-line px-4 py-2 text-[0.75rem] leading-snug text-ink-muted" data-partial-note data-template={t.locale.partialNote} hidden></p>
+
+  <p class="switching flex items-center gap-2 border-t border-line bg-brand px-4 py-2.5 text-[0.82rem] font-bold text-[#1c1b1a]" data-switching role="status" hidden>
+    <span class="spinner" aria-hidden="true"></span>{t.locale.switching}
+  </p>
 
   <div class="space-y-0.5 border-t border-line bg-bg-muted/60 px-4 py-2.5 text-[0.78rem] leading-snug text-ink-soft" aria-live="polite">
-    <p class="flex items-center gap-2"><FlagWave size="xs" data-preview-flag hidden /><span data-preview="your-time" data-template={t.local.yourTime}></span></p>
+    <p class="flex items-center gap-2" data-preview-row="your-time"><FlagWave size="xs" data-preview-flag hidden /><span data-preview="your-time" data-template={t.local.yourTime}></span></p>
     <p class="flex items-center gap-2"><FlagWave code="in" size="xs" fly /><span data-preview="india-time" data-template={t.local.nowInIndia}></span></p>
   </div>
 </div>
@@ -78,12 +98,14 @@ const tick = '<svg width="14" height="14" viewBox="0 0 12 12" aria-hidden="true"
     z-index: 60;
     top: calc(var(--header-h) + var(--notice-h, 0px) + 6px);
     right: var(--pop-right, 12px);
-    width: min(20rem, calc(100vw - 24px));
-    overflow: hidden;
+    width: min(22rem, calc(100vw - 24px));
+    max-height: calc(100dvh - var(--header-h) - 24px);
+    overflow: hidden auto;
     border: 1px solid var(--c-line);
+    border-top: 4px solid var(--c-brand);
     border-radius: 20px;
     background: var(--c-bg-elevated);
-    box-shadow: 0 18px 50px -18px rgb(20 22 26 / 0.35), 0 2px 8px rgb(20 22 26 / 0.06);
+    box-shadow: 0 18px 50px -18px rgb(28 27 26 / 0.35), 0 2px 8px rgb(28 27 26 / 0.06);
     transform-origin: calc(100% - 28px) 0;
   }
   .locale-pop.is-open { animation: pop 0.28s cubic-bezier(0.16, 1, 0.3, 1); }
@@ -91,25 +113,46 @@ const tick = '<svg width="14" height="14" viewBox="0 0 12 12" aria-hidden="true"
   @keyframes pop { from { opacity: 0; transform: translateY(-6px) scale(0.96); } to { opacity: 1; transform: none; } }
   @keyframes pop-out { to { opacity: 0; transform: translateY(-4px) scale(0.98); } }
 
-  .lang-opt {
-    display: flex; flex-direction: column; align-items: center; gap: 0.3rem;
-    padding: 0.55rem 0 0.4rem; border-radius: 12px; color: var(--c-ink-soft);
-    transition: background-color 0.2s, color 0.2s, transform 0.2s;
-  }
-  .lang-opt:hover { background: var(--c-bg-muted); color: var(--c-ink); }
-  .lang-opt:active { transform: scale(0.94); }
-  .lang-opt[aria-checked="true"] { background: var(--c-brand-soft); color: var(--c-ink); box-shadow: inset 0 0 0 1.5px var(--c-brand); }
-
   .country-opt {
     display: flex; width: 100%; align-items: center; gap: 0.6rem;
-    min-height: 2.5rem; padding: 0 0.6rem; border-radius: 10px;
+    min-height: 2.6rem; padding: 0 0.6rem; border-radius: 10px;
     font-size: 0.88rem; font-weight: 600; color: var(--c-ink);
     transition: background-color 0.15s;
   }
   .country-opt:hover, .country-opt:focus-visible { background: var(--c-bg-muted); }
-  .country-opt[aria-selected="true"] { background: var(--c-brand-soft); }
-  .opt-tick { display: grid; place-items: center; color: var(--c-brand-deep); opacity: 0; transition: opacity 0.2s; }
-  .country-opt[aria-selected="true"] .opt-tick { opacity: 1; }
+  .country-opt[aria-current="true"] { background: var(--c-brand-soft); box-shadow: inset 0 0 0 1.5px var(--c-brand); }
+  .opt-lang { flex-shrink: 0; font-size: 0.75rem; font-weight: 600; color: var(--c-ink-muted); }
+  .suggest-badge { flex-shrink: 0; border-radius: 999px; background: var(--c-brand); color: #1c1b1a; padding: 0.1rem 0.45rem; font-size: 0.68rem; font-weight: 800; }
+  .opt-tick { display: grid; width: 14px; place-items: center; color: var(--c-brand-deep); opacity: 0; transition: opacity 0.2s; }
+  .country-opt[aria-current="true"] .opt-tick { opacity: 1; }
   .country-list { scrollbar-width: thin; }
-  @media (prefers-reduced-motion: reduce) { .locale-pop.is-open, .locale-pop.is-closing { animation: none; } }
+
+  /* A country with more than one language: its name, then one button per language. */
+  .country-multi {
+    display: grid; gap: 0.4rem;
+    padding: 0.55rem 0.6rem 0.6rem; border-radius: 10px;
+    font-size: 0.88rem; font-weight: 600; color: var(--c-ink);
+  }
+  .country-multi:has([aria-current="true"]) { background: var(--c-brand-soft); box-shadow: inset 0 0 0 1.5px var(--c-brand); }
+  .lang-pick { display: flex; flex-wrap: wrap; gap: 0.35rem; padding-left: calc(21px + 0.6rem); }
+  .lang-opt {
+    display: inline-flex; align-items: center; gap: 0.3rem;
+    min-height: 2.25rem; padding: 0 0.85rem; border-radius: 999px;
+    border: 1px solid var(--c-line); background: var(--c-bg-elevated);
+    font-size: 0.84rem; font-weight: 700; color: var(--c-ink);
+    transition: background-color 0.2s, border-color 0.2s, transform 0.2s;
+  }
+  .lang-opt .opt-tick { display: none; color: inherit; }
+  .lang-opt:hover, .lang-opt:focus-visible { border-color: var(--c-brand); }
+  .lang-opt:active { transform: scale(0.96); }
+  .lang-opt[aria-current="true"] { background: var(--c-ink); border-color: var(--c-ink); color: var(--c-bg); }
+  .lang-opt[aria-current="true"] .opt-tick { display: grid; opacity: 1; }
+  /* On pages not in Hindi, the one Hindi word uses the system's Devanagari
+     font, so opening the picker never downloads a web font for it. */
+  html:not([lang="hi"]) .locale-pop [lang="hi"] { font-family: "Nirmala UI", "Kohinoor Devanagari", "Devanagari Sangam MN", "Noto Sans Devanagari", var(--font-sans); }
+
+  .spinner { width: 14px; height: 14px; border-radius: 999px; border: 2px solid rgb(28 27 26 / 0.25); border-top-color: #1c1b1a; animation: spin 0.7s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .locale-pop.is-switching .country-list { pointer-events: none; opacity: 0.6; }
+  @media (prefers-reduced-motion: reduce) { .locale-pop.is-open, .locale-pop.is-closing { animation: none; } .spinner { animation-duration: 2s; } }
 </style>

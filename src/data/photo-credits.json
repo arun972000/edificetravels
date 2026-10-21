@@ -471,5 +471,104 @@
     "sourceUrl": "https://commons.wikimedia.org/wiki/File:Ganga_Aarti_at_Varanasi_in_the_evening.jpg",
     "width": 2560,
     "height": 1707
+  },
+  {
+    "slug": "srinagar-houseboats",
+    "file": "photos/srinagar-houseboats.jpg",
+    "title": "Houseboats, Dal Lake, Kashmir",
+    "author": "Madhumita Das",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:Houseboats,_Dal_Lake,_Kashmir.jpg",
+    "width": 2560,
+    "height": 1451
+  },
+  {
+    "slug": "srinagar-shalimar-bagh",
+    "file": "photos/srinagar-shalimar-bagh.jpg",
+    "title": "Shalimar Bagh, Srinagar",
+    "author": "Pradeepkjoshi",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:Shalimar_Bagh,_Srinagar.jpg",
+    "width": 2560,
+    "height": 1707
+  },
+  {
+    "slug": "gulmarg-meadows",
+    "file": "photos/gulmarg-meadows.jpg",
+    "title": "Lush green meadows of Gulmarg, J&K, India",
+    "author": "Mr. Debapriya Hore",
+    "license": "CC0",
+    "licenseUrl": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:Lush_green_meadows_of_Gulmarg,_J&K,_India.jpg",
+    "width": 2560,
+    "height": 1546
+  },
+  {
+    "slug": "pahalgam-lidder",
+    "file": "photos/pahalgam-lidder.jpg",
+    "title": "The river Lidder flows through the Pahalgam valley",
+    "author": "Mr. Debapriya Hore",
+    "license": "CC BY 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by/4.0",
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:The_river_Lidder_flows_through_the_Pahalgam_valley.jpg",
+    "width": 2560,
+    "height": 1862
+  },
+  {
+    "slug": "chettinad-mansion",
+    "file": "photos/chettinad-mansion.jpg",
+    "title": "Kanadukathan-WUS04192",
+    "author": "Rainer Halama",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:Kanadukathan-WUS04192.jpg",
+    "width": 2560,
+    "height": 1707
+  },
+  {
+    "slug": "kolkata-howrah-bridge",
+    "file": "photos/kolkata-howrah-bridge.jpg",
+    "title": "Howrah Bridge 02",
+    "author": "Bernard Gagnon",
+    "license": "CC BY-SA 3.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:Howrah_Bridge_02.jpg",
+    "width": 2560,
+    "height": 1707
+  },
+  {
+    "slug": "dharamshala-mcleod-ganj",
+    "file": "photos/dharamshala-mcleod-ganj.jpg",
+    "title": "View over McLeod Ganj - Himachal Pradesh - India (26538939370)",
+    "author": "Adam Jones from Kelowna, BC, Canada",
+    "license": "CC BY-SA 2.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.0",
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:View_over_McLeod_Ganj_-_Himachal_Pradesh_-_India_(26538939370).jpg",
+    "width": 2560,
+    "height": 1920
+  },
+  {
+    "slug": "shimla-town",
+    "file": "photos/shimla-town.jpg",
+    "title": "Hill view from Simla town",
+    "author": "Pinakpani",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:Hill_view_from_Simla_town.jpg",
+    "width": 2560,
+    "height": 1920
+  },
+  {
+    "slug": "coorg-hills",
+    "file": "photos/coorg-hills.jpg",
+    "title": "RAJA SEAT (COORG)",
+    "author": "372shivanipoovaiah",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:RAJA_SEAT_(COORG).jpg",
+    "width": 2560,
+    "height": 1920
   }
 ]

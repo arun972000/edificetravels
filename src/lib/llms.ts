@@ -31,7 +31,7 @@ export async function companyFacts(): Promise<string[]> {
     `- WhatsApp and phone: ${site.phoneDisplay}. Office line: ${site.landlineDisplay}.`,
     `- Email: ${site.email}.`,
     `- Trip planner: ${url('/plan')}.`,
-    `- Languages: the team works in English and Hindi. The website's home, planner, about and contact pages are also in German, French, Spanish and Italian.`,
+    `- Languages: the team works in English and Hindi. The website's home, planner, about and contact pages are also in Hindi, German, French, Spanish and Italian.`,
     ...(social.length ? [`- Social: ${social.map(([n, h]) => `${n} ${h}`).join(', ')}.`] : []),
     '',
     '## What guests say',

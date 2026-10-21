@@ -46,7 +46,7 @@ None. Every page has a title, a description, one h1, a canonical URL and structu
 
 ## Opportunities
 
-- [ ] **Translated pages use decorative images.** Alt text exists only in English, so the German, French, Spanish and Italian pages leave photos unlabelled rather than mixing languages. Add translated descriptions when the translations are reviewed.
+- [ ] **Translated pages use decorative images.** Alt text exists only in English, so the Hindi, German, French, Spanish and Italian pages leave photos unlabelled rather than mixing languages. Add translated descriptions when the translations are reviewed.
 - [ ] **Card thumbnails stay `alt=""`** (584 images). This is correct: each sits inside a link whose text already names the journey, place or guide, and repeating it would make screen readers say everything twice.
 - [ ] **No AggregateRating markup.** This is deliberate while the reviews are samples. Add it only once real, verifiable reviews exist, ideally drawn from Google.
 - [ ] **Translate journey pages for the German market** if enquiries justify it. Only home, plan, about and contact are translated now, so German searches for "Rajasthan Rundreise privat" land on English pages.

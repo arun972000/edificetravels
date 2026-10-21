@@ -18,27 +18,27 @@ const list = [
 
 <div class="stays" data-stays>
   <div class="relative inline-grid w-full max-w-md grid-cols-3 rounded-pill bg-bg-muted p-1.5 sm:w-auto" role="tablist" aria-label="Stay style">
-    <span class="stays-thumb absolute inset-y-1.5 left-1.5 w-[calc((100%-0.75rem)/3)] rounded-pill bg-bg-elevated shadow-2" aria-hidden="true"></span>
+    <span class="stays-thumb absolute inset-y-1.5 left-1.5 w-[calc((100%-0.75rem)/3)] rounded-pill bg-brand shadow-[var(--shadow-brand)]" aria-hidden="true"></span>
     {list.map((t, i) => (
-      <button type="button" role="tab" id={`stay-tab-${t.id}`} aria-controls={`stay-panel-${t.id}`} aria-selected={i === 0 ? 'true' : 'false'} tabindex={i === 0 ? 0 : -1} class="relative z-10 h-11 rounded-pill px-5 text-[0.95rem] font-bold text-ink-soft transition-colors aria-selected:text-ink" data-stay-tab={i}>{t.name}</button>
+      <button type="button" role="tab" id={`stay-tab-${t.id}`} aria-controls={`stay-panel-${t.id}`} aria-selected={i === 0 ? 'true' : 'false'} tabindex={i === 0 ? 0 : -1} class="relative z-10 h-11 rounded-pill px-5 text-[0.95rem] font-bold text-ink-soft transition-colors aria-selected:text-on-brand" data-stay-tab={i}>{t.name}</button>
     ))}
   </div>
 
   <div class="mt-5 grid">
     {list.map((t, i) => (
-      <section id={`stay-panel-${t.id}`} role="tabpanel" aria-labelledby={`stay-tab-${t.id}`} class="stay-panel col-start-1 row-start-1 rounded-[26px] border border-line bg-bg-elevated p-5 sm:p-8" data-stay-panel={i} data-active={i === 0 ? 'true' : 'false'}>
+      <section id={`stay-panel-${t.id}`} role="tabpanel" aria-labelledby={`stay-tab-${t.id}`} class="stay-panel col-start-1 row-start-1 rounded-[26px] border border-line border-t-[6px] border-t-brand bg-bg-elevated p-5 sm:p-8" data-stay-panel={i} data-active={i === 0 ? 'true' : 'false'}>
         <div class="grid gap-6 lg:grid-cols-[1fr_1.4fr] lg:gap-12">
           <div>
             <h3 class="font-display text-[2rem] font-normal leading-none tracking-[-0.02em] text-ink">{t.name}</h3>
             <p class="mt-3 text-[1rem] leading-relaxed text-ink-soft">{t.blurb}</p>
-            <div class="mt-5 rounded-[18px] bg-bg-muted p-4">
-              <p class="text-[0.82rem] font-semibold text-ink-muted">How you travel</p>
+            <div class="mt-5 rounded-[18px] bg-brand-soft p-4">
+              <p class="text-[0.82rem] font-extrabold text-brand-deep">How you travel</p>
               <p class="mt-1 text-[0.98rem] font-semibold text-ink">{t.tier.vehicle}</p>
               {t.tier.note && <p class="mt-2 text-[0.88rem] text-ink-muted">{t.tier.note}</p>}
             </div>
           </div>
           <div>
-            <p class="text-[0.82rem] font-semibold text-ink-muted">Where you stay</p>
+            <p class="text-[0.82rem] font-extrabold text-brand-deep">Where you stay</p>
             <ul class="mt-2 divide-y divide-line">
               {t.tier.hotels.map(h => (
                 <li class="flex items-start gap-3 py-3 text-[0.98rem] text-ink">

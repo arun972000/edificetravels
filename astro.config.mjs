@@ -21,8 +21,8 @@ export default defineConfig({
   // Canonical URL. Used by the sitemap, canonical tags and JSON-LD.
   site: 'https://edificetravels.com',
   trailingSlash: 'never',
-  // about.html, not about/index.html: Cloudflare Pages serves a file at /about
-  // but redirects a folder index to /about/, which would contradict the canonicals.
+  // Flat HTML files keep extensionless public URLs consistent with canonicals;
+  // public/_redirects maps those URLs to the generated files.
   build: { format: 'file' },
   integrations: [
     // Preact in React-compatible mode: the islands keep React's API at a fraction of the size.

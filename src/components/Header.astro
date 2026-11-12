@@ -80,32 +80,33 @@ const regions = (await allRegions()).map(r => ({ id: r.id, title: regionCopy(r.i
     </div>
   </div>
 
-  <div id="mobile-menu" class="mobile-menu lg:hidden" hidden>
-    <div class="mm-scrim" data-menu-scrim aria-hidden="true"></div>
-    <div class="mm-card">
-      <ul class="p-1.5">
-        {nav.map(item => (
-          <li>
-            <a href={item.href} class="flex items-center justify-between rounded-[14px] px-3.5 py-3 text-[1.05rem] font-bold text-ink transition-colors hover:bg-bg-muted aria-[current=page]:bg-brand-soft" aria-current={isActive(item.base) ? 'page' : undefined}>
-              <span>{item.label}</span>
-              <svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true" class="text-ink-muted"><path d="M6 3.5 10.5 8 6 12.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" /></svg>
-            </a>
-          </li>
-        ))}
-      </ul>
-      <div class="border-t border-line px-3.5 pb-3 pt-3">
-        <p class="text-[0.8rem] font-bold text-ink-muted">{t.home.regionsLabel}</p>
-        <div class="no-scrollbar -mx-3.5 mt-2 flex gap-1.5 overflow-x-auto px-3.5">
-          {regions.map(r => <a href={`/regions/${r.id}`} class="chip !h-9 shrink-0 !px-3.5 !text-[0.85rem]">{r.title}</a>)}
-        </div>
-      </div>
-      <div class="grid grid-cols-2 gap-2 border-t border-line p-3">
-        <Button href={localizedPath('/plan', locale)} size="sm" track="plan_click" class="!h-11 w-full">{t.nav.plan}</Button>
-        <WhatsAppButton href={waMessages.general()} size="sm" label="WhatsApp" trackLabel="mobile-menu" locale={locale} class="[&>a]:!h-11 [&>a]:w-full" />
+</header>
+
+<div id="mobile-menu" class="mobile-menu lg:hidden" hidden>
+  <div class="mm-scrim" data-menu-scrim aria-hidden="true"></div>
+  <div class="mm-card">
+    <ul class="p-1.5">
+      {nav.map(item => (
+        <li>
+          <a href={item.href} class="flex items-center justify-between rounded-[14px] px-3.5 py-3 text-[1.05rem] font-bold text-ink transition-colors hover:bg-bg-muted aria-[current=page]:bg-brand-soft" aria-current={isActive(item.base) ? 'page' : undefined}>
+            <span>{item.label}</span>
+            <svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true" class="text-ink-muted"><path d="M6 3.5 10.5 8 6 12.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" /></svg>
+          </a>
+        </li>
+      ))}
+    </ul>
+    <div class="border-t border-line px-3.5 pb-3 pt-3">
+      <p class="text-[0.8rem] font-bold text-ink-muted">{t.home.regionsLabel}</p>
+      <div class="no-scrollbar -mx-3.5 mt-2 flex gap-1.5 overflow-x-auto px-3.5">
+        {regions.map(r => <a href={`/regions/${r.id}`} class="chip !h-9 shrink-0 !px-3.5 !text-[0.85rem]">{r.title}</a>)}
       </div>
     </div>
+    <div class="grid grid-cols-2 gap-2 border-t border-line p-3">
+      <Button href={localizedPath('/plan', locale)} size="sm" track="plan_click" class="!h-11 w-full">{t.nav.plan}</Button>
+      <WhatsAppButton href={waMessages.general()} size="sm" label="WhatsApp" trackLabel="mobile-menu" locale={locale} class="[&>a]:!h-11 [&>a]:w-full" />
+    </div>
   </div>
-</header>
+</div>
 
 <style>
   .site-header {
@@ -127,7 +128,7 @@ const regions = (await allRegions()).map(r => ({ id: r.id, title: regionCopy(r.i
   .site-header.is-open .burger span:first-child { top: 5px; transform: rotate(45deg); }
   .site-header.is-open .burger span:last-child { top: 5px; transform: rotate(-45deg); }
 
-  .mobile-menu { position: fixed; inset: calc(var(--header-h) + var(--notice-h, 0px)) 0 0 0; }
+  .mobile-menu { position: fixed; z-index: 50; inset: calc(var(--header-h) + var(--notice-h, 0px)) 0 0 0; }
   .mm-scrim { position: absolute; inset: 0; background: rgb(12 13 15 / 0.28); opacity: 0; transition: opacity 0.3s ease; }
   .mm-card {
     position: absolute; top: 6px; left: 12px; right: 12px;
@@ -139,8 +140,8 @@ const regions = (await allRegions()).map(r => ({ id: r.id, title: regionCopy(r.i
     opacity: 0; transform: translateY(-6px) scale(0.97);
     transition: opacity 0.22s ease, transform 0.3s var(--ease-out);
   }
-  .site-header.is-open .mm-scrim { opacity: 1; }
-  .site-header.is-open .mm-card { opacity: 1; transform: none; }
+  .site-header.is-open + .mobile-menu .mm-scrim { opacity: 1; }
+  .site-header.is-open + .mobile-menu .mm-card { opacity: 1; transform: none; }
   @media (prefers-reduced-motion: reduce) { .mm-card, .mm-scrim { transition: none; } }
 </style>
 

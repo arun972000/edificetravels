@@ -21,6 +21,14 @@ describe.skipIf(!has)('built site', () => {
     for (const l of ['de', 'fr', 'es', 'it']) expect(existsSync(join(DIST, `${l}.html`))).toBe(true);
   });
 
+  it('renders the mobile menu outside the filtered header', () => {
+    const html = read('index.html');
+    const headerEnd = html.indexOf('</header>');
+    const menuStart = html.indexOf('<div id="mobile-menu"');
+    expect(headerEnd).toBeGreaterThan(-1);
+    expect(menuStart).toBeGreaterThan(headerEnd);
+  });
+
   it('declares hreflang alternates on translated pages', () => {
     const html = read('de/plan.html');
     for (const l of ['en', 'de', 'fr', 'es', 'it', 'x-default']) expect(html).toContain(`hreflang="${l}"`);
@@ -79,12 +87,27 @@ describe.skipIf(!has)('built site', () => {
 
   it('sends every old-site redirect to a page that exists', () => {
     const rules = read('_redirects').split('\n').map(l => l.trim()).filter(l => l && !l.startsWith('#')).map(l => l.split(/\s+/));
-    expect(rules.length).toBeGreaterThan(30);
-    for (const [from, to, status] of rules) {
+    const redirects = rules.filter(([, , status]) => status === '301');
+    expect(redirects.length).toBeGreaterThan(30);
+    for (const [from, to, status] of redirects) {
       expect(status, from).toBe('301');
       if (to.includes(':splat')) continue;
       const file = to === '/' ? 'index.html' : `${to.slice(1)}.html`;
       expect(existsSync(join(DIST, file)), `${from} -> ${to}`).toBe(true);
+    }
+  });
+
+  it('rewrites clean page URLs to the built HTML files', () => {
+    const rules = read('_redirects').split('\n').map(l => l.trim()).filter(l => l && !l.startsWith('#')).map(l => l.split(/\s+/));
+    const rewrites = rules.filter(([, , status]) => status === '200');
+    for (const [from, to] of rewrites.filter(([from]) => !from.includes('*'))) {
+      expect(existsSync(join(DIST, to.slice(1))), `${from} -> ${to}`).toBe(true);
+    }
+    for (const path of ['about', 'contact', 'destinations', 'guide', 'journeys', 'plan', 'de', 'es', 'fr', 'it']) {
+      expect(rewrites).toContainEqual([`/${path}`, `/${path}.html`, '200']);
+    }
+    for (const path of ['de', 'es', 'fr', 'it', 'destinations', 'guide', 'journeys', 'regions']) {
+      expect(rewrites).toContainEqual([`/${path}/*`, `/${path}/:splat.html`, '200']);
     }
   });
 

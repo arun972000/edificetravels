@@ -4,6 +4,36 @@
 # keep its links, bookmarks and search rankings pointing somewhere useful.
 # Source: the old site's sitemaps, read on 12 October 2026 (28 URLs).
 
+# Keep clean URLs working on hosts that do not automatically resolve flat
+# .html output. These rewrites leave the browser URL and canonical unchanged.
+/about                         /about.html                          200
+/accessibility                 /accessibility.html                  200
+/booking-terms                 /booking-terms.html                  200
+/contact                       /contact.html                        200
+/cookies                       /cookies.html                        200
+/credits                       /credits.html                        200
+/destinations                  /destinations.html                   200
+/guide                         /guide.html                          200
+/how-booking-works             /how-booking-works.html              200
+/journeys                      /journeys.html                       200
+/plan                          /plan.html                           200
+/privacy                       /privacy.html                        200
+/responsible-travel            /responsible-travel.html             200
+/reviews                       /reviews.html                        200
+/terms                         /terms.html                          200
+/de                            /de.html                             200
+/es                            /es.html                             200
+/fr                            /fr.html                             200
+/it                            /it.html                             200
+/de/*                          /de/:splat.html                      200
+/es/*                          /es/:splat.html                      200
+/fr/*                          /fr/:splat.html                      200
+/it/*                          /it/:splat.html                      200
+/destinations/*                /destinations/:splat.html            200
+/guide/*                       /guide/:splat.html                   200
+/journeys/*                    /journeys/:splat.html                200
+/regions/*                     /regions/:splat.html                 200
+
 # Pages
 /pages/about-us                 /about                                   301
 /pages/contact-us               /contact                                 301

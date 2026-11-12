@@ -9,7 +9,7 @@ export const site = {
   /** Edifice Travels is a unit of this registered entity. */
   legalName: 'Edifice Travel Solutions LLP',
   url: 'https://edificetravels.com',
-  tagline: 'Private India journeys, designed by people who live here.',
+  tagline: 'Crafting Comfort and convenience for your travel',
   description:
     'Tailor-made private journeys across India for travellers from around the world: one team in New Delhi, an itemised written quote within 48 hours, and one WhatsApp line from first message to flight home.',
   basedIn: 'New Delhi, India',

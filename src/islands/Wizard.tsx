@@ -249,15 +249,6 @@ export default function Wizard(p: Props) {
                 );
               })}
             </div>
-            {p.journeys.length > 0 && (
-              <label className="mt-6 block text-small">
-                <span className="font-medium text-ink">{t.journeyQuestion}</span>
-                <select value={f.journey} onChange={e => set('journey', e.target.value)} className={input}>
-                  <option value="">{t.journeyNone}</option>
-                  {p.journeys.map(j => <option key={j.id} value={j.id}>{j.title} ({fill(p.daysLabel, { n: j.days })})</option>)}
-                </select>
-              </label>
-            )}
           </fieldset>
         )}
 

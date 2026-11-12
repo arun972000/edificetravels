@@ -22,8 +22,9 @@ const { class: className = '', compact = false, size = 44 } = Astro.props;
     <Image src={badge} alt="" width={size} height={size} densities={[1, 2, 3]} loading="eager" class="block h-full w-full" />
   </span>
   {!compact && (
-    <span class="font-sans font-extrabold tracking-[0.08em] text-[0.95rem] leading-none uppercase">
-      <span class="text-brand-deep">Edifice</span> <span>Travels</span>
+    <span class="flex flex-col leading-none">
+      <span class="font-display text-[1.05rem] tracking-[-0.05em] text-brand-deep">Edifice</span>
+      <span class="mt-0.5 font-sans text-[0.62rem] font-bold uppercase tracking-[0.22em] text-ink-soft">Travels</span>
     </span>
   )}
 </span>

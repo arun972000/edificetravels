@@ -129,9 +129,7 @@ const columns = [
 <script>
   const btn = document.getElementById('theme-toggle');
   const root = document.documentElement;
-  const currentTheme = () =>
-    root.getAttribute('data-theme')
-    ?? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+  const currentTheme = () => root.getAttribute('data-theme') ?? 'light';
   btn?.setAttribute('aria-pressed', String(currentTheme() === 'dark'));
   btn?.addEventListener('click', () => {
     const next = currentTheme() === 'dark' ? 'light' : 'dark';

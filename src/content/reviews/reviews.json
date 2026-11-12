@@ -14,5 +14,29 @@
     "source": "Google",
     "rating": 5,
     "trip": "Kashmir"
+  },
+  {
+    "id": "google-chelladurai-prabhakaran",
+    "quote": "Excellent service and we feel moral support of Edifice Travels during travel and entire trip. Package Price also affordable. Mr.Rajesh is always connecting person 24x7 and help us in critical situations also during travel.",
+    "name": "Chelladurai Prabhakaran",
+    "source": "Google",
+    "rating": 5,
+    "trip": "India tour"
+  },
+  {
+    "id": "google-srinivasan-sadagopan",
+    "quote": "Availed tour package to Delhi, Mathura, Vrindavan and Agra from M/s.Edifice Travels. They provided Excellent Hotel stay with complimentary breakfast and dinner. They provided very good vehicle as per our choice with an excellent and courteous Driver who took us to many places in well coordinated manner. We thank M/s. Edifice Travels wholeheartedly for making our trip a memorable one.",
+    "name": "Srinivasan Sadagopan",
+    "source": "Google",
+    "rating": 5,
+    "trip": "Delhi, Mathura, Vrindavan and Agra"
+  },
+  {
+    "id": "google-antony-george",
+    "quote": "Mr.Kumareson from edifice travels helped me with the recent accomodation arrangement for me and my family at Goa. It was a too notch professional experience that I had with him and his time during my interaction. I got a good package and the deliverables included was enjoyed by my family. I would recommend edifice travels for all your travel needs. All the best!",
+    "name": "Antony George",
+    "source": "Google",
+    "rating": 5,
+    "trip": "Goa"
   }
 ]

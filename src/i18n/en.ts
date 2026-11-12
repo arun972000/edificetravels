@@ -413,7 +413,7 @@ export const en = {
   },
 
   footer: {
-    tagline: 'Private India journeys, designed by people who live here.',
+    tagline: 'Crafting Comfort and convenience for your travel',
     based: 'Based in New Delhi. Private, tailor-made journeys for travellers from around the world.',
     hours: '9 am to 8 pm India time, seven days a week. We reply within 12 hours.',
     whatsappCalls: '(WhatsApp and calls)',

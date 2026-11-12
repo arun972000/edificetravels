@@ -16,10 +16,10 @@ const crumbs = [{ name: 'Home', href: '/' }, { name: 'Guest stories', href: '/re
     <Breadcrumbs items={crumbs} />
   </div>
   <Testimonials reviews={reviews} as="h1" title="Guest stories" lead="What travellers told us once they were home, quoted exactly as they wrote it." showAll={false} />
-  <div class="container-x pb-14 md:pb-20">
+  <div id="share-your-moment" class="container-x pb-14 md:pb-20">
     <div class="reveal rounded-[30px] bg-night p-6 text-white sm:p-10 md:p-14">
-      <SectionHeading title="Planning a journey of your own?" lead="Tell us how you want India to feel, and we will plan the route around it." dark />
-      <div class="mt-7"><Button href="/plan" size="lg" track="plan_click">Plan your trip</Button></div>
+      <SectionHeading title="Share your moment with us" lead="We would love to hear about the memories, the people, and the little details that made your journey unforgettable." dark />
+      <div class="mt-7"><Button href="/plan" size="lg" track="share_review_click">Share your moment with us</Button></div>
     </div>
   </div>
 </BaseLayout>

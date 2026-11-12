@@ -14,9 +14,7 @@ import '../styles/global.css';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import ConsentBanner from '../components/ConsentBanner.astro';
-import LocaleDialog from '../components/LocaleDialog.astro';
 import MobileDock from '../components/MobileDock.astro';
-import FlagWave from '../components/FlagWave.astro';
 import { site } from '../data/site';
 import { COUNTRIES, TZ_TO_COUNTRY } from '../data/countries';
 import { organizationLd, websiteLd, webPageLd, type PageType } from '../lib/seo';
@@ -154,13 +152,15 @@ const boot = {
     <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
     <meta name="theme-color" content="#0f1012" media="(prefers-color-scheme: dark)" />
     <script is:inline>
-      // Before paint: mark JS as available (for reveal styles) and apply a saved theme.
+      // Before paint: mark JS as available and default to white unless the user has chosen otherwise.
       document.documentElement.classList.remove('no-js');
       document.documentElement.classList.add('js');
+      var saved = 'light';
       try {
         var t = localStorage.getItem('theme');
-        if (t === 'dark' || t === 'light') document.documentElement.setAttribute('data-theme', t);
+        if (t === 'dark' || t === 'light') saved = t;
       } catch (e) {}
+      document.documentElement.setAttribute('data-theme', saved);
     </script>
     {ld.map(obj => <script type="application/ld+json" set:html={safeJson(obj)} />)}
   </head>
@@ -175,20 +175,7 @@ const boot = {
     </main>
     <Footer locale={locale} />
     <ConsentBanner locale={locale} />
-    <LocaleDialog locale={locale} />
     {dock !== false && <MobileDock locale={locale} {...dock} />}
-
-    <div id="locale-suggest" class="locale-suggest fixed left-1/2 top-[calc(var(--sticky-top)+10px)] z-[58] flex w-max max-w-[calc(100vw-1.5rem)] items-center gap-2 rounded-pill border border-line bg-bg-elevated py-1.5 pl-2 pr-1.5 shadow-2" role="status" hidden>
-      <FlagWave size="md" fly data-suggest-flag class="ml-1" />
-      <p class="min-w-0 flex-1 text-[0.85rem] font-semibold leading-tight text-ink" data-suggest-title></p>
-      <div class="flex shrink-0 items-center gap-1">
-        <button type="button" data-suggest-go class="press h-9 rounded-pill bg-ink px-3.5 text-[0.82rem] font-bold text-bg"></button>
-        <button type="button" data-suggest-stay class="press grid h-9 w-9 place-items-center rounded-full text-ink-muted hover:bg-bg-muted hover:text-ink"><svg width="11" height="11" viewBox="0 0 20 20" aria-hidden="true"><path d="M5 5l10 10M15 5L5 15" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" /></svg></button>
-      </div>
-    </div>
-
-    <script type="application/json" id="locale-boot" set:html={safeJson(boot)} />
-    <script src="../scripts/locale.ts"></script>
     <script>
       // Reveal on scroll, once per element. Headings, images and blocks share one observer.
       const els = document.querySelectorAll<HTMLElement>('.reveal, .split, .reveal-img');

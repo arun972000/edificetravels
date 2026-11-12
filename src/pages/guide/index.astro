@@ -22,10 +22,10 @@ const groups = [...new Set(guides.map(g => g.data.category))].map(c => ({ c, ite
   transparentHeader
   pageType="CollectionPage"
   jsonLd={[breadcrumbLd(crumbs), itemListLd('India travel guide', guides.map(g => ({ name: g.data.title, href: `/guide/${g.id}` })))]}
-  image={(await getImage({ src: photo('indian-market'), width: 1200, format: 'jpeg' })).src}
-  imageAlt={photoAlt('indian-market')}
+  image={(await getImage({ src: photo('hero-taj-dawn'), width: 1200, format: 'jpeg' })).src}
+  imageAlt={photoAlt('hero-taj-dawn')}
 >
-  <Hero image={photo('indian-market')} alt={photoAlt('indian-market')} title="What to know before you go to India" lead="Written by the specialists who plan the journeys, with the date each guide was last checked. If your question is not here, send it to us on WhatsApp." height="medium" breadcrumbs={crumbs} whatsapp={waMessages.general()} />
+  <Hero image={photo('hero-taj-dawn')} alt={photoAlt('hero-taj-dawn')} title="What to know before you go to India" lead="Written by the specialists who plan the journeys, with the date each guide was last checked. If your question is not here, send it to us on WhatsApp." height="medium" breadcrumbs={crumbs} whatsapp={waMessages.general()} />
 
   <div class="follow-header sticky top-[var(--sticky-top)] z-30 mt-4 border-b border-line bg-bg/90 backdrop-blur-xl">
     <nav class="no-scrollbar fade-end container-x flex gap-1.5 overflow-x-auto py-2.5" aria-label="Topics">

@@ -40,30 +40,6 @@
 :root { --sticky-top: calc(var(--header-h) + var(--notice-h, 0px)); }
 html.header-hidden { --sticky-top: 0px; }
 
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    --c-bg: #0f1012;
-    --c-bg-elevated: #17191c;
-    --c-bg-muted: #1c1f23;
-    --c-ink: #f3f4f6;
-    --c-ink-soft: #c9cdd4;
-    --c-ink-muted: #9aa1ac;
-    --c-line: #2a2e34;
-    --c-brand: #f08a35;
-    --c-brand-deep: #f5a25a;
-    --c-brand-soft: #33220f;
-    --c-indigo: #9fb0e0;
-    --c-success: #4ade80;
-    --c-warning: #e0a83f;
-    --c-danger: #f2726b;
-    --c-night: #1f2226;
-    --c-overlay: rgb(0 0 0 / 0.6);
-    --shadow-1: 0 0 0 1px rgb(255 255 255 / 0.06);
-    --shadow-2: 0 14px 34px -14px rgb(0 0 0 / 0.6);
-    --shadow-3: 0 30px 70px -24px rgb(0 0 0 / 0.75);
-    color-scheme: dark;
-  }
-}
 :root[data-theme="dark"] {
   --c-bg: #0f1012;
   --c-bg-elevated: #17191c;

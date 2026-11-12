@@ -64,4 +64,4 @@ Copy any file in `src/content/journeys/`, change the frontmatter, write the day-
 
 ## Hosting note
 
-Pages are built as files (`about.html`), not folders (`about/index.html`). The 200 rewrites in `public/_redirects` map clean page URLs to these files without changing the browser URL or canonical. Keep `build.format: 'file'` in `astro.config.mjs`.
+Pages are built as files (`about.html`), not folders (`about/index.html`). Vercel uses `cleanUrls: true` in `vercel.json` to serve these files at clean URLs such as `/journeys`; `public/_redirects` provides equivalent rewrites on hosts that support that file. Keep `build.format: 'file'` in `astro.config.mjs`.

@@ -29,6 +29,12 @@ describe.skipIf(!has)('built site', () => {
     expect(menuStart).toBeGreaterThan(headerEnd);
   });
 
+  it('enables clean URLs for flat HTML output on Vercel', () => {
+    const config = JSON.parse(readFileSync(join(__dirname, '..', '..', 'vercel.json'), 'utf8'));
+    expect(config.cleanUrls).toBe(true);
+    expect(existsSync(join(DIST, 'journeys.html'))).toBe(true);
+  });
+
   it('declares hreflang alternates on translated pages', () => {
     const html = read('de/plan.html');
     for (const l of ['en', 'de', 'fr', 'es', 'it', 'x-default']) expect(html).toContain(`hreflang="${l}"`);
